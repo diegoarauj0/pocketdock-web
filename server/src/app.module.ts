@@ -1,10 +1,37 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ValidationErrorException } from "./common/exceptions/validation.exception";
+import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
+import { GlobalExceptionFilter } from "./common/filters/globalException.filter";
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { DatabaseModule } from "./modules/database/database.module";
+import { UsersModule } from "./modules/users/users.module";
+import { AuthModule } from "./modules/auth/auth.module";
+import { Module, ValidationPipe } from "@nestjs/common";
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: GlobalExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useFactory: () => {
+        return new ValidationPipe({
+          exceptionFactory: (errors) => new ValidationErrorException(errors),
+          whitelist: true,
+          transform: true,
+        });
+      },
+    },
+  ],
+  imports: [DatabaseModule, AuthModule, UsersModule],
 })
 export class AppModule {}

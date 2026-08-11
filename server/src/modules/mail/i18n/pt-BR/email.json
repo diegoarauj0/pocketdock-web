@@ -1,0 +1,15 @@
+{
+  "subject": "Verifique seu endereço de e-mail",
+  "greetingPrefix": "Olá,",
+  "expiresInMessage": "Este código expira em {minutes} minutos.",
+  "SIGN_UP": {
+    "preheaderText": "Seu código de ativação chegou",
+    "title": "Confirme seu email",
+    "description": "Use o código abaixo para ativar sua conta."
+  },
+  "FORGOT_PASSWORD": {
+    "preheaderText": "Seu código de redefinição de senha chegou",
+    "title": "Redefina sua senha",
+    "description": "Use o código abaixo para redefinir sua senha."
+  }
+}

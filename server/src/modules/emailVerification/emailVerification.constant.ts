@@ -1,0 +1,4 @@
+export const EMAIL_VERIFICATION_CONSTANT = {
+  EXPIRES_IN_MS: 30 * 60 * 1000,
+  CODE_LENGTH: 6,
+};

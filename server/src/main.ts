@@ -1,8 +1,35 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { INestApplication, LogLevel } from "@nestjs/common";
+import { NestFactory } from "@nestjs/core";
+import { Swagger } from "./config/swagger";
+import cookieParser from "cookie-parser";
+import { AppModule } from "./app.module";
+import { env } from "./config/env";
+import helmet from "helmet";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  const app = await NestFactory.create(AppModule, {
+    logger: env.LOG_CONTEXTS as LogLevel[],
+  });
+
+  configureApp(app);
+
+  await app.listen(env.PORT);
 }
-bootstrap();
+
+function configureApp(app: INestApplication) {
+  app.use(helmet());
+
+  app.enableCors({
+    origin: env.CORS_ORIGIN,
+    credentials: true,
+  });
+
+  app.use(cookieParser());
+
+  Swagger(app);
+}
+
+bootstrap().catch((error) => {
+  console.error("Failed to start application:", error);
+  process.exit(1);
+});

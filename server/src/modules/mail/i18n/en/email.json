@@ -1,0 +1,15 @@
+{
+  "subject": "Verify your email address",
+  "greetingPrefix": "Hello,",
+  "expiresInMessage": "This code expires in {minutes} minutes.",
+  "SIGN_UP": {
+    "preheaderText": "Your activation code has arrived",
+    "title": "Confirm your email",
+    "description": "Use the code below to activate your account."
+  },
+  "FORGOT_PASSWORD": {
+    "preheaderText": "Your password reset code has arrived",
+    "title": "Reset your password",
+    "description": "Use the code below to reset your password."
+  }
+}
