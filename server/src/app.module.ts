@@ -2,7 +2,8 @@ import { ValidationErrorException } from "./common/exceptions/validation.excepti
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { GlobalExceptionFilter } from "./common/filters/globalException.filter";
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
-import { DatabaseModule } from "./modules/database/database.module";
+import { DockerModule } from "./infrastructure/docker/docker.module";
+import { DatabaseModule } from "./infrastructure/database/database.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { Module, ValidationPipe } from "@nestjs/common";
@@ -32,6 +33,6 @@ import { Module, ValidationPipe } from "@nestjs/common";
       },
     },
   ],
-  imports: [DatabaseModule, AuthModule, UsersModule],
+  imports: [DatabaseModule, AuthModule, UsersModule, DockerModule],
 })
 export class AppModule {}

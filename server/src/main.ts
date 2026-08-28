@@ -1,3 +1,4 @@
+import { DockerProvisionerService } from "./infrastructure/docker/services/dockerProvisioner.service";
 import { INestApplication, LogLevel } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { Swagger } from "./config/swagger";
@@ -10,6 +11,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: env.LOG_CONTEXTS as LogLevel[],
   });
+
+  await app.get(DockerProvisionerService).provision();
 
   configureApp(app);
 
