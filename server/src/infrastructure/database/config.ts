@@ -12,5 +12,5 @@ export default {
   logging: ["error", "warn", "migration"],
   synchronize: false,
   entities: ["dist/**/*.entity.{js,ts}"],
-  migrations: ["dist/modules/database/migrations/*.js"],
+  migrations: ["dist/infrastructure/database/migrations/*.js"],
 } as DataSourceOptions;

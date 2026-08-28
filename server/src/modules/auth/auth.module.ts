@@ -4,12 +4,12 @@ import { OAuthStrategyRegistry } from "./oAuthStrategy.registry";
 import { OAuthController } from "./controllers/OAuth.controller";
 import { AuthController } from "./controllers/auth.controller";
 import { AccountsModule } from "../accounts/accounts.module";
-import { SessionModule } from "../session/session.module";
+import { SessionModule } from "../sessions/session.module";
 import { OAuthService } from "./services/OAuth.service";
 import { CommonModule } from "src/common/common.module";
 import { AuthService } from "./services/auth.service";
 import { UsersModule } from "../users/users.module";
-import { Module, Provider } from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import { AuthGuard } from "./guards/auth.guard";
 import { APP_GUARD } from "@nestjs/core";
 

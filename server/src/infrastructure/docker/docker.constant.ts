@@ -9,5 +9,4 @@ export const DOCKER_CONSTANT = {
   POCKETBASE_LABEL_TYPE: "com.pocketdock.type",
   POCKETBASE_LABEL_VERSION: "com.pocketdock.version",
   POCKETBASE_LABEL_INSTANCE_ID: "com.pocketdock.instance-id",
-
 } as const;

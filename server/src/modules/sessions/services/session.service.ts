@@ -2,7 +2,7 @@ import { CryptoService } from "src/common/services/crypto.service";
 import { InvalidSessionException, InvalidSessionReason } from "../exceptions/invalidSession.exception";
 import { UsersService } from "src/modules/users/services/users.service";
 import { SessionRepository } from "../repositories/session.repository";
-import { JWTService } from "src/modules/session/services/jwt.service";
+import { JWTService } from "src/modules/sessions/services/jwt.service";
 import { SessionRevokeType } from "../session.entity";
 import { UserEntity } from "src/modules/users/user.entity";
 import { SESSION_CONSTANT } from "../session.constant";

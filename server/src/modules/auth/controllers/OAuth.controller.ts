@@ -4,10 +4,10 @@ import { ApiOAuthEmailConflictResponse } from "src/common/decorators/swagger/oAu
 import { ApiOAuthStrategyErrorResponse } from "src/common/decorators/swagger/oAuthStrategy.decorator";
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
 import { StrategyIDParamsDto, CallbackQueriesDto, AuthorizeResponseDto } from "../dtos/OAuth.dto";
-import { SessionService } from "src/modules/session/services/session.service";
+import { SessionService } from "src/modules/sessions/services/session.service";
 import { Controller, Get, Ip, Param, Post, Query, Res } from "@nestjs/common";
 import { AllowAnonymous } from "../decorators/allowAnonymous.decorator";
-import { SESSION_CONSTANT } from "src/modules/session/session.constant";
+import { SESSION_CONSTANT } from "src/modules/sessions/session.constant";
 import { UserAgent } from "src/common/decorators/userAgent.decorator";
 import { Cookie } from "src/common/decorators/cookie.decorator";
 import { OAuthService } from "../services/OAuth.service";

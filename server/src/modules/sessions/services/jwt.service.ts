@@ -20,7 +20,7 @@ export class JWTService {
     const { sessionID, userID } = props;
 
     return JWT.sign({ sessionID, userID, type: "access" }, env.SECRET, {
-      expiresIn: SESSION_CONSTANT.ACCESS_EXPIRES_IN_MS,
+      expiresIn: SESSION_CONSTANT.ACCESS_EXPIRES_IN_MS / 1000,
     });
   }
 
@@ -28,7 +28,7 @@ export class JWTService {
     const { sessionID, userID } = props;
 
     return JWT.sign({ sessionID, userID, type: "refresh" }, env.SECRET, {
-      expiresIn: SESSION_CONSTANT.SESSION_EXPIRES_IN_MS,
+      expiresIn: SESSION_CONSTANT.SESSION_EXPIRES_IN_MS / 1000,
     });
   }
 

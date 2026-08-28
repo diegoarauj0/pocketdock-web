@@ -7,5 +7,6 @@ import { Module } from "@nestjs/common";
 
 @Module({
   providers: [DockerService, DockerContainerService, DockerImageService, DockerProvisionerService, DockerVolumeService],
+  exports: [DockerContainerService],
 })
 export class DockerModule {}

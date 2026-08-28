@@ -9,10 +9,10 @@ import { EmailVerificationType } from "src/modules/emailVerification/emailVerifi
 import { Body, Controller, Get, HttpCode, HttpStatus, Ip, Post, Res } from "@nestjs/common";
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
 import { AcceptLanguage } from "src/common/decorators/acceptLanguage.decorator";
-import { SessionService } from "src/modules/session/services/session.service";
+import { SessionService } from "src/modules/sessions/services/session.service";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { AllowAnonymous } from "../decorators/allowAnonymous.decorator";
-import { SESSION_CONSTANT } from "src/modules/session/session.constant";
+import { SESSION_CONSTANT } from "src/modules/sessions/session.constant";
 import { PublicUserResponseDto } from "src/modules/users/dtos/user.dto";
 import { resolveLocale } from "src/modules/mail/helpers/resolveLocale";
 import { UserAgent } from "src/common/decorators/userAgent.decorator";

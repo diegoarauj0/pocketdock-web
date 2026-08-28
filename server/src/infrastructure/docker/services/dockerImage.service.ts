@@ -40,9 +40,9 @@ export class DockerImageService {
 
     const { context, dockerfile = "Dockerfile", tag, labels, buildArgs } = options;
 
-    const test = tar.pack(context);
+    const contextStream = tar.pack(context) as unknown;
 
-    const stream = await dockerClient.buildImage(test, {
+    const stream = await dockerClient.buildImage(contextStream as string, {
       buildargs: buildArgs,
       version: "2",
       dockerfile,
@@ -59,7 +59,7 @@ export class DockerImageService {
     return new Promise<void>((resolve, reject) => {
       const dockerClient = this.dockerService.getClient();
 
-      const handleFinished = (error) => {
+      const handleFinished = (error: Error | null): void => {
         if (error) {
           reject(error);
           return;
@@ -68,7 +68,7 @@ export class DockerImageService {
         resolve();
       };
 
-      const handleProgress = (event) => {
+      const handleProgress = (event: { stream?: string; error?: string }): void => {
         if (event.stream) {
           process.stdout.write(event.stream);
         }

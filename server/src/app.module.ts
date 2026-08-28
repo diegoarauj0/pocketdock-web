@@ -6,6 +6,7 @@ import { DockerModule } from "./infrastructure/docker/docker.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { InstanceModule } from "./modules/instances/instance.module";
 import { Module, ValidationPipe } from "@nestjs/common";
 
 @Module({
@@ -33,6 +34,6 @@ import { Module, ValidationPipe } from "@nestjs/common";
       },
     },
   ],
-  imports: [DatabaseModule, AuthModule, UsersModule, DockerModule],
+  imports: [DatabaseModule, AuthModule, UsersModule, InstanceModule, DockerModule],
 })
 export class AppModule {}
