@@ -5,7 +5,7 @@ export class InstanceMapper {
   public static toPrivate(instance: InstanceEntity): InstancePrivateDto {
     return {
       ID: instance.ID,
-      containerId: instance.containerName,
+      containerName: instance.containerName,
       createdAt: instance.createdAt,
       updatedAt: instance.updatedAt,
     };

@@ -1,6 +1,6 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 import { InstanceEntity } from "../instance.entity";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class InstanceIDParamsDto {
   @ApiProperty({
@@ -26,10 +26,10 @@ export class InstancePrivateDto {
 
   @ApiProperty({
     type: "string",
-    description: "ID do container Docker que executa a instância",
+    description: "Nome do container Docker que executa a instância",
     example: "pocketdock-instance-123e4567-e89b-12d3-a456-426614174000",
   })
-  public containerId!: InstanceEntity["containerName"];
+  public containerName!: InstanceEntity["containerName"];
 
   @ApiProperty({
     type: "string",

@@ -25,6 +25,8 @@ const envSchema = z.object({
   GOOGLE_OAUTH_REDIRECT_URI: z.string().optional(),
   GOOGLE_OAUTH_CLIENT_SECRET: z.string().optional(),
   DOCKER_HOST: z.string().default("unix:///var/run/docker.sock"),
+  MAX_MEMORY_IN_MB: z.coerce.number().default(512),
+  MAX_NANO_CPUS: z.coerce.number().default(1000000000),
   LOG_CONTEXTS: z
     .string()
     .transform((val) => val.split(",").map((item) => item.trim()))

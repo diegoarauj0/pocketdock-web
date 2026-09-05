@@ -12,6 +12,10 @@ export function isAlreadyPaused(error: unknown): boolean {
   return isDockerApiError(error) && error.statusCode === 409 && error.message.includes("is already paused");
 }
 
+export function isNotRunning(error: unknown): boolean {
+  return isDockerApiError(error) && error.statusCode === 409 && error.message.includes("is not running");
+}
+
 export function isNotPaused(error: unknown): boolean {
   return isDockerApiError(error) && error.statusCode === 500 && error.message.includes("is not paused");
 }

@@ -50,6 +50,12 @@ export class DockerContainerService {
     });
   }
 
+  public async getStatsContainer(name: string): Promise<Docker.ContainerStats> {
+    const container = this.getContainer(name);
+
+    return await container.stats({ stream: false });
+  }
+
   public async startContainer(name: string): Promise<void> {
     const container = this.getContainer(name);
 

@@ -1,5 +1,5 @@
+import { INSTANCE_CONSTANT } from "src/modules/instances/instance.constant";
 import { DockerImageService } from "./dockerImage.service";
-import { DOCKER_CONSTANT } from "../docker.constant";
 import { Injectable, Logger } from "@nestjs/common";
 import { DockerService } from "./docker.service";
 
@@ -34,7 +34,7 @@ export class DockerProvisionerService {
   }
 
   private async ensurePocketBaseImage(): Promise<void> {
-    const image = `${DOCKER_CONSTANT.POCKETBASE_REPOSITORY}:${DOCKER_CONSTANT.POCKETBASE_VERSION}`;
+    const image = `${INSTANCE_CONSTANT.REPOSITORY}:${INSTANCE_CONSTANT.VERSION}`;
 
     this.logger.debug(`Checking image "${image}"...`);
 
@@ -48,16 +48,17 @@ export class DockerProvisionerService {
     this.logger.log(`Image "${image}" does not exist. Building...`);
 
     await this.dockerImageService.buildImage({
-      context: DOCKER_CONSTANT.POCKETBASE_CONTEXT,
-      dockerfile: DOCKER_CONSTANT.POCKETBASE_DOCKERFILE,
+      context: INSTANCE_CONSTANT.CONTEXT,
+      dockerfile: INSTANCE_CONSTANT.DOCKERFILE,
       tag: image,
       labels: {
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_MANAGED]: "true",
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_TYPE]: DOCKER_CONSTANT.POCKETBASE_TYPE,
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_VERSION]: DOCKER_CONSTANT.POCKETBASE_VERSION,
+        [INSTANCE_CONSTANT.LABEL_MANAGED]: "true",
+        [INSTANCE_CONSTANT.LABEL_TYPE]: INSTANCE_CONSTANT.TYPE,
+        [INSTANCE_CONSTANT.LABEL_VERSION]: INSTANCE_CONSTANT.VERSION,
       },
       buildArgs: {
-        POCKETBASE_VERSION: DOCKER_CONSTANT.POCKETBASE_VERSION,
+        VERSION: INSTANCE_CONSTANT.VERSION,
+        PORT: INSTANCE_CONSTANT.PORT.toString(),
       },
     });
 

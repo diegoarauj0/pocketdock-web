@@ -1,55 +1,78 @@
+import { isAlreadyPaused, isDockerApiError, isNotPaused, isNotRunning } from "src/infrastructure/docker/docker.util";
 import { ContainerErrorReason, InstanceContainerException } from "../exceptions/instanceContainer.exception";
 import { DockerContainerService } from "src/infrastructure/docker/services/dockerContainer.service";
 import { InstanceNotFoundException } from "../exceptions/instanceNotFoundException.exception";
-import { DOCKER_CONSTANT } from "src/infrastructure/docker/docker.constant";
 import { InstanceRepository } from "../repositories/instance.repository";
-import { isAlreadyPaused, isDockerApiError, isNotPaused } from "src/infrastructure/docker/docker.util";
 import { CryptoService } from "src/common/services/crypto.service";
+import { UserEntity } from "src/modules/users/user.entity";
 import { INSTANCE_CONSTANT } from "../instance.constant";
 import { InstanceEntity } from "../instance.entity";
 import { Injectable, Logger } from "@nestjs/common";
+import { env } from "src/config/env";
+
+interface InterfaceState {
+  cpu: {
+    percent: number;
+    limit: number;
+    used: number;
+  };
+
+  memory: {
+    percent: number;
+    limit: number;
+    used: number;
+  };
+}
 
 @Injectable()
 export class InstanceService {
   private readonly logger = new Logger(InstanceService.name);
 
   constructor(
-    private readonly cryptoService: CryptoService,
-    private readonly instanceRepository: InstanceRepository,
     private readonly dockerContainerService: DockerContainerService,
+    private readonly instanceRepository: InstanceRepository,
+    private readonly cryptoService: CryptoService,
   ) {}
 
-  public async create(userID: string): Promise<InstanceEntity> {
+  public async create(user: UserEntity): Promise<InstanceEntity> {
     const ID = this.cryptoService.randomUUID();
     const containerName = `${INSTANCE_CONSTANT.CONTAINER_NAME_PREFIX}-${ID}`;
 
     try {
-      const image = `${DOCKER_CONSTANT.POCKETBASE_REPOSITORY}:${DOCKER_CONSTANT.POCKETBASE_VERSION}`;
+      const image = `${INSTANCE_CONSTANT.REPOSITORY}:${INSTANCE_CONSTANT.VERSION}`;
 
       const labels = {
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_VERSION]: DOCKER_CONSTANT.POCKETBASE_VERSION,
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_TYPE]: DOCKER_CONSTANT.POCKETBASE_TYPE,
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_MANAGED]: "true",
-        [DOCKER_CONSTANT.POCKETBASE_LABEL_INSTANCE_ID]: ID,
+        [INSTANCE_CONSTANT.LABEL_VERSION]: INSTANCE_CONSTANT.VERSION,
+        [INSTANCE_CONSTANT.LABEL_TYPE]: INSTANCE_CONSTANT.TYPE,
+        [INSTANCE_CONSTANT.LABEL_INSTANCE_ID]: ID,
+        [INSTANCE_CONSTANT.LABEL_MANAGED]: "true",
+      };
+
+      const hostConfig = {
+        Memory: env.MAX_MEMORY_IN_MB * 1024 * 1024,
+        NanoCpus: env.MAX_NANO_CPUS,
       };
 
       await this.dockerContainerService.createContainer({
         name: containerName,
         image: image,
+        hostConfig,
         labels,
       });
 
       await this.dockerContainerService.startContainer(containerName);
 
-      const instance = this.instanceRepository.create({
-        ID,
-        userID,
+      let instance = this.instanceRepository.create({
         containerName: containerName,
+        userID: user.ID,
+        ID,
       });
 
-      return this.instanceRepository.save(instance);
+      instance = await this.instanceRepository.save(instance);
+
+      return instance;
     } catch (error) {
-      this.logger.error("Failed to create instance container.", { userID, containerName });
+      this.logger.error("Failed to create instance container.", { userID: user.ID, containerName });
       this.logger.error(error);
 
       const { affected } = await this.instanceRepository.delete(ID);
@@ -105,6 +128,10 @@ export class InstanceService {
         throw new InstanceContainerException(ContainerErrorReason.ALREADY_PAUSED);
       }
 
+      if (isNotRunning(error)) {
+        throw new InstanceContainerException(ContainerErrorReason.ALREADY_PAUSED);
+      }
+
       throw new InstanceContainerException(ContainerErrorReason.PAUSE_FAILED);
     }
   }
@@ -113,7 +140,7 @@ export class InstanceService {
     const instance = await this.findOwnedById(ID, userID);
 
     try {
-      await this.dockerContainerService.unpauseContainer(instance.containerName);
+      await this.dockerContainerService.startContainer(instance.containerName);
 
       return instance;
     } catch (error) {
@@ -145,5 +172,39 @@ export class InstanceService {
 
       throw error;
     }
+  }
+
+  public async stats(ID: string, userID: string): Promise<InterfaceState> {
+    const instance = await this.findOwnedById(ID, userID);
+    const stats = await this.dockerContainerService.getStatsContainer(instance.containerName);
+
+    const { cpu_stats, precpu_stats, memory_stats } = stats;
+
+    const cpuDelta = cpu_stats.cpu_usage.total_usage - precpu_stats.cpu_usage.total_usage;
+    const systemDelta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage;
+
+    const onlineCpus = cpu_stats.online_cpus;
+
+    const maxCpus = env.MAX_NANO_CPUS / 1_000_000_000;
+
+    const usedCpus = (cpuDelta / systemDelta) * onlineCpus;
+    const usageCpuPercent = (usedCpus / maxCpus) * 100;
+
+    const usageMemory = memory_stats.usage - memory_stats.stats.cache;
+    const usageMemoryPercent = (usageMemory / (env.MAX_MEMORY_IN_MB * 1024 * 1024)) * 100;
+
+    return {
+      cpu: {
+        percent: usageCpuPercent,
+        limit: maxCpus,
+        used: usedCpus,
+      },
+
+      memory: {
+        used: memory_stats.usage / 1024 / 1024,
+        percent: usageMemoryPercent,
+        limit: env.MAX_MEMORY_IN_MB,
+      },
+    };
   }
 }

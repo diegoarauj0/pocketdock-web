@@ -1,13 +1,13 @@
 import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalidSession.decorator";
-import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiCreatedResponse } from "@nestjs/swagger";
+import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
+import { InstanceIDParamsDto, InstancePrivateDto } from "../dtos/instance.dto";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { Session } from "src/modules/auth/decorators/session.decorator";
 import { InstanceService } from "../services/instance.service";
-import { InstanceMapper } from "../instance.mapper";
 import { UserEntity } from "src/modules/users/user.entity";
-import { InstanceIDParamsDto, InstancePrivateDto } from "../dtos/instance.dto";
+import { InstanceMapper } from "../instance.mapper";
 
 @Controller("api/instances")
 export class InstanceController {
@@ -24,7 +24,7 @@ export class InstanceController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async create(@Session() { user }: { user: UserEntity }) {
-    const instance = await this.instanceService.create(user.ID);
+    const instance = await this.instanceService.create(user);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -110,5 +110,13 @@ export class InstanceController {
     const instance = await this.instanceService.remove(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
+  }
+
+  @Get("stats/:ID")
+  @HttpCode(HttpStatus.OK)
+  public async stats(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto): Promise<any> {
+    const stats = await this.instanceService.stats(ID, user.ID);
+
+    return stats;
   }
 }
