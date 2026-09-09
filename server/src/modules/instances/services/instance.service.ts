@@ -9,19 +9,17 @@ import { INSTANCE_CONSTANT } from "../instance.constant";
 import { InstanceEntity } from "../instance.entity";
 import { Injectable, Logger } from "@nestjs/common";
 import { env } from "src/config/env";
+import { ContainerStats } from "dockerode";
+
+interface InterfaceCalculateUsage {
+  percent: number;
+  limit: number;
+  used: number;
+}
 
 interface InterfaceState {
-  cpu: {
-    percent: number;
-    limit: number;
-    used: number;
-  };
-
-  memory: {
-    percent: number;
-    limit: number;
-    used: number;
-  };
+  memory: InterfaceCalculateUsage;
+  cpu: InterfaceCalculateUsage;
 }
 
 @Injectable()
@@ -174,37 +172,51 @@ export class InstanceService {
     }
   }
 
-  public async stats(ID: string, userID: string): Promise<InterfaceState> {
-    const instance = await this.findOwnedById(ID, userID);
-    const stats = await this.dockerContainerService.getStatsContainer(instance.containerName);
+  private calculateMemoryUsage(stats: ContainerStats): InterfaceCalculateUsage {
+    const { memory_stats } = stats;
 
-    const { cpu_stats, precpu_stats, memory_stats } = stats;
+    const usedBytes = memory_stats.usage - memory_stats.stats.cache;
+
+    const limitBytes = env.MAX_MEMORY_IN_MB * 1024 * 1024;
+
+    return {
+      used: usedBytes / 1024 / 1024,
+      percent: (usedBytes / limitBytes) * 100,
+      limit: env.MAX_MEMORY_IN_MB,
+    };
+  }
+
+  private calculateCpuUsage(stats: ContainerStats): InterfaceCalculateUsage {
+    const { cpu_stats, precpu_stats } = stats;
 
     const cpuDelta = cpu_stats.cpu_usage.total_usage - precpu_stats.cpu_usage.total_usage;
+
     const systemDelta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage;
 
     const onlineCpus = cpu_stats.online_cpus;
-
-    const maxCpus = env.MAX_NANO_CPUS / 1_000_000_000;
+    const cpuLimit = env.MAX_NANO_CPUS / 1_000_000_000;
 
     const usedCpus = (cpuDelta / systemDelta) * onlineCpus;
-    const usageCpuPercent = (usedCpus / maxCpus) * 100;
-
-    const usageMemory = memory_stats.usage - memory_stats.stats.cache;
-    const usageMemoryPercent = (usageMemory / (env.MAX_MEMORY_IN_MB * 1024 * 1024)) * 100;
+    const usagePercent = (usedCpus / cpuLimit) * 100;
 
     return {
-      cpu: {
-        percent: usageCpuPercent,
-        limit: maxCpus,
-        used: usedCpus,
-      },
+      percent: usagePercent,
+      limit: cpuLimit,
+      used: usedCpus,
+    };
+  }
 
-      memory: {
-        used: memory_stats.usage / 1024 / 1024,
-        percent: usageMemoryPercent,
-        limit: env.MAX_MEMORY_IN_MB,
-      },
+  public async stats(ID: string, userID: string): Promise<InterfaceState> {
+    const instance = await this.findOwnedById(ID, userID);
+
+    const stats = await this.dockerContainerService.getStatsContainer(instance.containerName);
+
+    const cpu = this.calculateCpuUsage(stats);
+    const memory = this.calculateMemoryUsage(stats);
+
+    return {
+      cpu,
+      memory,
     };
   }
 }
