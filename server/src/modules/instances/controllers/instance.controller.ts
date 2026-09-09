@@ -112,6 +112,14 @@ export class InstanceController {
     return InstanceMapper.toPrivate(instance);
   }
 
+  @ApiOperation({
+    summary: "Estatísticas da instância",
+    description: "Retorna as estatísticas de uso de uma instância específica do usuário autenticado.",
+  })
+  @ApiOkResponse({ description: "Estatísticas retornadas com sucesso." })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
   @Get("stats/:ID")
   @HttpCode(HttpStatus.OK)
   public async stats(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto): Promise<any> {
