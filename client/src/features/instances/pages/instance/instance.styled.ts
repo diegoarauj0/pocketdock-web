@@ -8,7 +8,7 @@ export const PageWrapper = styled.div`
   background-color: ${({ theme }) => theme.background.dark};
 `;
 
-export const Content = styled.main`
+export const Content = styled.main<{ $error?: boolean }>`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[8]};
@@ -66,11 +66,13 @@ export const Subtitle = styled.span`
   color: ${({ theme }) => theme.text.muted};
 `;
 
-export const Status = styled.div`
+export const Status = styled.div<{ $isRunning: boolean }>`
   background-color: ${({ theme }) => theme.background.light};
 
   border-radius: ${({ theme }) => theme.radius.full};
-  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.success};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme, $isRunning }) => ($isRunning ? theme.success : theme.text.muted)};
+
+  color: ${({ theme, $isRunning }) => ($isRunning ? theme.text.default : theme.text.muted)};
 
   display: flex;
   justify-content: center;
@@ -104,12 +106,12 @@ export const DeleteInstance = styled.button`
   }
 `;
 
-export const PauseOrResumeInstance = styled.button`
+export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
   background-color: transparent;
 
-  color: ${({ theme }) => theme.text.default};
+  color: ${({ theme, $stop }) => ($stop ? theme.danger : theme.text.default)};
 
-  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.default};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme, $stop }) => ($stop ? theme.danger : theme.borderColor.default)};
   border-radius: ${({ theme }) => theme.radius.md};
 
   display: flex;
@@ -179,4 +181,116 @@ export const Usage = styled.p`
   width: ${({ theme }) => theme.size.full};
 
   text-align: center;
+`;
+
+export const InstanceData = styled.div`
+  background-color: ${({ theme }) => theme.background.default};
+
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.default};
+  border-radius: ${({ theme }) => theme.radius.lg};
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: ${({ theme }) => theme.spacing[4]};
+
+  padding: ${({ theme }) => theme.spacing[6]};
+
+  > *:first-child {
+    grid-column: 1 / -1;
+  }
+`;
+
+export const InstanceRow = styled.div`
+  background-color: transparent;
+
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spacing[1]};
+
+  padding: ${({ theme }) => theme.spacing[4]};
+
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.light};
+    border-color: ${({ theme }) => theme.borderColor.default};
+  }
+`;
+
+export const FieldLabel = styled.span`
+  color: ${({ theme }) => theme.text.default};
+  font-size: ${({ theme }) => theme.fontSize.md};
+  font-weight: 500;
+  letter-spacing: -0.01em;
+`;
+
+export const FieldValue = styled.span`
+  color: ${({ theme }) => theme.text.muted};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+`;
+
+export const ErrorState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing[3]};
+
+  padding: ${({ theme }) => theme.spacing[12]} ${({ theme }) => theme.spacing[6]};
+`;
+
+export const ErrorIcon = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: ${({ theme }) => theme.danger};
+
+  margin-bottom: ${({ theme }) => theme.spacing[2]};
+`;
+
+export const ErrorTitle = styled.h2`
+  color: ${({ theme }) => theme.text.default};
+  font-size: ${({ theme }) => theme.fontSize.xl};
+  font-weight: 600;
+  letter-spacing: -0.01em;
+
+  text-align: center;
+`;
+
+export const ErrorMessage = styled.p`
+  color: ${({ theme }) => theme.text.muted};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+
+  text-align: center;
+
+  margin-bottom: ${({ theme }) => theme.spacing[3]};
+`;
+
+export const ErrorBackLink = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  a {
+    color: ${({ theme }) => theme.text.muted};
+
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+    gap: ${({ theme }) => theme.spacing[2]};
+
+    font-size: ${({ theme }) => theme.fontSize.sm};
+
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: ${({ theme }) => theme.text.default};
+    }
+  }
 `;

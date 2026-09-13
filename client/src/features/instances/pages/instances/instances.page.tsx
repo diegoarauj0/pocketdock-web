@@ -1,15 +1,39 @@
 import { InstanceCardComponent } from "@/features/instances/components/instanceCard/instanceCard.component";
+import { useCreateInstanceMutation } from "@/features/instances/mutations/useCreateInstanceMutation.hook";
 import { LoadingScreenComponent } from "@/shared/components/loadingScreen/loadingScreen.component";
 import { useInstancesQuery } from "@/features/instances/queries/useInstances.query";
+import { ApiResponseError } from "@/shared/http/http.client";
+import { notificationService } from "@/shared/services/notification.service";
 import { HeaderComponent } from "@/shared/components/header/header.component";
-import { httpService } from "@/shared/services/http.service";
+import { APP_CONSTANT } from "@/app/app.constant";
 import * as S from "./instances.styled";
 import { Plus } from "lucide-react";
 
 export function InstancesPage() {
   const { data: instances, isLoading, isError } = useInstancesQuery();
+  const createInstanceMutation = useCreateInstanceMutation();
 
   const total = instances?.length || 0;
+
+  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.CREATE_INSTANCE;
+
+  const handleCreateInstance = () => {
+    notificationService.loading("Criando instância...", notificationID);
+
+    createInstanceMutation.mutate(undefined, {
+      onSuccess: () => {
+        notificationService.success("Instância criada com sucesso.", notificationID);
+      },
+      onError: (error) => {
+        if (error instanceof ApiResponseError) {
+          notificationService.error(error.message, notificationID);
+          return;
+        }
+
+        notificationService.error("Não foi possível criar a instância.", notificationID);
+      },
+    });
+  };
 
   if (isLoading) return <LoadingScreenComponent />;
 
@@ -24,12 +48,7 @@ export function InstancesPage() {
               <S.Subtitle>{total} instância(s)</S.Subtitle>
             </S.TextGroup>
 
-            <S.NewButton
-              type="button"
-              onClick={() => {
-                httpService.post("/api/instances", undefined);
-              }}
-            >
+            <S.NewButton type="button" onClick={handleCreateInstance}>
               <Plus size={16} />
               Nova instância
             </S.NewButton>
@@ -50,12 +69,7 @@ export function InstancesPage() {
             <S.Subtitle>{total} instância(s)</S.Subtitle>
           </S.TextGroup>
 
-          <S.NewButton
-            type="button"
-            onClick={() => {
-              httpService.post("/api/instances", undefined);
-            }}
-          >
+          <S.NewButton type="button" onClick={handleCreateInstance}>
             <Plus size={16} />
             Nova instância
           </S.NewButton>

@@ -1,4 +1,4 @@
-import { InterfaceCreateContainerOptions } from "../docker.type";
+import { InterfaceContainerStatus, InterfaceCreateContainerOptions } from "../docker.type";
 import { DockerService } from "./docker.service";
 import { isNotFoundError } from "../docker.util";
 import { Injectable } from "@nestjs/common";
@@ -56,21 +56,26 @@ export class DockerContainerService {
     return await container.stats({ stream: false });
   }
 
+  public async getContainerStatus(name: string): Promise<InterfaceContainerStatus> {
+    const container = this.getContainer(name);
+
+    const { State } = await container.inspect();
+
+    return {
+      paused: State.Paused,
+      running: State.Running,
+    };
+  }
+
   public async startContainer(name: string): Promise<void> {
     const container = this.getContainer(name);
 
     await container.start();
   }
 
-  public async pauseContainer(name: string): Promise<void> {
+  public async stopContainer(name: string): Promise<void> {
     const container = this.getContainer(name);
 
-    await container.pause();
-  }
-
-  public async unpauseContainer(name: string): Promise<void> {
-    const container = this.getContainer(name);
-
-    await container.unpause();
+    await container.stop();
   }
 }

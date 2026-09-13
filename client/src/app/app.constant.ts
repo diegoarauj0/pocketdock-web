@@ -23,6 +23,10 @@ export const APP_CONSTANT = {
     SIGN_UP: "signUp",
     EMAIL_VERIFICATION: "emailVerification",
     RESET_PASSWORD: "resetPassword",
+    DELETE_INSTANCE: "deleteInstance",
+    STOP_INSTANCE: "stopInstance",
+    START_INSTANCE: "startInstance",
+    CREATE_INSTANCE: "createInstance",
   },
 
   EMAIL_VERIFICATION_CODE_LENGTH: 6,

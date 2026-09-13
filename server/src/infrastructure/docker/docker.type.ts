@@ -1,5 +1,10 @@
 import type Docker from "dockerode";
 
+export interface InterfaceContainerStatus {
+  running: boolean;
+  paused: boolean;
+}
+
 export interface InterfaceDockerApiError extends Error {
   json?: { message: string };
   statusCode: number;

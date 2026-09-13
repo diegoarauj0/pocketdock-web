@@ -2,7 +2,7 @@ import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalid
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiCreatedResponse } from "@nestjs/swagger";
 import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
-import { InstanceIDParamsDto, InstancePrivateDto } from "../dtos/instance.dto";
+import { InstanceIDParamsDto, InstancePrivateDto, InstanceStatsDto } from "../dtos/instance.dto";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { Session } from "src/modules/auth/decorators/session.decorator";
 import { InstancesService } from "../services/instances.service";
@@ -65,33 +65,33 @@ export class InstancesController {
   }
 
   @ApiOperation({
-    summary: "Pausar instância",
-    description: "Pausa o container da instância do usuário autenticado.",
+    summary: "Parar instância",
+    description: "Para o container da instância do usuário autenticado.",
   })
-  @ApiOkResponse({ description: "Instância pausada com sucesso.", type: SuccessResponseDto(InstancePrivateDto) })
+  @ApiOkResponse({ description: "Instância parada com sucesso.", type: SuccessResponseDto(InstancePrivateDto) })
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Post(":ID/pause")
+  @Post(":ID/stop")
   @HttpCode(HttpStatus.OK)
-  public async pause(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.pause(ID, user.ID);
+  public async stop(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
+    const instance = await this.instancesService.stop(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
 
   @ApiOperation({
-    summary: "Retomar instância",
-    description: "Retoma o container da instância do usuário autenticado.",
+    summary: "Iniciar instância",
+    description: "Inicia o container da instância do usuário autenticado.",
   })
-  @ApiOkResponse({ description: "Instância retomada com sucesso.", type: SuccessResponseDto(InstancePrivateDto) })
+  @ApiOkResponse({ description: "Instância iniciada com sucesso.", type: SuccessResponseDto(InstancePrivateDto) })
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Post(":ID/resume")
+  @Post(":ID/start")
   @HttpCode(HttpStatus.OK)
-  public async resume(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.resume(ID, user.ID);
+  public async start(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
+    const instance = await this.instancesService.start(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -114,15 +114,19 @@ export class InstancesController {
 
   @ApiOperation({
     summary: "Estatísticas da instância",
-    description: "Retorna as estatísticas de uso de uma instância específica do usuário autenticado.",
+    description:
+      "Retorna as estatísticas de uso de uma instância específica do usuário autenticado, incluindo o status simplificado (running ou stopped).",
   })
-  @ApiOkResponse({ description: "Estatísticas retornadas com sucesso." })
+  @ApiOkResponse({ description: "Estatísticas retornadas com sucesso.", type: SuccessResponseDto(InstanceStatsDto) })
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Get("stats/:ID")
   @HttpCode(HttpStatus.OK)
-  public async stats(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto): Promise<any> {
+  public async stats(
+    @Session() { user }: { user: UserEntity },
+    @Param() { ID }: InstanceIDParamsDto,
+  ): Promise<InstanceStatsDto> {
     const stats = await this.instancesService.stats(ID, user.ID);
 
     return stats;

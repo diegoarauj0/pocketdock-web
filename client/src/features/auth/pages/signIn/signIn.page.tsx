@@ -8,7 +8,7 @@ import { APP_PATH } from "@/app/app.path";
 import * as S from "./signIn.styled";
 
 const features: string[] = [
-  "Pause and resume without losing data",
+  "Stop and start without losing data",
   "Individual panel for each instance",
 ];
 
@@ -19,7 +19,7 @@ export function SignInPage() {
     <S.SignInWrapper>
       <AuthIntroComponent
         headline={`Your PocketBase servers,\nunder control.`}
-        description="Create instances in seconds, pause when you are not using them, and remove them in one click — all from a single panel."
+        description="Create instances in seconds, stop them when you are not using them, and remove them in one click — all from a single panel."
         features={features}
       >
         <S.FormWrapper>

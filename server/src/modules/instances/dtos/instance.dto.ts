@@ -47,3 +47,33 @@ export class InstancePrivateDto {
   })
   public updatedAt!: InstanceEntity["updatedAt"];
 }
+
+export class InstanceStatsDto {
+  @ApiProperty({
+    type: "object",
+    properties: {
+      percent: { type: "number", example: 12.34 },
+      limit: { type: "number", example: 4 },
+      used: { type: "number", example: 1.5 },
+    },
+  })
+  public cpu!: { percent: number; limit: number; used: number };
+
+  @ApiProperty({
+    type: "object",
+    properties: {
+      percent: { type: "number", example: 25.6 },
+      limit: { type: "number", example: 512 },
+      used: { type: "number", example: 131.2 },
+    },
+  })
+  public memory!: { percent: number; limit: number; used: number };
+
+  @ApiProperty({
+    enum: ["running", "stopped"],
+    enumName: "InstanceStatus",
+    description: "Status simplificado da instância (rodando ou parada)",
+    example: "running",
+  })
+  public status!: "running" | "stopped";
+}
