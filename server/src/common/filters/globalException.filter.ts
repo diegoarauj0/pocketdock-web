@@ -52,13 +52,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (typeof exceptionResponse === "object") {
         const res = exceptionResponse as {
           message?: string;
-          error: { message?: string; code?: string; details?: any };
+          error?: string;
         };
 
         error = {
-          code: res?.error?.code ?? "INTERNAL_SERVER_ERROR",
-          message: res?.error?.message ?? res?.message ?? "An unexpected error occurred.",
-          details: res?.error?.details ?? null,
+          code: res?.error ?? "INTERNAL_SERVER_ERROR",
+          message: res.message ?? res?.message ?? "An unexpected error occurred.",
+          details: null,
         };
       }
     }

@@ -8,8 +8,8 @@ import { UserEntity } from "src/modules/users/user.entity";
 import { INSTANCE_CONSTANT } from "../instance.constant";
 import { InstanceEntity } from "../instance.entity";
 import { Injectable, Logger } from "@nestjs/common";
-import { env } from "src/config/env";
 import { ContainerStats } from "dockerode";
+import { env } from "src/config/env";
 
 interface InterfaceCalculateUsage {
   percent: number;
@@ -23,8 +23,8 @@ interface InterfaceState {
 }
 
 @Injectable()
-export class InstanceService {
-  private readonly logger = new Logger(InstanceService.name);
+export class InstancesService {
+  private readonly logger = new Logger(InstancesService.name);
 
   constructor(
     private readonly dockerContainerService: DockerContainerService,
@@ -175,7 +175,7 @@ export class InstanceService {
   private calculateMemoryUsage(stats: ContainerStats): InterfaceCalculateUsage {
     const { memory_stats } = stats;
 
-    const usedBytes = memory_stats.usage - memory_stats.stats.cache;
+    const usedBytes = memory_stats.usage - (memory_stats.stats?.cache || 0);
 
     const limitBytes = env.MAX_MEMORY_IN_MB * 1024 * 1024;
 

@@ -18,8 +18,8 @@ export function AuthIntroComponent({ headline, description, features, children }
           <S.Description>{description}</S.Description>
 
           <FeatureListComponent>
-            {features?.map((feature) => (
-              <FeatureComponent feature={feature} />
+            {features?.map((feature, index) => (
+              <FeatureComponent feature={feature} key={index} />
             ))}
           </FeatureListComponent>
         </S.LeftWrapper>

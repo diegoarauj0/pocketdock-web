@@ -3,8 +3,7 @@ import { useSignUpResendMutation } from "../mutations/useSignUpResendMutation.ho
 import { useSignUpVerifyMutation } from "../mutations/useSignUpVerifyMutation.hook";
 import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
-import { ApiResponseError } from "@/shared/services/http.service";
-import { ERROR_CODES } from "@/shared/http/http.client";
+import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useLocation, useNavigate } from "react-router";
 import { APP_CONSTANT } from "@/app/app.constant";
 import { useCallback, useState } from "react";

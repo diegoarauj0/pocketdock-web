@@ -20,10 +20,6 @@ import { Module, ValidationPipe } from "@nestjs/common";
       useClass: GlobalExceptionFilter,
     },
     {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
-    },
-    {
       provide: APP_PIPE,
       useFactory: () => {
         return new ValidationPipe({

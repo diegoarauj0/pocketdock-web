@@ -1,15 +1,15 @@
-import type { FormEvent, SubmitEvent } from "react";
-import { ApiResponseError, type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
 import { useForgotPasswordVerifyMutation } from "../mutations/useForgotPasswordVerifyMutation.hook";
 import { useForgotPasswordResendMutation } from "../mutations/useForgotPasswordResendMutation.hook";
-import { useForgotPasswordMutation } from "../mutations/useForgotPasswordMutation.hook";
-import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import type { InterfaceCodeInputRegister } from "@/shared/hooks/useVerificationCode.hook";
+import { useForgotPasswordMutation } from "../mutations/useForgotPasswordMutation.hook";
+import { type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
+import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
-import { ERROR_CODES } from "@/shared/http/http.client";
+import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
+import type { FormEvent, SubmitEvent } from "react";
+import { APP_CONSTANT } from "@/app/app.constant";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
-import { APP_CONSTANT } from "@/app/app.constant";
 import { APP_PATH } from "@/app/app.path";
 
 const CODE_LENGTH = APP_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
@@ -53,7 +53,12 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
   const [fieldError, setFieldError] = useState("");
   const [serverError, setServerError] = useState("");
 
-  const { handleSubmit, getCodeInputRegister, error: codeError, reset } = useVerificationCode({
+  const {
+    handleSubmit,
+    getCodeInputRegister,
+    error: codeError,
+    reset,
+  } = useVerificationCode({
     length: CODE_LENGTH,
   });
 
@@ -148,7 +153,15 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
         { onSuccess: handleForgotPasswordSuccess, onError: handleError },
       );
     },
-    [confirmPassword, email, forgotPasswordMutation, handleError, handleForgotPasswordSuccess, notificationID, password],
+    [
+      confirmPassword,
+      email,
+      forgotPasswordMutation,
+      handleError,
+      handleForgotPasswordSuccess,
+      notificationID,
+      password,
+    ],
   );
 
   const codeSubmitHandler = handleSubmit((code) => {
@@ -156,19 +169,13 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
 
     notificationService.loading("Verifying your code...", notificationID);
 
-    forgotPasswordVerifyMutation.mutate(
-      { email, code },
-      { onSuccess: handleVerifySuccess, onError: handleError },
-    );
+    forgotPasswordVerifyMutation.mutate({ email, code }, { onSuccess: handleVerifySuccess, onError: handleError });
   });
 
   const handleResend = useCallback(() => {
     notificationService.loading("Resending your reset code...", notificationID);
 
-    forgotPasswordResendMutation.mutate(
-      { email },
-      { onSuccess: handleResendSuccess, onError: handleError },
-    );
+    forgotPasswordResendMutation.mutate({ email }, { onSuccess: handleResendSuccess, onError: handleError });
   }, [email, forgotPasswordResendMutation, handleError, handleResendSuccess, notificationID]);
 
   const goToPreviousStep = useCallback(() => {

@@ -1,12 +1,12 @@
-import { ApiResponseError, type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
+import { type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
 import type { InterfaceSignUpFormValues } from "../validations/signUp.validation";
 import type { InterfaceSignInFormValues } from "../validations/signIn.validation";
 import { notificationService } from "@/shared/services/notification.service";
+import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useSignUpMutation } from "../mutations/useSignUpMutation.hook";
 import type { InterfaceSignUpRequest } from "../services/auth.service";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { getSignUpSchema } from "../validations/signUp.validation";
-import { ERROR_CODES } from "@/shared/http/http.client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { APP_CONSTANT } from "@/app/app.constant";
 import type { BaseSyntheticEvent } from "react";

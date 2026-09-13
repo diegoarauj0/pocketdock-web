@@ -5,13 +5,13 @@ import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from "@nes
 import { InstanceIDParamsDto, InstancePrivateDto } from "../dtos/instance.dto";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { Session } from "src/modules/auth/decorators/session.decorator";
-import { InstanceService } from "../services/instance.service";
+import { InstancesService } from "../services/instances.service";
 import { UserEntity } from "src/modules/users/user.entity";
 import { InstanceMapper } from "../instance.mapper";
 
 @Controller("api/instances")
-export class InstanceController {
-  constructor(private readonly instanceService: InstanceService) {}
+export class InstancesController {
+  constructor(private readonly instancesService: InstancesService) {}
 
   @ApiOperation({
     summary: "Criar instância",
@@ -24,7 +24,7 @@ export class InstanceController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   public async create(@Session() { user }: { user: UserEntity }) {
-    const instance = await this.instanceService.create(user);
+    const instance = await this.instancesService.create(user);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -43,7 +43,7 @@ export class InstanceController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async findAll(@Session() { user }: { user: UserEntity }) {
-    const instances = await this.instanceService.findAllByUserId(user.ID);
+    const instances = await this.instancesService.findAllByUserId(user.ID);
 
     return instances.map((instance) => InstanceMapper.toPrivate(instance));
   }
@@ -59,7 +59,7 @@ export class InstanceController {
   @Get(":ID")
   @HttpCode(HttpStatus.OK)
   public async findOne(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instanceService.findOwnedById(ID, user.ID);
+    const instance = await this.instancesService.findOwnedById(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -75,7 +75,7 @@ export class InstanceController {
   @Post(":ID/pause")
   @HttpCode(HttpStatus.OK)
   public async pause(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instanceService.pause(ID, user.ID);
+    const instance = await this.instancesService.pause(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -91,7 +91,7 @@ export class InstanceController {
   @Post(":ID/resume")
   @HttpCode(HttpStatus.OK)
   public async resume(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instanceService.resume(ID, user.ID);
+    const instance = await this.instancesService.resume(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -107,7 +107,7 @@ export class InstanceController {
   @Delete(":ID")
   @HttpCode(HttpStatus.OK)
   public async remove(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instanceService.remove(ID, user.ID);
+    const instance = await this.instancesService.remove(ID, user.ID);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -123,7 +123,7 @@ export class InstanceController {
   @Get("stats/:ID")
   @HttpCode(HttpStatus.OK)
   public async stats(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto): Promise<any> {
-    const stats = await this.instanceService.stats(ID, user.ID);
+    const stats = await this.instancesService.stats(ID, user.ID);
 
     return stats;
   }

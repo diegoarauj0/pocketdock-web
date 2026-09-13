@@ -10,6 +10,10 @@ export const APP_CONSTANT = {
       RESET_PASSWORD: "resetPassword",
       LAYOUT: "auth",
     },
+    INSTANCES: {
+      INSTANCES: "instances",
+      INSTANCE: "instance"
+    },
   },
 
   NOTIFICATION_AUTO_CLOSE: 5000,
@@ -24,6 +28,8 @@ export const APP_CONSTANT = {
   EMAIL_VERIFICATION_CODE_LENGTH: 6,
 
   THEME_STORAGE_KEY: "THEME",
+
+  ACCESS_TOKEN_STORAGE_KEY: "ACCESS_TOKEN",
 
   EMAIL_MAX_LENGTH: 255,
   EMAIL_MIN_LENGTH: 1,

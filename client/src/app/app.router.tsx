@@ -1,12 +1,15 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { AuthLayout } from "@/features/auth/layouts/auth.layout";
+import { PrivateRouteComponent } from "@/features/auth/components/privateRoute/privateRoute.component";
 import { EmailVerificationGuardComponent } from "@/features/auth/components/emailVerificationGuard/emailVerificationGuard.component";
 import { SignInPage } from "@/features/auth/pages/signIn/signIn.page";
 import { SignUpPage } from "@/features/auth/pages/signUp/signUp.page";
 import { EmailVerificationPage } from "@/features/auth/pages/emailVerification/emailVerification.page";
 import { ResetPasswordPage } from "@/features/auth/pages/resetPassword/resetPassword.page";
 import { HomePage } from "@/features/home/pages/home/home.page";
+import { InstancesPage } from "@/features/instances/pages/instances/instances.page";
 import { APP_PATH } from "./app.path";
+import { InstancePage } from "@/features/instances/pages/instance/instance.page";
 
 export const router = createBrowserRouter([
   {
@@ -24,4 +27,11 @@ export const router = createBrowserRouter([
     ],
   },
   { path: APP_PATH.HOME, element: <HomePage /> },
+  {
+    element: <PrivateRouteComponent />,
+    children: [
+      { path: APP_PATH.INSTANCES, element: <InstancesPage /> },
+      { path: APP_PATH.INSTANCE, element: <InstancePage /> }
+    ],
+  },
 ]);
