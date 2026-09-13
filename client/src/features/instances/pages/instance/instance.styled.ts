@@ -13,9 +13,9 @@ export const Content = styled.main`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[8]};
 
-  width: 100%;
-  max-width: 1140px;
-  margin: none auto;
+  width: ${({ theme }) => theme.size.full};
+  max-width: ${({ theme }) => theme.size["6xl"]};
+  margin: 0 auto;
   padding: ${({ theme }) => theme.spacing[8]} ${({ theme }) => theme.spacing[6]};
 
   @media ${({ theme }) => `(max-width: ${theme.breakpoint.sm})`} {
@@ -26,8 +26,8 @@ export const Content = styled.main`
 export const InstanceHeader = styled.div`
   display: grid;
 
-  grid-template-rows: 50px 80px 40px;
-  grid-template-columns: 150px auto 250px;
+  grid-template-rows: ${({ theme }) => theme.spacing[12]} ${({ theme }) => theme.spacing[20]} ${({ theme }) => theme.spacing[10]};
+  grid-template-columns: ${({ theme }) => theme.spacing[36]} auto auto;
 `;
 
 export const PreviewLink = styled.div`
@@ -70,7 +70,7 @@ export const Status = styled.div`
   background-color: ${({ theme }) => theme.background.light};
 
   border-radius: ${({ theme }) => theme.radius.full};
-  border: 1px solid ${({ theme }) => theme.success};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.success};
 
   display: flex;
   justify-content: center;
@@ -80,13 +80,13 @@ export const Status = styled.div`
 export const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-around;
 `;
 
 export const DeleteInstance = styled.button`
   background-color: ${({ theme }) => theme.danger};
 
-  color: ${({ theme }) => theme.text.default};
+  color: ${({ theme }) => theme.onPrimary};
 
   border: none;
   border-radius: ${({ theme }) => theme.radius.md};
@@ -105,11 +105,11 @@ export const DeleteInstance = styled.button`
 `;
 
 export const PauseOrResumeInstance = styled.button`
-  background-color: ${({ theme }) => theme.background.light};
+  background-color: transparent;
 
   color: ${({ theme }) => theme.text.default};
 
-  border: none;
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.default};
   border-radius: ${({ theme }) => theme.radius.md};
 
   display: flex;
@@ -120,6 +120,13 @@ export const PauseOrResumeInstance = styled.button`
 
   padding: ${({ theme }) => theme.spacing[2]} ${({ theme }) => theme.spacing[4]};
 
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.background.light};
+    border-color: ${({ theme }) => theme.highlight};
+  }
+
   svg {
     margin-right: ${({ theme }) => theme.spacing[2]};
   }
@@ -128,7 +135,7 @@ export const PauseOrResumeInstance = styled.button`
 export const InstanceUsage = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 150px;
+  grid-template-rows: ${({ theme }) => theme.spacing[36]};
 
   justify-content: space-around;
 
@@ -138,7 +145,7 @@ export const InstanceUsage = styled.div`
 export const UsageCard = styled.div`
   background-color: ${({ theme }) => theme.background.light};
 
-  border: 1px solid ${({ theme }) => theme.borderColor.default};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.default};
   border-radius: ${({ theme }) => theme.radius.lg};
 
   display: flex;
@@ -169,7 +176,7 @@ export const Usage = styled.p`
   font-size: ${({ theme }) => theme.fontSize["3xl"]};
   font-weight: 600;
 
-  width: 100%;
+  width: ${({ theme }) => theme.size.full};
 
   text-align: center;
 `;

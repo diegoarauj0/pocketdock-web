@@ -23,7 +23,7 @@ export const Card = styled(Link)`
 
   &:hover {
     border-color: ${({ theme }) => theme.highlight};
-    box-shadow: 0 0 0 1px ${({ theme }) => theme.highlight};
+    box-shadow: 0 0 0 ${({ theme }) => theme.border.thin} ${({ theme }) => theme.highlight};
   }
 `;
 
@@ -32,7 +32,7 @@ export const Header = styled.div`
 
   align-items: center;
 
-  gap: 10px;
+  gap: ${({ theme }) => theme.spacing[2.5]};
   grid-template-columns: ${({ theme }) => theme.spacing[12]} 1fr;
   grid-template-rows: 1fr;
 

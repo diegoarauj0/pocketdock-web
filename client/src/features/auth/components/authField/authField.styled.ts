@@ -2,24 +2,24 @@ import styled from "styled-components";
 
 export const Field = styled.div`
   display: grid;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing[2]};
 `;
 
 export const Label = styled.label`
   color: ${({ theme }) => theme.text.default};
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
 `;
 
 export const Input = styled.input<{ $hasError?: boolean }>`
-  width: 100%;
-  height: 44px;
-  padding: 0 13px;
-  border: 1px solid ${({ theme }) => theme.borderColor.muted};
+  width: ${({ theme }) => theme.size.full};
+  height: ${({ theme }) => theme.spacing[11]};
+  padding: 0 ${({ theme }) => theme.spacing[3.5]};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};
   border-radius: ${({ theme }) => theme.radius.md};
   outline: none;
   background: ${({ theme }) => theme.background.dark};
   color: ${({ theme }) => theme.text.default};
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
@@ -46,5 +46,5 @@ export const Input = styled.input<{ $hasError?: boolean }>`
 export const ErrorMessage = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.danger};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
 `;

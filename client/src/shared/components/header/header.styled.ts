@@ -1,13 +1,21 @@
 import styled from "styled-components";
 
 export const Header = styled.header`
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  width: 100vw;
-  height: 68px;
+  width: ${({ theme }) => theme.size.full};
+  height: ${({ theme }) => theme.spacing[16]};
   padding: 0 ${({ theme }) => theme.spacing[6]};
+
+  background-color: color-mix(in srgb, ${({ theme }) => theme.background.dark} 80%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
   border-bottom: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};
 `;
@@ -24,11 +32,10 @@ export const BrandIcon = styled.div`
   align-items: center;
   justify-content: center;
 
-  width: 32px;
-  height: 32px;
+  width: ${({ theme }) => theme.spacing[6]};
+  height: ${({ theme }) => theme.spacing[6]};
 
-  background-color: oklch(0.3 0.08 172);
-  border-radius: ${({ theme }) => theme.radius.full};
+  color: ${({ theme }) => theme.primary};
 `;
 
 export const BrandName = styled.span`
@@ -67,6 +74,6 @@ export const LogoutButton = styled.button`
 
   &:focus-visible {
     outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.primary};
-    outline-offset: 2px;
+    outline-offset: ${({ theme }) => theme.spacing[0.5]};
   }
 `;

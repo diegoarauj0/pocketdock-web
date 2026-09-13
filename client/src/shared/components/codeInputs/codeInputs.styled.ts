@@ -3,23 +3,23 @@ import styled from "styled-components";
 export const CodeInputs = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 8px;
+  gap: ${({ theme }) => theme.spacing[2]};
 `;
 
 export const Input = styled.input`
-  width: 100%;
+  width: ${({ theme }) => theme.size.full};
   min-width: 0;
-  height: 56px;
+  height: ${({ theme }) => theme.spacing[14]};
   padding: 0;
 
-  border: 1px solid ${({ theme }) => theme.borderColor.muted};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};
   border-radius: ${({ theme }) => theme.radius.md};
   outline: none;
 
   background: ${({ theme }) => theme.background.dark};
   color: ${({ theme }) => theme.text.default};
 
-  font-size: 1.25rem;
+  font-size: ${({ theme }) => theme.fontSize.xl};
   font-weight: 600;
   letter-spacing: 0.05em;
   text-align: center;

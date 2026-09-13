@@ -1,3 +1,39 @@
+export type SpacingKey =
+  | 0
+  | 0.5
+  | 1
+  | 1.5
+  | 2
+  | 2.5
+  | 3
+  | 3.5
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 11
+  | 12
+  | 14
+  | 16
+  | 20
+  | 24
+  | 28
+  | 32
+  | 36
+  | 40
+  | 44
+  | 48
+  | 52
+  | 56
+  | 60
+  | 64
+  | 72
+  | 80
+  | 96;
+
 export interface InterfaceTheme {
   background: {
     default: string;
@@ -18,6 +54,13 @@ export interface InterfaceTheme {
   highlight: string;
 
   primary: string;
+  onPrimary: string;
+
+  inverse: {
+    background: string;
+    text: string;
+  };
+
   secondary: string;
 
   danger: string;
@@ -25,26 +68,7 @@ export interface InterfaceTheme {
   success: string;
   info: string;
 
-  spacing: {
-    0: string;
-    0.5: string;
-    1: string;
-    1.5: string;
-    2: string;
-    2.5: string;
-    3: string;
-    4: string;
-    5: string;
-    6: string;
-    8: string;
-    10: string;
-    12: string;
-    14: string;
-    16: string;
-    20: string;
-    24: string;
-    30: string;
-  };
+  spacing: { [K in SpacingKey]: string };
 
   radius: {
     none: string;
@@ -52,6 +76,8 @@ export interface InterfaceTheme {
     md: string;
     lg: string;
     xl: string;
+    "2xl": string;
+    "3xl": string;
     full: string;
   };
 
@@ -71,18 +97,27 @@ export interface InterfaceTheme {
     "3xl": string;
     "4xl": string;
     "5xl": string;
+    "6xl": string;
+    "7xl": string;
+    "8xl": string;
+    "9xl": string;
   };
 
   lineHeight: {
+    none: string;
     tight: string;
+    snug: string;
     normal: string;
     relaxed: string;
+    loose: string;
   };
 
   breakpoint: {
     sm: string;
     md: string;
     lg: string;
+    xl: string;
+    "2xl": string;
   };
 
   size: {
@@ -97,6 +132,8 @@ export interface InterfaceTheme {
     "3xl": string;
     "4xl": string;
     "5xl": string;
+    "6xl": string;
+    "7xl": string;
     full: string;
   };
 }

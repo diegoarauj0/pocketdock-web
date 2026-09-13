@@ -5,7 +5,7 @@ export const IntroPanel = styled.section`
 
   padding: ${({ theme }) => theme.spacing[10]};
 
-  height: 100%;
+  height: ${({ theme }) => theme.size.full};
 
   @media (max-width: ${({ theme }) => theme.breakpoint.sm}) {
     padding: ${({ theme }) => theme.spacing[6]};
@@ -16,38 +16,38 @@ export const IntroContent = styled.div`
   flex-direction: row;
   display: flex;
 
-  width: 100%;
+  width: ${({ theme }) => theme.size.full};
 `;
 
 export const Headline = styled.h1`
   margin: none;
-  font-size: clamp(2.25rem, 4vw, 3.75rem);
-  line-height: 1.12;
-  letter-spacing: -0.045em;
-  font-weight: 650;
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  line-height: ${({ theme }) => theme.lineHeight.tight};
+  letter-spacing: -0.05em;
+  font-weight: 700;
 
-  text-align: center;
+  text-align: left;
 `;
 
 export const Description = styled.p`
-  max-width: 480px;
-  margin: 28px 0 0;
+  max-width: ${({ theme }) => theme.size["md"]};
+  margin: ${({ theme }) => theme.spacing[6]} 0 0;
   color: ${({ theme }) => theme.text.muted};
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: ${({ theme }) => theme.fontSize.md};
+  line-height: ${({ theme }) => theme.lineHeight.relaxed};
 
-  text-align: center;
+  text-align: left;
 `;
 
 export const LeftWrapper = styled.div`
   width: ${({ theme }) => theme.size["5xl"]};
 
-  padding: ${({ theme }) => theme.spacing[10]};
+  padding: ${({ theme }) => theme.spacing[10]} ${({ theme }) => theme.spacing[8]};
 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 
   @media (max-width: ${({ theme }) => theme.breakpoint.lg}) {
     display: none;

@@ -1,21 +1,21 @@
 import styled from "styled-components";
 
 export const FeatureList = styled.div`
-  margin-top: 36px;
+  margin-top: ${({ theme }) => theme.spacing[9]};
   display: grid;
-  gap: 16px;
+  gap: ${({ theme }) => theme.spacing[4]};
 `;
 
 export const Feature = styled.div`
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: ${({ theme }) => theme.spacing[3.5]};
   color: ${({ theme }) => theme.text.muted};
-  font-size: 0.875rem;
+  font-size: ${({ theme }) => theme.fontSize.sm};
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: ${({ theme }) => theme.spacing[4]};
+    height: ${({ theme }) => theme.spacing[4]};
     flex: 0 0 auto;
     color: ${({ theme }) => theme.primary};
     stroke-width: 1.8;

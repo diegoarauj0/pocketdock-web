@@ -1,9 +1,9 @@
 import styled from "styled-components";
 
 export const Brand = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: ${({ theme }) => theme.spacing[5]};
   color: ${({ theme }) => theme.primary};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -11,14 +11,15 @@ export const Brand = styled.div`
 
 export const Title = styled.h2`
   margin: 0;
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  line-height: 1.15;
-  letter-spacing: -0.035em;
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  line-height: ${({ theme }) => theme.lineHeight.tight};
+  letter-spacing: -0.03em;
+  font-weight: 650;
 `;
 
 export const Subtitle = styled.p`
-  margin: 12px 0 36px;
+  margin: ${({ theme }) => theme.spacing[3]} 0 ${({ theme }) => theme.spacing[9]};
   color: ${({ theme }) => theme.text.muted};
-  font-size: 0.95rem;
-  line-height: 1.55;
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  line-height: ${({ theme }) => theme.lineHeight.normal};
 `;

@@ -12,8 +12,8 @@ export const Content = styled.main`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing[8]};
 
-  width: 100%;
-  max-width: 1140px;
+  width: ${({ theme }) => theme.size.full};
+  max-width: ${({ theme }) => theme.size["6xl"]};
   margin: 0 auto;
   padding: ${({ theme }) => theme.spacing[8]} ${({ theme }) => theme.spacing[6]};
 
@@ -53,27 +53,28 @@ export const NewButton = styled.button`
   justify-content: center;
   gap: ${({ theme }) => theme.spacing[1.5]};
 
-  width: 150px;
-  height: 38px;
+  min-width: ${({ theme }) => theme.spacing[36]};
+  height: ${({ theme }) => theme.spacing[10]};
+  padding: 0 ${({ theme }) => theme.spacing[4]};
 
   font-size: ${({ theme }) => theme.fontSize.sm};
   font-weight: 600;
-  color: oklch(0.15 0.015 139);
+  color: ${({ theme }) => theme.inverse.text};
 
-  background-color: ${({ theme }) => theme.primary};
+  background-color: ${({ theme }) => theme.inverse.background};
   border: none;
-  border-radius: ${({ theme }) => theme.radius.lg};
+  border-radius: ${({ theme }) => theme.radius.md};
 
   cursor: pointer;
-  transition: opacity 0.15s ease;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
 
   &:hover {
-    opacity: 0.88;
+    background-color: color-mix(in srgb, ${({ theme }) => theme.inverse.background} 85%, ${({ theme }) => theme.inverse.text});
   }
 
   &:focus-visible {
-    outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.text.default};
-    outline-offset: 2px;
+    outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.primary};
+    outline-offset: ${({ theme }) => theme.spacing[0.5]};
   }
 `;
 

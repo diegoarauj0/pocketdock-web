@@ -12,9 +12,9 @@ export const Wrapper = styled.div`
 `;
 
 export const Spinner = styled.div`
-  width: 32px;
-  height: 32px;
-  border: 3px solid ${({ theme }) => theme.borderColor.muted};
+  width: ${({ theme }) => theme.spacing[8]};
+  height: ${({ theme }) => theme.spacing[8]};
+  border: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.borderColor.muted};
   border-top-color: ${({ theme }) => theme.primary};
   border-radius: ${({ theme }) => theme.radius.full};
   animation: ${spin} 700ms linear infinite;

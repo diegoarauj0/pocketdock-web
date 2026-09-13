@@ -1,33 +1,27 @@
-import type { InterfaceTheme } from "./theme.type";
+import type { InterfaceTheme, SpacingKey } from "./theme.type";
+
+const px = (value: number): string => `${value}px`;
+
+const SPACING_KEYS = [
+  0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+  14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 72, 80, 96,
+] as const satisfies readonly SpacingKey[];
+
+const spacing = Object.fromEntries(
+  SPACING_KEYS.map((key) => [key, px(key * 4)]),
+) as { [K in SpacingKey]: string };
 
 const SIZE = {
-  spacing: {
-    0: "0px",
-    0.5: "2px",
-    1: "4px",
-    1.5: "6px",
-    2: "8px",
-    2.5: "10px",
-    3: "12px",
-    4: "16px",
-    5: "20px",
-    6: "24px",
-    8: "32px",
-    10: "40px",
-    12: "48px",
-    14: "56px",
-    16: "64px",
-    20: "80px",
-    24: "96px",
-    30: "120px",
-  },
+  spacing,
 
   radius: {
     none: "0px",
-    sm: "4px",
-    md: "8px",
-    lg: "12px",
-    xl: "16px",
+    sm: "2px",
+    md: "6px",
+    lg: "8px",
+    xl: "12px",
+    "2xl": "16px",
+    "3xl": "24px",
     full: "9999px",
   },
 
@@ -47,23 +41,32 @@ const SIZE = {
     "3xl": "30px",
     "4xl": "36px",
     "5xl": "48px",
+    "6xl": "60px",
+    "7xl": "72px",
+    "8xl": "96px",
+    "9xl": "128px",
   },
 
   lineHeight: {
+    none: "1",
     tight: "1.25",
+    snug: "1.375",
     normal: "1.5",
-    relaxed: "1.75",
+    relaxed: "1.625",
+    loose: "2",
   },
 
   breakpoint: {
-    sm: "700px",
+    sm: "640px",
     md: "768px",
-    lg: "1200px",
+    lg: "1024px",
+    xl: "1280px",
+    "2xl": "1536px",
   },
 
   size: {
-    "3xs": "260px",
-    "2xs": "280px",
+    "3xs": "256px",
+    "2xs": "288px",
     xs: "320px",
     sm: "384px",
     md: "448px",
@@ -73,56 +76,77 @@ const SIZE = {
     "3xl": "768px",
     "4xl": "896px",
     "5xl": "1024px",
+    "6xl": "1152px",
+    "7xl": "1280px",
     full: "100%",
   },
 };
 
 export const DARK_THEME: InterfaceTheme = {
   background: {
-    default: "oklch(0.15 0.015 139)",
-    light: "oklch(0.2 0.015 139)",
-    dark: "oklch(0.1 0.015 139)",
+    default: "#0a0a0a",
+    light: "#111111",
+    dark: "#000000",
   },
+
   text: {
-    default: "oklch(0.96 0.03 139)",
-    muted: "oklch(0.76 0.03 139)",
+    default: "#fafafa",
+    muted: "#888888",
   },
+
   borderColor: {
-    default: "oklch(0.4 0.03 139)",
-    muted: "oklch(0.3 0.03 139)",
+    default: "#333333",
+    muted: "#262626",
   },
-  highlight: "oklch(0.5 0.03 139)",
-  primary: "oklch(78% 0.151 172)",
-  secondary: "oklch(0.76 0.1 319)",
-  danger: "oklch(0.7 0.05 30)",
-  warning: "oklch(0.7 0.05 100)",
-  success: "oklch(0.7 0.05 160)",
-  info: "oklch(0.7 0.05 260)",
+
+  highlight: "#444444",
+
+  primary: "#34d399",
+  onPrimary: "#ffffff",
+
+  inverse: {
+    background: "#fafafa",
+    text: "#000000",
+  },
+
+  secondary: "#7928ca",
+  danger: "#eb4d4b",
+  warning: "#f5a623",
+  success: "#229e5d",
+  info: "#00bcf2",
 
   ...SIZE,
 };
 
 export const LIGHT_THEME: InterfaceTheme = {
   background: {
-    default: "oklch(0.96 0.015 139)",
-    light: "oklch(1 0.015 139)",
-    dark: "oklch(0.92 0.015 139)",
+    default: "#ffffff",
+    light: "#fafafa",
+    dark: "#ffffff",
   },
   text: {
-    default: "oklch(0.15 0.03 139)",
-    muted: "oklch(0.4 0.03 139)",
+    default: "#111111",
+    muted: "#666666",
   },
   borderColor: {
-    default: "oklch(0.6 0.03 139)",
-    muted: "oklch(0.7 0.03 139)",
+    default: "#d4d4d4",
+    muted: "#eaeaea",
   },
-  highlight: "oklch(1 0.03 139)",
-  primary: "oklch(78% 0.151 172)",
-  secondary: "oklch(0.4 0.1 319)",
-  danger: "oklch(0.5 0.05 30)",
-  warning: "oklch(0.5 0.05 100)",
-  success: "oklch(0.5 0.05 160)",
-  info: "oklch(0.5 0.05 260)",
+  highlight: "#d4d4d4",
+
+  primary: "#059669",
+  onPrimary: "#ffffff",
+
+  inverse: {
+    background: "#111111",
+    text: "#ffffff",
+  },
+
+  secondary: "#7928ca",
+  danger: "#eb4d4b",
+  warning: "#f5a623",
+  success: "#229e5d",
+  info: "#00bcf2",
 
   ...SIZE,
 };

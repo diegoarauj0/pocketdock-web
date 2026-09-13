@@ -6,9 +6,9 @@ export function HeaderComponent() {
     <S.Header>
       <S.Brand>
         <S.BrandIcon>
-          <Database size={16} color="oklch(0.78 0.151 172)" />
+          <Database />
         </S.BrandIcon>
-        <S.BrandName>PocketDeck</S.BrandName>
+        <S.BrandName>PocketDock</S.BrandName>
       </S.Brand>
 
       <S.UserSection>

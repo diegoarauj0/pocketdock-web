@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 export const ResetPasswordWrapper = styled.div`
-  width: 100%;
-  height: 100%;
+  width: ${({ theme }) => theme.size.full};
+  height: ${({ theme }) => theme.size.full};
 `;
 
 export const FormWrapper = styled.section`
@@ -11,7 +11,7 @@ export const FormWrapper = styled.section`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing[10]};
 
-  width: 100%;
+  width: ${({ theme }) => theme.size.full};
 
   @media (max-width: ${({ theme }) => theme.breakpoint.sm}) {
     padding: ${({ theme }) => theme.spacing[6]};
@@ -19,22 +19,28 @@ export const FormWrapper = styled.section`
 `;
 
 export const FormCard = styled.div`
-  width: min(100%, 448px);
+  width: min(100%, ${({ theme }) => theme.size["md"]});
+
+  padding: ${({ theme }) => theme.spacing[8]};
+
+  background-color: ${({ theme }) => theme.background.default};
+  border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};
+  border-radius: ${({ theme }) => theme.radius.lg};
 `;
 
 export const Form = styled.form`
   display: grid;
-  gap: 20px;
+  gap: ${({ theme }) => theme.spacing[5]};
 `;
 
 export const StepIndicator = styled.div`
   display: flex;
-  gap: 8px;
-  margin-bottom: 28px;
+  gap: ${({ theme }) => theme.spacing[2]};
+  margin-bottom: ${({ theme }) => theme.spacing[7]};
 `;
 
 export const StepSegment = styled.span<{ $active: boolean }>`
-  height: 4px;
+  height: ${({ theme }) => theme.spacing[1]};
   flex: 1;
   border-radius: ${({ theme }) => theme.radius.full};
   background-color: ${({ theme, $active }) => ($active ? theme.primary : theme.borderColor.muted)};
@@ -47,17 +53,17 @@ export const StepSegment = styled.span<{ $active: boolean }>`
 export const ErrorMessage = styled.p`
   margin: 0;
   color: ${({ theme }) => theme.danger};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
 `;
 
 export const BackButton = styled.button`
-  margin-top: 12px;
+  margin-top: ${({ theme }) => theme.spacing[3]};
   padding: 0;
   border: none;
   background: none;
   cursor: pointer;
   color: ${({ theme }) => theme.primary};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
 
   &:hover {
     text-decoration: underline;
@@ -65,9 +71,9 @@ export const BackButton = styled.button`
 `;
 
 export const ResendPrompt = styled.p`
-  margin: 20px 0 0;
+  margin: ${({ theme }) => theme.spacing[5]} 0 0;
   color: ${({ theme }) => theme.text.muted};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
   text-align: center;
 `;
 
@@ -77,7 +83,7 @@ export const ResendButton = styled.button`
   background: none;
   cursor: pointer;
   color: ${({ theme }) => theme.primary};
-  font-size: 0.8rem;
+  font-size: ${({ theme }) => theme.fontSize.xs};
 
   &:hover {
     text-decoration: underline;
