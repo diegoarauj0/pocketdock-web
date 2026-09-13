@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { fadeInUp, staggerFadeInUp } from "@/features/theme/animations";
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -37,17 +38,23 @@ export const TextGroup = styled.div`
 `;
 
 export const Title = styled.h1`
+  ${fadeInUp(0)}
+
   font-size: ${({ theme }) => theme.fontSize["2xl"]};
   font-weight: 700;
   color: ${({ theme }) => theme.text.default};
 `;
 
 export const Subtitle = styled.span`
+  ${fadeInUp(80)}
+
   font-size: ${({ theme }) => theme.fontSize.sm};
   color: ${({ theme }) => theme.text.muted};
 `;
 
 export const NewButton = styled.button`
+  ${fadeInUp(160)}
+
   display: inline-flex;
   align-items: center;
   justify-content: center;

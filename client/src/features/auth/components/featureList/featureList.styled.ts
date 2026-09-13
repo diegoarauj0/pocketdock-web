@@ -1,6 +1,9 @@
 import styled from "styled-components";
+import { staggerFadeInUp } from "@/features/theme/animations";
 
 export const FeatureList = styled.div`
+  ${staggerFadeInUp(200, 80)}
+
   margin-top: ${({ theme }) => theme.spacing[9]};
   display: grid;
   gap: ${({ theme }) => theme.spacing[4]};

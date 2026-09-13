@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { fadeIn, fadeInUp } from "@/features/theme/animations";
 
 export const SignUpWrapper = styled.div`
   width: ${({ theme }) => theme.size.full};
@@ -19,6 +20,8 @@ export const FormWrapper = styled.section`
 `;
 
 export const FormCard = styled.div`
+  ${fadeIn(0)}
+
   width: min(100%, ${({ theme }) => theme.size["md"]});
 
   padding: ${({ theme }) => theme.spacing[8]};
@@ -29,6 +32,8 @@ export const FormCard = styled.div`
 `;
 
 export const Form = styled.form`
+  ${fadeInUp(260)}
+
   display: grid;
   gap: ${({ theme }) => theme.spacing[5]};
 `;

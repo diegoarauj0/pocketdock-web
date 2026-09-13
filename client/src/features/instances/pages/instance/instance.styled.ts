@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { fadeInUp } from "@/features/theme/animations";
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -32,6 +33,8 @@ export const InstanceHeader = styled.div`
 `;
 
 export const PreviewLink = styled.div`
+  ${fadeInUp(0)}
+
   grid-column: 1 / 4;
 
   display: flex;
@@ -57,17 +60,23 @@ export const TextGroup = styled.div`
 `;
 
 export const Title = styled.h1`
+  ${fadeInUp(80)}
+
   font-size: ${({ theme }) => theme.fontSize["2xl"]};
   color: ${({ theme }) => theme.text.default};
   font-weight: 700;
 `;
 
 export const Subtitle = styled.span`
+  ${fadeInUp(160)}
+
   font-size: ${({ theme }) => theme.fontSize.sm};
   color: ${({ theme }) => theme.text.muted};
 `;
 
 export const Status = styled.div<{ $isRunning: boolean }>`
+  ${fadeInUp(320)}
+
   background-color: ${({ theme }) => theme.background.light};
 
   border-radius: ${({ theme }) => theme.radius.full};
@@ -82,6 +91,8 @@ export const Status = styled.div<{ $isRunning: boolean }>`
 `;
 
 export const ButtonGroup = styled.div`
+  ${fadeInUp(240)}
+
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -140,6 +151,8 @@ export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
 `;
 
 export const InstanceUsage = styled.div`
+  ${fadeInUp(360)}
+
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: ${({ theme }) => theme.spacing[36]};
@@ -189,6 +202,8 @@ export const Usage = styled.p`
 `;
 
 export const InstanceData = styled.div`
+  ${fadeInUp(440)}
+
   background-color: ${({ theme }) => theme.background.default};
 
   border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.default};
@@ -252,6 +267,8 @@ export const ErrorState = styled.div`
 `;
 
 export const ErrorIcon = styled.div`
+  ${fadeInUp(0)}
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -262,6 +279,8 @@ export const ErrorIcon = styled.div`
 `;
 
 export const ErrorTitle = styled.h2`
+  ${fadeInUp(80)}
+
   color: ${({ theme }) => theme.text.default};
   font-size: ${({ theme }) => theme.fontSize.xl};
   font-weight: 600;
@@ -271,6 +290,8 @@ export const ErrorTitle = styled.h2`
 `;
 
 export const ErrorMessage = styled.p`
+  ${fadeInUp(160)}
+
   color: ${({ theme }) => theme.text.muted};
   font-size: ${({ theme }) => theme.fontSize.sm};
 
@@ -280,6 +301,8 @@ export const ErrorMessage = styled.p`
 `;
 
 export const ErrorBackLink = styled.div`
+  ${fadeInUp(240)}
+
   display: flex;
   justify-content: center;
   align-items: center;

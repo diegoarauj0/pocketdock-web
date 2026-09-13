@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { fadeInUp } from "@/features/theme/animations";
 
 export const IntroPanel = styled.section`
   display: flex;
@@ -20,6 +21,8 @@ export const IntroContent = styled.div`
 `;
 
 export const Headline = styled.h1`
+  ${fadeInUp(0)}
+
   margin: none;
   font-size: clamp(2.25rem, 4vw, 3.5rem);
   line-height: ${({ theme }) => theme.lineHeight.tight};
@@ -30,6 +33,8 @@ export const Headline = styled.h1`
 `;
 
 export const Description = styled.p`
+  ${fadeInUp(100)}
+
   max-width: ${({ theme }) => theme.size["md"]};
   margin: ${({ theme }) => theme.spacing[6]} 0 0;
   color: ${({ theme }) => theme.text.muted};

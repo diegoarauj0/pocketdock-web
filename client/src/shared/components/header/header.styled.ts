@@ -1,10 +1,13 @@
 import styled from "styled-components";
+import { fadeInDown } from "@/features/theme/animations";
 import { Link } from "react-router";
 
 export const Header = styled.header`
   position: sticky;
   top: 0;
   z-index: 50;
+
+  ${fadeInDown(0)}
 
   display: flex;
   align-items: center;

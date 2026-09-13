@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { fadeInUp } from "@/features/theme/animations";
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -26,6 +27,8 @@ export const Content = styled.main`
 `;
 
 export const Title = styled.h1`
+  ${fadeInUp(0)}
+
   font-size: clamp(2.25rem, 4vw, 3.5rem);
   line-height: ${({ theme }) => theme.lineHeight.tight};
   letter-spacing: -0.05em;
@@ -34,6 +37,8 @@ export const Title = styled.h1`
 `;
 
 export const Description = styled.p`
+  ${fadeInUp(100)}
+
   max-width: ${({ theme }) => theme.size["lg"]};
   color: ${({ theme }) => theme.text.muted};
   font-size: ${({ theme }) => theme.fontSize.lg};
@@ -41,6 +46,8 @@ export const Description = styled.p`
 `;
 
 export const Actions = styled.div`
+  ${fadeInUp(200)}
+
   display: flex;
   align-items: center;
   justify-content: center;
