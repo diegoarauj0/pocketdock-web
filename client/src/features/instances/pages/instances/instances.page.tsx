@@ -18,11 +18,11 @@ export function InstancesPage() {
   const notificationID = APP_CONSTANT.NOTIFICATION_IDS.CREATE_INSTANCE;
 
   const handleCreateInstance = () => {
-    notificationService.loading("Criando instância...", notificationID);
+    notificationService.loading("Creating instance...", notificationID);
 
     createInstanceMutation.mutate(undefined, {
       onSuccess: () => {
-        notificationService.success("Instância criada com sucesso.", notificationID);
+        notificationService.success("Instance created successfully.", notificationID);
       },
       onError: (error) => {
         if (error instanceof ApiResponseError) {
@@ -30,7 +30,7 @@ export function InstancesPage() {
           return;
         }
 
-        notificationService.error("Não foi possível criar a instância.", notificationID);
+        notificationService.error("Could not create the instance.", notificationID);
       },
     });
   };
@@ -44,13 +44,13 @@ export function InstancesPage() {
         <S.Content>
           <S.InstancesHeader>
             <S.TextGroup>
-              <S.Title>Minhas instâncias</S.Title>
-              <S.Subtitle>{total} instância(s)</S.Subtitle>
+              <S.Title>My instances</S.Title>
+              <S.Subtitle>{total} instance(s)</S.Subtitle>
             </S.TextGroup>
 
             <S.NewButton type="button" onClick={handleCreateInstance}>
               <Plus size={16} />
-              Nova instância
+              New instance
             </S.NewButton>
           </S.InstancesHeader>
         </S.Content>
@@ -65,13 +65,13 @@ export function InstancesPage() {
       <S.Content>
         <S.InstancesHeader>
           <S.TextGroup>
-            <S.Title>Minhas instâncias</S.Title>
-            <S.Subtitle>{total} instância(s)</S.Subtitle>
+            <S.Title>My instances</S.Title>
+            <S.Subtitle>{total} instance(s)</S.Subtitle>
           </S.TextGroup>
 
           <S.NewButton type="button" onClick={handleCreateInstance}>
             <Plus size={16} />
-            Nova instância
+            New instance
           </S.NewButton>
         </S.InstancesHeader>
 

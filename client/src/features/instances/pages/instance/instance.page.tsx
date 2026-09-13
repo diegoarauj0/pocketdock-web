@@ -14,7 +14,7 @@ import { APP_PATH } from "@/app/app.path";
 import * as S from "./instance.styled";
 
 const formatCreatedAt = (date: string): string => {
-  const formatter = new Intl.DateTimeFormat("pt-BR", {
+  const formatter = new Intl.DateTimeFormat("en-US", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
@@ -50,40 +50,40 @@ export function InstancePage() {
   const handleStopInstance = () => {
     const notificationID = APP_CONSTANT.NOTIFICATION_IDS.STOP_INSTANCE;
 
-    notificationService.loading("Parando instância...", notificationID);
+    notificationService.loading("Stopping instance...", notificationID);
 
     stopInstanceMutation.mutate(ID || "", {
       onSuccess: () => {
-        notificationService.success("Instância parada com sucesso.", notificationID);
+        notificationService.success("Instance stopped successfully.", notificationID);
         stateQuery.refetch();
       },
-      onError: (error) => handleMutationError(error, notificationID, "Não foi possível parar a instância."),
+      onError: (error) => handleMutationError(error, notificationID, "Could not stop the instance."),
     });
   };
 
   const handleStartInstance = () => {
     const notificationID = APP_CONSTANT.NOTIFICATION_IDS.START_INSTANCE;
 
-    notificationService.loading("Iniciando instância...", notificationID);
+    notificationService.loading("Starting instance...", notificationID);
 
     startInstanceMutation.mutate(ID || "", {
       onSuccess: () => {
-        notificationService.success("Instância iniciada com sucesso.", notificationID);
+        notificationService.success("Instance started successfully.", notificationID);
         stateQuery.refetch();
       },
-      onError: (error) => handleMutationError(error, notificationID, "Não foi possível iniciar a instância."),
+      onError: (error) => handleMutationError(error, notificationID, "Could not start the instance."),
     });
   };
 
   const handleDeleteInstance = () => {
-    notificationService.loading("Deletando instância...", notificationID);
+    notificationService.loading("Deleting instance...", notificationID);
 
     deleteInstanceMutation.mutate(ID || "", {
       onSuccess: () => {
-        notificationService.success("Instância deletada com sucesso.", notificationID);
+        notificationService.success("Instance deleted successfully.", notificationID);
         navigate(APP_PATH.INSTANCES);
       },
-      onError: (error) => handleMutationError(error, notificationID, "Não foi possível deletar a instância."),
+      onError: (error) => handleMutationError(error, notificationID, "Could not delete the instance."),
     });
   };
 
@@ -102,14 +102,12 @@ export function InstancePage() {
               <CircleAlert size={48} />
             </S.ErrorIcon>
 
-            <S.ErrorTitle>Não foi possível carregar a instância</S.ErrorTitle>
-            <S.ErrorMessage>
-              Algo deu errado ao buscar os dados da instância. Tente novamente mais tarde.
-            </S.ErrorMessage>
+            <S.ErrorTitle>Could not load the instance</S.ErrorTitle>
+            <S.ErrorMessage>Something went wrong while loading the instance data. Try again later.</S.ErrorMessage>
 
             <S.ErrorBackLink>
               <Link to={APP_PATH.INSTANCES}>
-                <ArrowLeft /> Voltar para instâncias
+                <ArrowLeft /> Back to instances
               </Link>
             </S.ErrorBackLink>
           </S.ErrorState>
@@ -147,15 +145,15 @@ export function InstancePage() {
               onClick={state.status === "running" ? handleStopInstance : handleStartInstance}
             >
               {state.status === "running" ? <Square /> : <Play />}
-              {state.status === "running" ? "Parar" : "Iniciar"}
+              {state.status === "running" ? "Stop" : "Start"}
             </S.StartOrStopInstance>
             <S.DeleteInstance type="button" onClick={handleDeleteInstance}>
-              <Trash /> Remover
+              <Trash /> Remove
             </S.DeleteInstance>
           </S.ButtonGroup>
 
           <S.Status $isRunning={state.status === "running"}>
-            {state.status === "running" ? "• Em execução" : "• Parada"}
+            {state.status === "running" ? "• Running" : "• Stopped"}
           </S.Status>
         </S.InstanceHeader>
 
@@ -179,7 +177,7 @@ export function InstancePage() {
 
         <S.InstanceData>
           <S.TextGroup>
-            <S.Title>Informações da instância</S.Title>
+            <S.Title>Instance information</S.Title>
           </S.TextGroup>
 
           <S.InstanceRow>
@@ -188,18 +186,22 @@ export function InstancePage() {
           </S.InstanceRow>
 
           <S.InstanceRow>
-            <S.FieldLabel>Criado em</S.FieldLabel>
+            <S.FieldLabel>Created at</S.FieldLabel>
             <S.FieldValue>{formatCreatedAt(instance.createdAt)}</S.FieldValue>
           </S.InstanceRow>
 
           <S.InstanceRow>
-            <S.FieldLabel>URL do Painel</S.FieldLabel>
-            <S.FieldValue>{location.protocol}//{instance.ID}.{location.host}/_/</S.FieldValue>
+            <S.FieldLabel>Panel URL</S.FieldLabel>
+            <S.FieldValue>
+              {location.protocol}//{instance.ID}.{location.host}/_/
+            </S.FieldValue>
           </S.InstanceRow>
 
           <S.InstanceRow>
-            <S.FieldLabel>URL da API</S.FieldLabel>
-            <S.FieldValue>{location.protocol}//{instance.ID}.{location.host}</S.FieldValue>
+            <S.FieldLabel>API URL</S.FieldLabel>
+            <S.FieldValue>
+              {location.protocol}//{instance.ID}.{location.host}
+            </S.FieldValue>
           </S.InstanceRow>
         </S.InstanceData>
       </S.Content>

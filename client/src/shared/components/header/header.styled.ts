@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router";
 
 export const Header = styled.header`
   position: sticky;
@@ -25,6 +26,13 @@ export const Brand = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing[3]};
   margin-left: ${({ theme }) => theme.spacing[6]};
+`;
+
+export const BrandLink = styled(Link)`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[3]};
+  text-decoration: none;
 `;
 
 export const BrandIcon = styled.div`
@@ -70,6 +78,34 @@ export const LogoutButton = styled.button`
   &:hover {
     color: ${({ theme }) => theme.text.default};
     background-color: ${({ theme }) => theme.background.light};
+  }
+
+  &:focus-visible {
+    outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.primary};
+    outline-offset: ${({ theme }) => theme.spacing[0.5]};
+  }
+`;
+
+export const SignInLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+
+  padding: ${({ theme }) => theme.spacing[1.5]} ${({ theme }) => theme.spacing[3]};
+
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 600;
+  color: ${({ theme }) => theme.inverse.text};
+  text-decoration: none;
+
+  background-color: ${({ theme }) => theme.inverse.background};
+  border: none;
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: color-mix(in srgb, ${({ theme }) => theme.inverse.background} 85%, ${({ theme }) => theme.inverse.text});
   }
 
   &:focus-visible {

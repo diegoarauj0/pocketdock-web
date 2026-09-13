@@ -26,7 +26,8 @@ export const Content = styled.main<{ $error?: boolean }>`
 export const InstanceHeader = styled.div`
   display: grid;
 
-  grid-template-rows: ${({ theme }) => theme.spacing[12]} ${({ theme }) => theme.spacing[20]} ${({ theme }) => theme.spacing[10]};
+  grid-template-rows: ${({ theme }) => theme.spacing[12]} ${({ theme }) => theme.spacing[20]} ${({ theme }) =>
+      theme.spacing[10]};
   grid-template-columns: ${({ theme }) => theme.spacing[36]} auto auto;
 `;
 
@@ -70,7 +71,8 @@ export const Status = styled.div<{ $isRunning: boolean }>`
   background-color: ${({ theme }) => theme.background.light};
 
   border-radius: ${({ theme }) => theme.radius.full};
-  border: ${({ theme }) => theme.border.thin} solid ${({ theme, $isRunning }) => ($isRunning ? theme.success : theme.text.muted)};
+  border: ${({ theme }) => theme.border.thin} solid
+    ${({ theme, $isRunning }) => ($isRunning ? theme.success : theme.text.muted)};
 
   color: ${({ theme, $isRunning }) => ($isRunning ? theme.text.default : theme.text.muted)};
 
@@ -111,7 +113,8 @@ export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
 
   color: ${({ theme, $stop }) => ($stop ? theme.danger : theme.text.default)};
 
-  border: ${({ theme }) => theme.border.thin} solid ${({ theme, $stop }) => ($stop ? theme.danger : theme.borderColor.default)};
+  border: ${({ theme }) => theme.border.thin} solid
+    ${({ theme, $stop }) => ($stop ? theme.danger : theme.borderColor.default)};
   border-radius: ${({ theme }) => theme.radius.md};
 
   display: flex;
@@ -122,7 +125,9 @@ export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
 
   padding: ${({ theme }) => theme.spacing[2]} ${({ theme }) => theme.spacing[4]};
 
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     background-color: ${({ theme }) => theme.background.light};
@@ -212,10 +217,13 @@ export const InstanceRow = styled.div`
 
   padding: ${({ theme }) => theme.spacing[4]};
 
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+
+  background-color: ${({ theme }) => theme.background.light};
 
   &:hover {
-    background-color: ${({ theme }) => theme.background.light};
     border-color: ${({ theme }) => theme.borderColor.default};
   }
 `;

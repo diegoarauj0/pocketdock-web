@@ -7,7 +7,7 @@ interface InterfaceInstanceCardProps {
   instance: InterfaceInstance;
 }
 
-const dateFormatter = new Intl.DateTimeFormat("pt-BR", {
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
   day: "2-digit",
   month: "short",
   year: "numeric",
@@ -36,12 +36,12 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
 
       <S.MetaList>
         <S.MetaItem>
-          <S.Label>Criada em:</S.Label>
+          <S.Label>Created:</S.Label>
           <S.Value>{formatDate(instance.createdAt)}</S.Value>
         </S.MetaItem>
 
         <S.MetaItem>
-          <S.Label>Atualizada em:</S.Label>
+          <S.Label>Updated:</S.Label>
           <S.Value>{formatDate(instance.updatedAt)}</S.Value>
         </S.MetaItem>
       </S.MetaList>
