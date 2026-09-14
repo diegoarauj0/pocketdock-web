@@ -4,6 +4,7 @@ export interface InterfaceInstance {
   containerName: string;
   updatedAt: string;
   createdAt: string;
+  url: string;
   ID: string;
 }
 

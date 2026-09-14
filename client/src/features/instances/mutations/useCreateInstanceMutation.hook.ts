@@ -24,6 +24,7 @@ export function useCreateInstanceMutation() {
         containerName: "Creating instance...",
         createdAt,
         updatedAt: createdAt,
+        url: "",
       };
 
       queryClient.setQueryData<InterfaceInstance[]>(["instances"], (oldInstances = []) => [

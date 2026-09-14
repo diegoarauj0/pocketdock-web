@@ -19,6 +19,7 @@ export class DockerContainerService {
       Labels: options.labels,
       ExposedPorts: options.exposedPorts,
       HostConfig: options.hostConfig,
+      NetworkingConfig: options.networkingConfig,
     });
   }
 

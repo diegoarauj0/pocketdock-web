@@ -27,6 +27,8 @@ const envSchema = z.object({
   DOCKER_HOST: z.string().default("unix:///var/run/docker.sock"),
   MAX_MEMORY_IN_MB: z.coerce.number().default(512),
   MAX_NANO_CPUS: z.coerce.number().default(1000000000),
+  INSTANCE_DOMAIN: z.string().default("localhost"),
+  INSTANCE_PROTOCOL: z.enum(["http", "https"]).default(process.env.NODE_ENV === "production" ? "https" : "http"),
   LOG_CONTEXTS: z
     .string()
     .transform((val) => val.split(",").map((item) => item.trim()))

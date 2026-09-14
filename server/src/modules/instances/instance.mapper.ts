@@ -1,3 +1,4 @@
+import { env } from "src/config/env";
 import { InstancePrivateDto } from "./dtos/instance.dto";
 import { InstanceEntity } from "./instance.entity";
 
@@ -8,6 +9,7 @@ export class InstanceMapper {
       containerName: instance.containerName,
       createdAt: instance.createdAt,
       updatedAt: instance.updatedAt,
+      url: `${env.INSTANCE_PROTOCOL}://${instance.ID}.${env.INSTANCE_DOMAIN}`,
     };
   }
 }

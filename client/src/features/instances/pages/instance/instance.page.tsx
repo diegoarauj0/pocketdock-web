@@ -133,9 +133,7 @@ export function InstancePage() {
 
           <S.TextGroup>
             <S.Title>{instance.containerName}</S.Title>
-            <S.Subtitle>
-              {location.protocol}//{instance.ID}.{location.host}
-            </S.Subtitle>
+            <S.Subtitle>{instance.url}</S.Subtitle>
           </S.TextGroup>
 
           <S.ButtonGroup>
@@ -192,16 +190,12 @@ export function InstancePage() {
 
           <S.InstanceRow>
             <S.FieldLabel>Panel URL</S.FieldLabel>
-            <S.FieldValue>
-              {location.protocol}//{instance.ID}.{location.host}/_/
-            </S.FieldValue>
+            <S.FieldValue>{instance.url}/_/</S.FieldValue>
           </S.InstanceRow>
 
           <S.InstanceRow>
             <S.FieldLabel>API URL</S.FieldLabel>
-            <S.FieldValue>
-              {location.protocol}//{instance.ID}.{location.host}
-            </S.FieldValue>
+            <S.FieldValue>{instance.url}</S.FieldValue>
           </S.InstanceRow>
         </S.InstanceData>
       </S.Content>

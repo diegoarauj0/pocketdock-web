@@ -6,6 +6,7 @@ export const INSTANCE_CONSTANT = {
   TYPE: "pocketbase",
   VERSION: "0.40.1",
   PORT: 8080,
+  NETWORK: "pocketdock-instances",
 
   LABEL_INSTANCE_ID: "com.pocketdock.instance-id",
   LABEL_MANAGED: "com.pocketdock.managed",

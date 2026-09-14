@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { fadeInUp, staggerFadeInUp } from "@/features/theme/animations";
+import { fadeInUp } from "@/features/theme/animations";
 
 export const PageWrapper = styled.div`
   display: flex;

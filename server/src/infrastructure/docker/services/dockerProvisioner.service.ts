@@ -1,4 +1,5 @@
 import { INSTANCE_CONSTANT } from "src/modules/instances/instance.constant";
+import { DockerNetworkService } from "./dockerNetwork.service";
 import { DockerImageService } from "./dockerImage.service";
 import { Injectable, Logger } from "@nestjs/common";
 import { DockerService } from "./docker.service";
@@ -10,6 +11,7 @@ export class DockerProvisionerService {
   constructor(
     private readonly dockerService: DockerService,
     private readonly dockerImageService: DockerImageService,
+    private readonly dockerNetworkService: DockerNetworkService,
   ) {}
 
   public async provision(): Promise<void> {
@@ -17,6 +19,7 @@ export class DockerProvisionerService {
 
     await this.ensureDockerAvailable();
     await this.ensureRequiredImages();
+    await this.ensureRequiredNetworks();
 
     this.logger.log("Docker provisioning completed.");
   }
@@ -31,6 +34,25 @@ export class DockerProvisionerService {
 
   private async ensureRequiredImages(): Promise<void> {
     await this.ensurePocketBaseImage();
+  }
+
+  private async ensureRequiredNetworks(): Promise<void> {
+    await this.ensureInstanceNetwork();
+  }
+
+  private async ensureInstanceNetwork(): Promise<void> {
+    const network = INSTANCE_CONSTANT.NETWORK;
+
+    this.logger.debug(`Checking network "${network}"...`);
+
+    const created = await this.dockerNetworkService.ensureNetwork(network);
+
+    if (created) {
+      this.logger.log(`Network "${network}" successfully created.`);
+      return;
+    }
+
+    this.logger.debug(`Network "${network}" already exists.`);
   }
 
   private async ensurePocketBaseImage(): Promise<void> {

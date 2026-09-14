@@ -45,6 +45,11 @@ export class InstancesService {
         [INSTANCE_CONSTANT.LABEL_TYPE]: INSTANCE_CONSTANT.TYPE,
         [INSTANCE_CONSTANT.LABEL_INSTANCE_ID]: ID,
         [INSTANCE_CONSTANT.LABEL_MANAGED]: "true",
+
+        "traefik.enable": "true",
+        [`traefik.http.routers.${containerName}.rule`]: `Host(\`${ID}.${env.INSTANCE_DOMAIN}\`)`,
+        [`traefik.http.routers.${containerName}.entrypoints`]: "web",
+        [`traefik.http.services.${containerName}.loadbalancer.server.port`]: `${INSTANCE_CONSTANT.PORT}`,
       };
 
       const hostConfig = {
@@ -52,10 +57,19 @@ export class InstancesService {
         NanoCpus: env.MAX_NANO_CPUS,
       };
 
+      const networkingConfig = {
+        EndpointsConfig: {
+          [INSTANCE_CONSTANT.NETWORK]: {
+            Aliases: [containerName],
+          },
+        },
+      };
+
       await this.dockerContainerService.createContainer({
         name: containerName,
         image: image,
         hostConfig,
+        networkingConfig,
         labels,
       });
 

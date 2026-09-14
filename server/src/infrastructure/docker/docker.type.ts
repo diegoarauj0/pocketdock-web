@@ -30,5 +30,7 @@ export interface InterfaceCreateContainerOptions {
 
   hostConfig?: Docker.HostConfig;
 
+  networkingConfig?: Docker.ContainerCreateOptions["NetworkingConfig"];
+
   cmd?: string[];
 }

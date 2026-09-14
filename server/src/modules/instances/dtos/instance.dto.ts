@@ -46,6 +46,13 @@ export class InstancePrivateDto {
     example: "2024-01-01T00:00:00.000Z",
   })
   public updatedAt!: InstanceEntity["updatedAt"];
+
+  @ApiProperty({
+    type: "string",
+    description: "URL base da instância",
+    example: "https://123e4567-e89b-12d3-a456-426614174000.app.example.com",
+  })
+  public url!: string;
 }
 
 export class InstanceStatsDto {
