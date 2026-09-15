@@ -12,6 +12,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const refreshPromise = useRef<Promise<InterfaceTokenResponse> | null>(null);
   const mePromise = useRef<Promise<InterfacePublicUser> | null>(null);
+  const logoutPromise = useRef<Promise<void> | null>(null);
 
   const refreshToken = useCallback(() => {
     if (refreshPromise.current) {
@@ -25,6 +26,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
 
     return refreshPromise.current;
+  }, []);
+
+  const logout = useCallback(() => {
+    if (logoutPromise.current) {
+      return logoutPromise.current;
+    }
+
+    logoutPromise.current = authService.logout();
+
+    logoutPromise.current.finally(() => {
+      logoutPromise.current = null;
+    });
+
+    return logoutPromise.current;
   }, []);
 
   const me = useCallback(() => {
@@ -53,12 +68,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [me],
   );
 
-  const signOut = useCallback(() => {
+  const signOut = useCallback(async () => {
     tokenStoreService.clear();
 
     setState("unauthenticated");
     setUser(null);
-  }, []);
+
+    await logout();
+  }, [logout]);
 
   useEffect(() => {
     const requestInterceptor = httpClient.interceptors.request.use((config) => {

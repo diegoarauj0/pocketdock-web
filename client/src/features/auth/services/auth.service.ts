@@ -21,6 +21,11 @@ export interface InterfaceSignUpRequest {
   email: string;
 }
 
+export interface InterfaceAuthorizeResponse {
+  authorizeURL: string;
+  strategyID: string;
+}
+
 export interface InterfaceTokenResponse {
   access: string;
   expiresIn: number;
@@ -48,12 +53,20 @@ export const authService = {
     return httpService.get<InterfacePublicUser>("/api/auth/@me");
   },
 
+  authorize: (strategyID: string): Promise<InterfaceAuthorizeResponse> => {
+    return httpService.post<InterfaceAuthorizeResponse, undefined>(`/api/oauth/authorize/${strategyID}`, undefined);
+  },
+
   refresh: (): Promise<InterfaceTokenResponse> => {
     return httpService.post<InterfaceTokenResponse, undefined>("/api/auth/refresh", undefined);
   },
 
   signIn: (request: InterfaceSignInRequest): Promise<InterfaceTokenResponse> => {
     return httpService.post<InterfaceTokenResponse, InterfaceSignInRequest>("/api/auth/signIn", request);
+  },
+
+  logout: (): Promise<void> => {
+    return httpService.post("/api/auth/logout", undefined);
   },
 
   signUp: (request: InterfaceSignUpRequest): Promise<void> => {

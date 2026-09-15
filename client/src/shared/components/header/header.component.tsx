@@ -1,7 +1,7 @@
+import { useAuth } from "@/features/auth/contexts/auth.context";
 import { Database, LogOut } from "lucide-react";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
-import { useAuth } from "@/features/auth/contexts/auth.context";
 import * as S from "./header.styled";
 
 export function HeaderComponent() {

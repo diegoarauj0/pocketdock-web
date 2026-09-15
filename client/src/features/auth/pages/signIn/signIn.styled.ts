@@ -37,3 +37,33 @@ export const Form = styled.form`
   display: grid;
   gap: ${({ theme }) => theme.spacing[5]};
 `;
+
+export const OAuthDivider = styled.div`
+  ${fadeInUp(320)}
+
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[4]};
+
+  margin: ${({ theme }) => theme.spacing[6]} 0;
+
+  color: ${({ theme }) => theme.text.muted};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+`;
+
+export const OAuthDividerLine = styled.span`
+  flex: 1;
+  height: ${({ theme }) => theme.border.thin};
+  background-color: ${({ theme }) => theme.borderColor.muted};
+`;
+
+export const OAuthSection = styled.div`
+  ${fadeInUp(360)}
+`;
+
+export const OAuthErrorMessage = styled.p`
+  margin: ${({ theme }) => theme.spacing[3]} 0 0;
+  color: ${({ theme }) => theme.danger};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  text-align: center;
+`;

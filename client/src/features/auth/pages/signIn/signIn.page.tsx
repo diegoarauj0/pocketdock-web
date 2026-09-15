@@ -1,8 +1,10 @@
 import { PrimaryButtonComponent } from "@/shared/components/primaryButton/primaryButton.component";
 import { AuthLinkPromptComponent } from "../../components/authLinkPrompt/authLinkPrompt.component";
+import { GoogleOAuthButtonComponent } from "../../components/googleOAuthButton/googleOAuthButton.component";
 import { FormHeaderComponent } from "../../components/formHeader/formHeader.component";
 import { AuthFieldComponent } from "../../components/authField/authField.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
+import { useOAuthSignIn } from "../../hooks/useOAuthSignIn.hook";
 import { useSignIn } from "../../hooks/useSignIn.hook";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./signIn.styled";
@@ -14,6 +16,7 @@ const features: string[] = [
 
 export function SignInPage() {
   const { register, errors, isSubmitting, handleSubmit } = useSignIn();
+  const { isRedirecting, signInWithGoogle } = useOAuthSignIn();
 
   return (
     <S.SignInWrapper>
@@ -52,6 +55,16 @@ export function SignInPage() {
                 Access
               </PrimaryButtonComponent>
             </S.Form>
+
+            <S.OAuthDivider>
+              <S.OAuthDividerLine />
+              or continue with
+              <S.OAuthDividerLine />
+            </S.OAuthDivider>
+
+            <S.OAuthSection>
+              <GoogleOAuthButtonComponent isRedirecting={isRedirecting} onClick={signInWithGoogle} />
+            </S.OAuthSection>
 
             <AuthLinkPromptComponent
               text="Don't have an account?"
