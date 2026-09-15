@@ -6,10 +6,10 @@ export const CodeInputs = styled.div`
   gap: ${({ theme }) => theme.spacing[2]};
 `;
 
-export const Input = styled.input`
+export const CodeInput = styled.input`
+  height: ${({ theme }) => theme.spacing[14]};
   width: ${({ theme }) => theme.size.full};
   min-width: 0;
-  height: ${({ theme }) => theme.spacing[14]};
   padding: 0;
 
   border: ${({ theme }) => theme.border.thin} solid ${({ theme }) => theme.borderColor.muted};

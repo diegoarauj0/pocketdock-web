@@ -9,6 +9,7 @@ export const AUTH_CONSTANT = {
     SIGN_UP: "signUp",
     EMAIL_VERIFICATION: "emailVerification",
     RESET_PASSWORD: "resetPassword",
+    OAUTH_CALLBACK: "oauthCallback"
   },
 
   NOTIFICATION_IDS: {

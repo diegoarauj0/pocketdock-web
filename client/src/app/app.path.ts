@@ -1,5 +1,5 @@
-import { AUTH_CONSTANT } from "@/features/auth/constants/auth.constant";
 import { INSTANCE_CONSTANT } from "@/features/instances/constants/instance.constant";
+import { AUTH_CONSTANT } from "@/features/auth/constants/auth.constant";
 
 export const APP_PATH = {
   HOME: "/",
@@ -10,6 +10,7 @@ export const APP_PATH = {
     SIGN_UP: `/${AUTH_CONSTANT.ROUTER.LAYOUT}/${AUTH_CONSTANT.ROUTER.SIGN_UP}`,
     EMAIL_VERIFICATION: `/${AUTH_CONSTANT.ROUTER.LAYOUT}/${AUTH_CONSTANT.ROUTER.EMAIL_VERIFICATION}`,
     RESET_PASSWORD: `/${AUTH_CONSTANT.ROUTER.LAYOUT}/${AUTH_CONSTANT.ROUTER.RESET_PASSWORD}`,
+    OAUTH_CALLBACK: `/${AUTH_CONSTANT.ROUTER.LAYOUT}/${AUTH_CONSTANT.ROUTER.OAUTH_CALLBACK}`
   },
 
   INSTANCES: `/${INSTANCE_CONSTANT.ROUTER.INSTANCES}`,

@@ -10,7 +10,7 @@ export function CodeInputsComponent({ length, getCodeInputRegister }: InterfaceC
   return (
     <S.CodeInputs>
       {Array.from({ length }, (_, index) => (
-        <S.Input key={index} autoFocus={index === 0} {...getCodeInputRegister(index)} />
+        <S.CodeInput key={index} autoFocus={index === 0} {...getCodeInputRegister(index)} />
       ))}
     </S.CodeInputs>
   );
