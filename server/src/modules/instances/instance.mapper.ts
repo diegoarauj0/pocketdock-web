@@ -7,9 +7,10 @@ export class InstanceMapper {
     return {
       ID: instance.ID,
       containerName: instance.containerName,
+      defaultPassword: instance.defaultPassword,
+      url: `${env.INSTANCE_PROTOCOL}://${instance.ID}.${env.INSTANCE_DOMAIN}`,
       createdAt: instance.createdAt,
       updatedAt: instance.updatedAt,
-      url: `${env.INSTANCE_PROTOCOL}://${instance.ID}.${env.INSTANCE_DOMAIN}`,
     };
   }
 }

@@ -33,6 +33,13 @@ export class InstancePrivateDto {
 
   @ApiProperty({
     type: "string",
+    description: "Senha default do superuser da instância (trocar após o primeiro acesso)",
+    example: "8f14e45fceea167a5a36dedd4bea2543a18f9dd4c4c8e55f8b7f0e0b3c1d0c28",
+  })
+  public defaultPassword!: InstanceEntity["defaultPassword"];
+
+  @ApiProperty({
+    type: "string",
     format: "date-time",
     description: "Data de criação",
     example: "2024-01-01T00:00:00.000Z",

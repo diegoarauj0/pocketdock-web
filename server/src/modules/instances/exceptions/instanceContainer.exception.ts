@@ -8,6 +8,7 @@ export enum ContainerErrorReason {
   START_FAILED = "START_FAILED",
   ALREADY_STOPPED = "ALREADY_STOPPED",
   ALREADY_RUNNING = "ALREADY_RUNNING",
+  SUPERUSER_CREATE_FAILED = "SUPERUSER_CREATE_FAILED",
 }
 
 const reasonToStatusCodeMap: Record<ContainerErrorReason, HttpStatus> = {
@@ -17,6 +18,7 @@ const reasonToStatusCodeMap: Record<ContainerErrorReason, HttpStatus> = {
   [ContainerErrorReason.START_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
   [ContainerErrorReason.ALREADY_STOPPED]: HttpStatus.CONFLICT,
   [ContainerErrorReason.ALREADY_RUNNING]: HttpStatus.CONFLICT,
+  [ContainerErrorReason.SUPERUSER_CREATE_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
 };
 
 const reasonToMessageMap: Record<ContainerErrorReason, string> = {
@@ -31,6 +33,8 @@ const reasonToMessageMap: Record<ContainerErrorReason, string> = {
   [ContainerErrorReason.ALREADY_STOPPED]: "Instance container is already stopped.",
 
   [ContainerErrorReason.ALREADY_RUNNING]: "Instance container is already running.",
+
+  [ContainerErrorReason.SUPERUSER_CREATE_FAILED]: "Failed to create instance superuser.",
 };
 
 export class InstanceContainerException extends BaseException<{ reason: ContainerErrorReason }> {

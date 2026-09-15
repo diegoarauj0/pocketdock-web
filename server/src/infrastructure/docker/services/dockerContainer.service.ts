@@ -1,8 +1,9 @@
-import { InterfaceContainerStatus, InterfaceCreateContainerOptions } from "../docker.type";
+import { InterfaceContainerStatus, InterfaceCreateContainerOptions, InterfaceExecResult } from "../docker.type";
 import { DockerService } from "./docker.service";
 import { isNotFoundError } from "../docker.util";
 import { Injectable } from "@nestjs/common";
 import Docker from "dockerode";
+import { Writable } from "node:stream";
 
 @Injectable()
 export class DockerContainerService {
@@ -78,5 +79,53 @@ export class DockerContainerService {
     const container = this.getContainer(name);
 
     await container.stop();
+  }
+
+  public async execContainer(name: string, cmd: string[]): Promise<InterfaceExecResult> {
+    const docker = this.dockerService.getClient();
+    const container = this.getContainer(name);
+
+    const exec = await container.exec({
+      Cmd: cmd,
+      AttachStdout: true,
+      AttachStderr: true,
+    });
+
+    const stream = await exec.start({
+      hijack: false,
+      stdin: false,
+    });
+
+    const stdoutChunks: Buffer[] = [];
+    const stderrChunks: Buffer[] = [];
+
+    const stdoutCollector = new Writable({
+      write(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+        stdoutChunks.push(chunk);
+        callback();
+      },
+    });
+
+    const stderrCollector = new Writable({
+      write(chunk: Buffer, _encoding: BufferEncoding, callback: (error?: Error | null) => void) {
+        stderrChunks.push(chunk);
+        callback();
+      },
+    });
+
+    docker.modem.demuxStream(stream, stdoutCollector, stderrCollector);
+
+    await new Promise<void>((resolve, reject) => {
+      stream.once("error", reject);
+      stream.once("end", resolve);
+    });
+
+    const { ExitCode } = await exec.inspect();
+
+    return {
+      exitCode: ExitCode ?? 0,
+      stdout: Buffer.concat(stdoutChunks).toString("utf8").trim(),
+      stderr: Buffer.concat(stderrChunks).toString("utf8").trim(),
+    };
   }
 }

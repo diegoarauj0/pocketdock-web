@@ -5,12 +5,13 @@ import { useStartInstanceMutation } from "../../mutations/useStartInstance.mutat
 import { notificationService } from "@/shared/services/notification.service";
 import { LoadingScreenComponent } from "@/shared/components/loadingScreen/loadingScreen.component";
 import { HeaderComponent } from "@/shared/components/header/header.component";
-import { ArrowLeft, CircleAlert, Cpu, MemoryStick, Play, Square, Trash } from "lucide-react";
+import { ArrowLeft, Check, CircleAlert, Copy, Cpu, MemoryStick, Play, Square, Trash } from "lucide-react";
 import { useInstanceQuery } from "../../queries/useInstance.query";
 import { useStateQuery } from "../../queries/useState.query";
 import { Link, useNavigate, useParams } from "react-router";
 import { APP_CONSTANT } from "@/app/app.constant";
 import { APP_PATH } from "@/app/app.path";
+import { useState } from "react";
 import * as S from "./instance.styled";
 
 const formatCreatedAt = (date: string): string => {
@@ -32,11 +33,10 @@ export function InstancePage() {
 
   const instanceQuery = useInstanceQuery(ID);
   const stateQuery = useStateQuery(ID);
+  const [copiedField, setCopiedField] = useState<"password" | "panel" | "api" | null>(null);
   const stopInstanceMutation = useStopInstanceMutation();
   const startInstanceMutation = useStartInstanceMutation();
   const deleteInstanceMutation = useDeleteInstanceMutation();
-
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.DELETE_INSTANCE;
 
   const handleMutationError = (error: unknown, ID: string, genericMessage: string) => {
     if (error instanceof ApiResponseError) {
@@ -76,6 +76,8 @@ export function InstancePage() {
   };
 
   const handleDeleteInstance = () => {
+    const notificationID = APP_CONSTANT.NOTIFICATION_IDS.DELETE_INSTANCE;
+
     notificationService.loading("Deleting instance...", notificationID);
 
     deleteInstanceMutation.mutate(ID || "", {
@@ -85,6 +87,14 @@ export function InstancePage() {
       },
       onError: (error) => handleMutationError(error, notificationID, "Could not delete the instance."),
     });
+  };
+
+  const handleCopy = async (value: string, field: "password" | "panel" | "api") => {
+    await navigator.clipboard.writeText(value);
+
+    setCopiedField(field);
+
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   if (stateQuery.isPending || instanceQuery.isPending) {
@@ -118,6 +128,24 @@ export function InstancePage() {
 
   const state = stateQuery.data!;
   const instance = instanceQuery.data!;
+
+  const panelURL = `${instance.url}/_/`;
+
+  const renderCopyButton = (field: "password" | "panel" | "api") => {
+    const copied = copiedField === field;
+
+    return (
+      <S.CopyButton
+        type="button"
+        onClick={() =>
+          handleCopy(field === "password" ? instance.defaultPassword : field === "panel" ? panelURL : instance.url, field)
+        }
+      >
+        {copied ? <Check size={14} /> : <Copy size={14} />}
+        {copied ? "Copied" : "Copy"}
+      </S.CopyButton>
+    );
+  };
 
   return (
     <S.PageWrapper>
@@ -188,15 +216,40 @@ export function InstancePage() {
             <S.FieldValue>{formatCreatedAt(instance.createdAt)}</S.FieldValue>
           </S.InstanceRow>
 
-          <S.InstanceRow>
+          <S.InstanceRow $full={true}>
             <S.FieldLabel>Panel URL</S.FieldLabel>
-            <S.FieldValue>{instance.url}/_/</S.FieldValue>
+
+            <S.CopyableValue>
+              <S.FieldValue>{panelURL}</S.FieldValue>
+              {renderCopyButton("panel")}
+            </S.CopyableValue>
           </S.InstanceRow>
 
-          <S.InstanceRow>
+          <S.InstanceRow $full={true}>
             <S.FieldLabel>API URL</S.FieldLabel>
-            <S.FieldValue>{instance.url}</S.FieldValue>
+
+            <S.CopyableValue>
+              <S.FieldValue>{instance.url}</S.FieldValue>
+              {renderCopyButton("api")}
+            </S.CopyableValue>
           </S.InstanceRow>
+
+          <S.InstanceRow $full={true}>
+            <S.FieldLabel>Default password</S.FieldLabel>
+
+            <S.CopyableValue >
+              <S.FieldValue>{instance.defaultPassword}</S.FieldValue>
+              {renderCopyButton("password")}
+            </S.CopyableValue>
+          </S.InstanceRow>
+
+          <S.LoginNotice>
+            The login email for this instance is the same one you use to sign in to PocketDock.
+          </S.LoginNotice>
+
+          <S.CredentialsNotice>
+            Change this password after the first login at {panelURL}.
+          </S.CredentialsNotice>
         </S.InstanceData>
       </S.Content>
     </S.PageWrapper>

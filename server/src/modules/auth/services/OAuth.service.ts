@@ -58,7 +58,7 @@ export class OAuthService {
   }
 
   public createAuthorizeURL(OAuthStrategyID: OAuthStrategyID): { authorizeURL: string; state: string } {
-    const state = this.cryptoService.createRandomHash();
+    const state = this.cryptoService.randomHash();
 
     const authorizeURL = this.oAuthStrategyRegistry.strategies[OAuthStrategyID].createAuthorizeURL(state);
 

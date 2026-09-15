@@ -17,6 +17,9 @@ export class InstanceEntity {
   @typeorm.Column({ type: "varchar", length: 255, nullable: false })
   public containerName!: string;
 
+  @typeorm.Column({ type: "varchar", length: 255, nullable: false })
+  public defaultPassword!: string;
+
   @typeorm.CreateDateColumn()
   public createdAt!: Date;
 

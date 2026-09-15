@@ -8,6 +8,7 @@ import { UserEntity } from "src/modules/users/user.entity";
 import { INSTANCE_CONSTANT } from "../instance.constant";
 import { InstanceEntity } from "../instance.entity";
 import { Injectable, Logger } from "@nestjs/common";
+import { setTimeout } from "node:timers/promises";
 import { ContainerStats } from "dockerode";
 import { env } from "src/config/env";
 
@@ -22,6 +23,10 @@ interface InterfaceState {
   cpu: InterfaceCalculateUsage;
   status: "running" | "stopped";
 }
+
+const SUPERUSER_CREATE_ATTEMPTS = 5;
+
+const SUPERUSER_CREATE_RETRY_DELAY_MS = 2000;
 
 @Injectable()
 export class InstancesService {
@@ -73,12 +78,17 @@ export class InstancesService {
         labels,
       });
 
+      const defaultPassword = this.cryptoService.randomHash();
+
       await this.dockerContainerService.startContainer(containerName);
+
+      await this.createSuperuser(containerName, user.email, defaultPassword);
 
       let instance = this.instanceRepository.create({
         containerName: containerName,
         userID: user.ID,
         ID,
+        defaultPassword,
       });
 
       instance = await this.instanceRepository.save(instance);
@@ -223,8 +233,8 @@ export class InstancesService {
 
     if (status.running === false || status.paused === true) {
       return {
-        cpu: this.zeroUsage(),
-        memory: this.zeroUsage(),
+        cpu: { percent: 0, limit: 0, used: 0 },
+        memory: { percent: 0, limit: 0, used: 0 },
         status: "stopped",
       };
     }
@@ -234,18 +244,31 @@ export class InstancesService {
     const cpu = this.calculateCpuUsage(stats);
     const memory = this.calculateMemoryUsage(stats);
 
-    return {
-      cpu,
-      memory,
-      status: "running",
-    };
+    return { cpu, memory, status: "running" };
   }
+  private async createSuperuser(containerName: string, email: string, password: string): Promise<void> {
+    const cmd = ["/pb/pocketbase", "superuser", "upsert", email, password];
 
-  private zeroUsage(): InterfaceCalculateUsage {
-    return {
-      percent: 0,
-      limit: 0,
-      used: 0,
-    };
+    for (let attempt = 1; attempt <= SUPERUSER_CREATE_ATTEMPTS; attempt++) {
+      try {
+        const { exitCode, stdout, stderr } = await this.dockerContainerService.execContainer(containerName, cmd);
+
+        if (exitCode === 0) {
+          this.logger.log(`Superuser created for instance ${containerName}.`, { email });
+          return;
+        }
+
+        this.logger.warn(
+          `Superuser upsert failed (exit ${exitCode}) on attempt ${attempt} for instance ${containerName}.`,
+          { stdout, stderr },
+        );
+      } catch (error) {
+        this.logger.warn(`Superuser upsert attempt ${attempt} failed for instance ${containerName}.`, error);
+      }
+
+      await setTimeout(SUPERUSER_CREATE_RETRY_DELAY_MS);
+    }
+
+    throw new InstanceContainerException(ContainerErrorReason.SUPERUSER_CREATE_FAILED);
   }
 }

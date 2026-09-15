@@ -22,6 +22,7 @@ export function useCreateInstanceMutation() {
       const optimisticInstance: InterfaceInstance = {
         ID: crypto.randomUUID(),
         containerName: "Creating instance...",
+        defaultPassword: "",
         createdAt,
         updatedAt: createdAt,
         url: "",

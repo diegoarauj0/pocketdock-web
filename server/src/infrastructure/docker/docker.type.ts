@@ -5,6 +5,12 @@ export interface InterfaceContainerStatus {
   paused: boolean;
 }
 
+export interface InterfaceExecResult {
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+}
+
 export interface InterfaceDockerApiError extends Error {
   json?: { message: string };
   statusCode: number;

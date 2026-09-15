@@ -2,6 +2,7 @@ import { httpService } from "@/shared/services/http.service";
 
 export interface InterfaceInstance {
   containerName: string;
+  defaultPassword: string;
   updatedAt: string;
   createdAt: string;
   url: string;

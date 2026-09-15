@@ -13,7 +13,7 @@ export class CryptoService {
     return crypto.randomBytes(bytes).toString("hex").toUpperCase().slice(0, length);
   }
 
-  public createRandomHash(): string {
+  public randomHash(): string {
     return crypto.createHash("sha256").update(crypto.randomBytes(32)).digest("hex");
   }
 
