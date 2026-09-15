@@ -1,17 +1,30 @@
-import type { InterfaceCodeInputRegister } from "@/shared/hooks/useVerificationCode.hook";
 import * as S from "./codeInputs.styled";
+import { OTPInput } from "input-otp";
 
 interface InterfaceCodeInputsProps {
-  getCodeInputRegister: (index: number) => InterfaceCodeInputRegister;
   length: number;
+  value: string;
+  onChange: (nextCode: string) => void;
 }
 
-export function CodeInputsComponent({ length, getCodeInputRegister }: InterfaceCodeInputsProps) {
+export function CodeInputsComponent({ length, value, onChange }: InterfaceCodeInputsProps) {
   return (
-    <S.CodeInputs>
-      {Array.from({ length }, (_, index) => (
-        <S.CodeInput key={index} autoFocus={index === 0} {...getCodeInputRegister(index)} />
-      ))}
-    </S.CodeInputs>
+    <OTPInput
+      value={value}
+      maxLength={length}
+      autoComplete="off"
+      inputMode="text"
+      onChange={onChange}
+      render={({ slots }) => (
+        <S.CodeBoxRow>
+          {slots.map((slot, index) => (
+            <S.CodeBox key={index} $filled={Boolean(slot.char)} $active={slot.isActive}>
+              {slot.char ?? ""}
+              {slot.hasFakeCaret && <S.CodeCaret />}
+            </S.CodeBox>
+          ))}
+        </S.CodeBoxRow>
+      )}
+    />
   );
 }

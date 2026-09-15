@@ -9,34 +9,15 @@ import { AUTH_CONSTANT } from "../../constants/auth.constant";
 import * as S from "./resetPassword.styled";
 import { APP_PATH } from "@/app/app.path";
 
-const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
-
 type ResetPasswordStep = "email" | "password" | "code";
 
 const STEPS: ResetPasswordStep[] = ["email", "password", "code"];
 
 export function ResetPasswordPage() {
-  const {
-    handleCodeSubmit,
-    handlePasswordSubmit,
-    getCodeInputRegister,
-    handleEmailSubmit,
-    handleResend,
-    goToPreviousStep,
-    setConfirmPassword,
-    confirmPassword,
-    setPassword,
-    isResending,
-    isSubmitting,
-    setEmail,
-    fieldError,
-    password,
-    error,
-    email,
-    step,
-  } = useResetPassword();
+  const { handlers, registrars, errors, step, values, previousStep, stats } = useResetPassword();
 
-  const currentStepIndex = STEPS.indexOf(step);
+  const { isResending, isSubmitting } = stats;
+  const { handleCode, handleEmail, handlePassword, handleResend, onChangeCode } = handlers;
 
   const headerByStep = {
     email: {
@@ -49,7 +30,7 @@ export function ResetPasswordPage() {
     },
     code: {
       title: "Verify your email",
-      subtitle: `We sent a ${CODE_LENGTH}-character code to ${email}. Enter it below to confirm it is really you.`,
+      subtitle: `We sent a ${AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH}-character code to ${values.email}. Enter it below to confirm it is really you.`,
     },
   } as const;
 
@@ -63,7 +44,7 @@ export function ResetPasswordPage() {
           <S.FormCard>
             <S.StepIndicator>
               {STEPS.map((item, index) => (
-                <S.StepSegment key={item} $active={index <= currentStepIndex} />
+                <S.StepSegment key={item} $active={index <= STEPS.indexOf(step)} />
               ))}
             </S.StepIndicator>
 
@@ -74,42 +55,38 @@ export function ResetPasswordPage() {
             />
 
             {step === "email" && (
-              <S.Form onSubmit={handleEmailSubmit}>
+              <S.Form onSubmit={handleEmail}>
                 <AuthFieldComponent
                   htmlFor="email"
                   label="Email"
                   type="email"
                   placeholder="you@company.com"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  register={registrars.email}
+                  error={errors.email}
                 />
-
-                {fieldError && <S.ErrorMessage role="alert">{fieldError}</S.ErrorMessage>}
 
                 <PrimaryButtonComponent type="submit">Continue</PrimaryButtonComponent>
               </S.Form>
             )}
 
             {step === "password" && (
-              <S.Form onSubmit={handlePasswordSubmit}>
+              <S.Form onSubmit={handlePassword}>
                 <AuthFieldComponent
                   htmlFor="new-password"
                   label="New password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  register={registrars.password}
+                  error={errors.password}
                 />
                 <AuthFieldComponent
                   htmlFor="confirm-password"
                   label="Confirm new password"
                   type="password"
                   placeholder="••••••••"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
+                  register={registrars.confirmPassword}
+                  error={errors.confirmPassword}
                 />
-
-                {fieldError && <S.ErrorMessage role="alert">{fieldError}</S.ErrorMessage>}
 
                 <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
                   Continue
@@ -118,16 +95,18 @@ export function ResetPasswordPage() {
             )}
 
             {step === "code" && (
-              <>
-                <S.Form onSubmit={handleCodeSubmit}>
-                  <CodeInputsComponent length={CODE_LENGTH} getCodeInputRegister={getCodeInputRegister} />
+              <S.Form onSubmit={handleCode}>
+                <CodeInputsComponent
+                  length={AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH}
+                  value={values.code}
+                  onChange={onChangeCode}
+                />
 
-                  {error && <S.ErrorMessage role="alert">{error}</S.ErrorMessage>}
+               {errors.code && <S.ErrorMessage role="alert">{errors.code}</S.ErrorMessage>}
 
-                  <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                    Reset password
-                  </PrimaryButtonComponent>
-                </S.Form>
+                <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
+                  Reset password
+                </PrimaryButtonComponent>
 
                 <S.ResendPrompt>
                   Didn't receive the code?{" "}
@@ -135,11 +114,11 @@ export function ResetPasswordPage() {
                     Resend code
                   </S.ResendButton>
                 </S.ResendPrompt>
-              </>
+              </S.Form>
             )}
 
-            {currentStepIndex > 0 && (
-              <S.BackButton type="button" onClick={goToPreviousStep}>
+            {step !== "email" && (
+              <S.BackButton type="button" onClick={previousStep}>
                 Back
               </S.BackButton>
             )}

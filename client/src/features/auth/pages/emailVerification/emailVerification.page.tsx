@@ -30,7 +30,11 @@ export function EmailVerificationPage() {
             />
 
             <S.Form onSubmit={handleSubmit}>
-              <CodeInputsComponent length={CODE_LENGTH} getCodeInputRegister={emailVerification.getCodeInputRegister} />
+              <CodeInputsComponent
+                length={CODE_LENGTH}
+                value={emailVerification.code}
+                onChange={emailVerification.handleCodeChange}
+              />
 
               {error && <S.ErrorMessage role="alert">{error}</S.ErrorMessage>}
 

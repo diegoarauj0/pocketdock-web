@@ -1,81 +1,63 @@
 import { useForgotPasswordVerifyMutation } from "../mutations/useForgotPasswordVerifyMutation.hook";
 import { useForgotPasswordResendMutation } from "../mutations/useForgotPasswordResendMutation.hook";
-import type { InterfaceCodeInputRegister } from "@/shared/hooks/useVerificationCode.hook";
+import { getEmailSchema, type InterfaceEmailFormValues } from "../validations/email.validation";
 import { useForgotPasswordMutation } from "../mutations/useForgotPasswordMutation.hook";
 import { type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
 import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
-import type { FormEvent, SubmitEvent } from "react";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
-
-const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
-
-const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
+import { useForm } from "react-hook-form";
+import {
+  getPasswordAndConfirmSchema,
+  type InterfacePasswordAndConfirmFormValues,
+} from "../validations/passwordAndConfirm.validation";
 
 type ResetPasswordStep = "email" | "password" | "code";
 
-const STEPS: ResetPasswordStep[] = ["email", "password", "code"];
-
-interface InterfaceUseResetPasswordReturn {
-  handleCodeSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
-  handlePasswordSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  getCodeInputRegister: (index: number) => InterfaceCodeInputRegister;
-  handleEmailSubmit: (event: FormEvent<HTMLFormElement>) => void;
-  handleResend: () => void;
-  goToPreviousStep: () => void;
-  setConfirmPassword: (value: string) => void;
-  confirmPassword: string;
-  setPassword: (value: string) => void;
-  isResending: boolean;
-  isSubmitting: boolean;
-  setEmail: (value: string) => void;
-  fieldError: string;
-  password: string;
-  error: string;
-  email: string;
-  step: ResetPasswordStep;
-}
-
-export function useResetPassword(): InterfaceUseResetPasswordReturn {
+export function useResetPassword() {
   const navigate = useNavigate();
-  const forgotPasswordMutation = useForgotPasswordMutation();
-  const forgotPasswordVerifyMutation = useForgotPasswordVerifyMutation();
-  const forgotPasswordResendMutation = useForgotPasswordResendMutation();
 
   const [step, setStep] = useState<ResetPasswordStep>("email");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [fieldError, setFieldError] = useState("");
-  const [serverError, setServerError] = useState("");
 
-  const {
-    handleSubmit,
-    getCodeInputRegister,
-    error: codeError,
-    reset,
-  } = useVerificationCode({
-    length: CODE_LENGTH,
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isResending, setIsResending] = useState<boolean>(false);
+
+  const forgotPasswordVerifyMutation = useForgotPasswordVerifyMutation();
+  const forgotPasswordResendMutation = useForgotPasswordResendMutation();
+  const forgotPasswordMutation = useForgotPasswordMutation();
+
+  const emailForm = useForm<InterfaceEmailFormValues>({
+    resolver: zodResolver(getEmailSchema()),
   });
+
+  const passwordForm = useForm<InterfacePasswordAndConfirmFormValues>({
+    resolver: zodResolver(getPasswordAndConfirmSchema()),
+  });
+
+  const verificationCode = useVerificationCode({ length: AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH });
 
   const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.RESET_PASSWORD;
 
   const handleError = useCallback(
     (error: unknown) => {
+      setIsSubmitting(false);
+      setIsResending(false);
+
       if (error instanceof ApiResponseError) {
         if (error.code === ERROR_CODES.INVALID_EMAIL_VERIFICATION_CODE) {
-          notificationService.error("The code you entered is invalid or has expired.");
+          notificationService.error("The code you entered is invalid or has expired.", notificationID);
+          verificationCode.setError("The code you entered is invalid or has expired.");
 
-          setServerError("The code you entered is invalid or has expired.");
-          reset();
+          return verificationCode.reset();
         }
 
         if (error.code === ERROR_CODES.CONCURRENT_EMAIL_VERIFICATION) {
-          notificationService.error("We already sent you a code. Please check your inbox.");
+          notificationService.error("We already sent you a code. Please check your inbox.", notificationID);
         }
 
         if (error.code === ERROR_CODES.VALIDATION_ERROR) {
@@ -83,11 +65,19 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
 
           details.forEach(({ name, reasons }) => {
             if (name === "code") {
-              setServerError(reasons[0].message);
+              setStep("code");
+              notificationService.error("We already sent you a code. Please check your inbox.", notificationID);
+              verificationCode.setError(reasons[0].message);
             }
 
-            if (name === "email" || name === "password") {
-              setFieldError(reasons[0].message);
+            if (name === "email") {
+              setStep("email");
+              emailForm.setError("email", { message: reasons[0].message });
+            }
+
+            if (name === "password") {
+              setStep("password");
+              passwordForm.setError("password", { message: reasons[0].message });
             }
           });
         }
@@ -95,112 +85,110 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
 
       notificationService.error("Unknown error.", notificationID);
     },
-    [notificationID, reset],
+    [emailForm, passwordForm, notificationID, verificationCode],
   );
 
-  const handleForgotPasswordSuccess = useCallback(() => {
-    notificationService.success("We sent a reset code to your email.", notificationID);
-
-    setStep("code");
-  }, [notificationID]);
-
   const handleVerifySuccess = useCallback(() => {
+    setIsSubmitting(false);
+
     notificationService.success("Password updated! You can now sign in.", notificationID);
 
     navigate(APP_PATH.AUTH.SIGN_IN);
   }, [notificationID, navigate]);
 
   const handleResendSuccess = useCallback(() => {
+    setIsResending(false);
+
     notificationService.success("A new reset code was sent to your email.", notificationID);
 
-    reset();
-  }, [notificationID, reset]);
+    verificationCode.reset();
+  }, [notificationID, verificationCode]);
 
-  const handleEmailSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      setFieldError("");
+  const handleResend = useCallback(() => {
+    setIsResending(true);
 
-      if (!EMAIL_PATTERN.test(email.trim())) {
-        setFieldError("Enter a valid email address.");
-        return;
-      }
+    notificationService.loading("Resending your reset code...", notificationID);
 
-      setStep("password");
-    },
-    [email],
-  );
+    const email = emailForm.getValues("email");
 
-  const handlePasswordSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      setFieldError("");
+    forgotPasswordResendMutation.mutate({ email }, { onSuccess: handleResendSuccess, onError: handleError });
+  }, [emailForm, forgotPasswordResendMutation, notificationID, handleResendSuccess, handleError]);
 
-      if (password.length < AUTH_CONSTANT.PASSWORD_MIN_LENGTH) {
-        setFieldError(`Password must be at least ${AUTH_CONSTANT.PASSWORD_MIN_LENGTH} characters.`);
-        return;
-      }
+  const handleEmail = emailForm.handleSubmit(() => {
+    if (step !== "email") return;
 
-      if (password !== confirmPassword) {
-        setFieldError("Passwords do not match.");
-        return;
-      }
+    setStep("password");
+  });
 
-      notificationService.loading("Sending your reset code...", notificationID);
+  const handleForgotPasswordSuccess = useCallback(() => {
+    setIsSubmitting(false);
 
-      forgotPasswordMutation.mutate(
-        { email, password },
-        { onSuccess: handleForgotPasswordSuccess, onError: handleError },
-      );
-    },
-    [
-      confirmPassword,
-      email,
-      forgotPasswordMutation,
-      handleError,
-      handleForgotPasswordSuccess,
-      notificationID,
-      password,
-    ],
-  );
+    notificationService.success("We sent a reset code to your email.", notificationID);
 
-  const codeSubmitHandler = handleSubmit((code) => {
-    setServerError("");
+    setStep("code");
+  }, [notificationID]);
+
+  const handlePassword = passwordForm.handleSubmit(({ password }) => {
+    if (step !== "password") return;
+
+    setIsSubmitting(true);
+
+    notificationService.loading("Sending your reset code...", notificationID);
+
+    const email = emailForm.getValues("email");
+
+    forgotPasswordMutation.mutate(
+      { email, password },
+      { onSuccess: handleForgotPasswordSuccess, onError: handleError },
+    );
+  });
+
+  const handleCode = verificationCode.handleSubmit((code) => {
+    if (step !== "code") return;
+
+    setIsSubmitting(true);
 
     notificationService.loading("Verifying your code...", notificationID);
+
+    const email = emailForm.getValues("email");
 
     forgotPasswordVerifyMutation.mutate({ email, code }, { onSuccess: handleVerifySuccess, onError: handleError });
   });
 
-  const handleResend = useCallback(() => {
-    notificationService.loading("Resending your reset code...", notificationID);
-
-    forgotPasswordResendMutation.mutate({ email }, { onSuccess: handleResendSuccess, onError: handleError });
-  }, [email, forgotPasswordResendMutation, handleError, handleResendSuccess, notificationID]);
-
-  const goToPreviousStep = useCallback(() => {
-    setFieldError("");
-    setServerError("");
-    setStep(STEPS[STEPS.indexOf(step) - 1]);
+  const previousStep = useCallback(() => {
+    if (step === "code") return setStep("password");
+    if (step === "password") return setStep("email");
   }, [step]);
 
   return {
-    handleCodeSubmit: codeSubmitHandler,
-    handlePasswordSubmit,
-    getCodeInputRegister,
-    handleEmailSubmit,
-    handleResend,
-    goToPreviousStep,
-    setConfirmPassword,
-    confirmPassword,
-    setPassword,
-    isResending: forgotPasswordResendMutation.isPending,
-    isSubmitting: forgotPasswordMutation.isPending || forgotPasswordVerifyMutation.isPending,
-    setEmail,
-    fieldError,
-    password,
-    error: codeError || serverError,
-    email,
     step,
+    previousStep,
+    handlers: {
+      handleCode,
+      handlePassword,
+      handleEmail,
+      handleResend,
+      onChangeCode: verificationCode.handleCodeChange,
+    },
+    values: {
+      email: emailForm.getValues("email"),
+      password: passwordForm.getValues("password"),
+      code: verificationCode.code,
+    },
+    stats: {
+      isSubmitting: isSubmitting,
+      isResending: isResending,
+    },
+    errors: {
+      email: emailForm.formState.errors.email?.message,
+      password: passwordForm.formState.errors.password?.message,
+      confirmPassword: passwordForm.formState.errors.confirmPassword?.message,
+      code: verificationCode.error,
+    },
+    registrars: {
+      email: emailForm.register("email"),
+      password: passwordForm.register("password"),
+      confirmPassword: passwordForm.register("confirmPassword"),
+    },
   };
 }

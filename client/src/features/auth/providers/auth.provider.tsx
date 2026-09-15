@@ -69,12 +69,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
   );
 
   const signOut = useCallback(async () => {
+    await logout();
+
     tokenStoreService.clear();
 
     setState("unauthenticated");
     setUser(null);
-
-    await logout();
   }, [logout]);
 
   useEffect(() => {
