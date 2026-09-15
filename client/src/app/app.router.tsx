@@ -23,7 +23,6 @@ export const router = createBrowserRouter([
         children: [{ index: true, element: <EmailVerificationPage /> }],
       },
       { path: APP_PATH.AUTH.RESET_PASSWORD, element: <ResetPasswordPage /> },
-      { path: "*", element: <Navigate to={APP_PATH.AUTH.SIGN_IN} replace /> },
     ],
   },
   { path: APP_PATH.HOME, element: <HomePage /> },
@@ -31,7 +30,8 @@ export const router = createBrowserRouter([
     element: <PrivateRouteComponent />,
     children: [
       { path: APP_PATH.INSTANCES, element: <InstancesPage /> },
-      { path: APP_PATH.INSTANCE, element: <InstancePage /> }
+      { path: APP_PATH.INSTANCE, element: <InstancePage /> },
     ],
   },
+  { path: "*", element: <Navigate to={APP_PATH.HOME} replace /> },
 ]);

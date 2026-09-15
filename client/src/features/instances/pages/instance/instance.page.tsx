@@ -9,7 +9,7 @@ import { ArrowLeft, Check, CircleAlert, Copy, Cpu, MemoryStick, Play, Square, Tr
 import { useInstanceQuery } from "../../queries/useInstance.query";
 import { useStateQuery } from "../../queries/useState.query";
 import { Link, useNavigate, useParams } from "react-router";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
 import { APP_PATH } from "@/app/app.path";
 import { useState } from "react";
 import * as S from "./instance.styled";
@@ -48,7 +48,7 @@ export function InstancePage() {
   };
 
   const handleStopInstance = () => {
-    const notificationID = APP_CONSTANT.NOTIFICATION_IDS.STOP_INSTANCE;
+    const notificationID = INSTANCE_CONSTANT.NOTIFICATION_IDS.STOP_INSTANCE;
 
     notificationService.loading("Stopping instance...", notificationID);
 
@@ -62,7 +62,7 @@ export function InstancePage() {
   };
 
   const handleStartInstance = () => {
-    const notificationID = APP_CONSTANT.NOTIFICATION_IDS.START_INSTANCE;
+    const notificationID = INSTANCE_CONSTANT.NOTIFICATION_IDS.START_INSTANCE;
 
     notificationService.loading("Starting instance...", notificationID);
 
@@ -76,7 +76,7 @@ export function InstancePage() {
   };
 
   const handleDeleteInstance = () => {
-    const notificationID = APP_CONSTANT.NOTIFICATION_IDS.DELETE_INSTANCE;
+    const notificationID = INSTANCE_CONSTANT.NOTIFICATION_IDS.DELETE_INSTANCE;
 
     notificationService.loading("Deleting instance...", notificationID);
 

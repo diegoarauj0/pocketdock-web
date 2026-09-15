@@ -1,0 +1,3 @@
+export const NOTIFICATION_CONSTANT = {
+  NOTIFICATION_AUTO_CLOSE: 5000,
+} as const;

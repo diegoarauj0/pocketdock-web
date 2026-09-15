@@ -1,5 +1,5 @@
 import type { InterfaceInstance } from "@/features/instances/services/instances.service";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
 import * as S from "./instanceCard.styled";
 import { Container } from "lucide-react";
 
@@ -21,7 +21,7 @@ function formatDate(value: string): string {
 
 export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) {
   return (
-    <S.Card to={`/${APP_CONSTANT.ROUTER.INSTANCES.INSTANCE}/${instance.ID}`}>
+    <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.ID}`}>
       <S.Header>
         <S.IconArea>
           <Container size={24} />

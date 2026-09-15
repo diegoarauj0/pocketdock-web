@@ -7,12 +7,12 @@ import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import type { FormEvent, SubmitEvent } from "react";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
 
-const CODE_LENGTH = APP_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
+const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/;
 
@@ -62,7 +62,7 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
     length: CODE_LENGTH,
   });
 
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.RESET_PASSWORD;
+  const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.RESET_PASSWORD;
 
   const handleError = useCallback(
     (error: unknown) => {
@@ -136,8 +136,8 @@ export function useResetPassword(): InterfaceUseResetPasswordReturn {
       event.preventDefault();
       setFieldError("");
 
-      if (password.length < APP_CONSTANT.PASSWORD_MIN_LENGTH) {
-        setFieldError(`Password must be at least ${APP_CONSTANT.PASSWORD_MIN_LENGTH} characters.`);
+      if (password.length < AUTH_CONSTANT.PASSWORD_MIN_LENGTH) {
+        setFieldError(`Password must be at least ${AUTH_CONSTANT.PASSWORD_MIN_LENGTH} characters.`);
         return;
       }
 

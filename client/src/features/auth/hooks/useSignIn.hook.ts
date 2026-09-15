@@ -6,7 +6,7 @@ import { useSignInMutation } from "../mutations/useSignInMutation.hook";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { getSignInSchema } from "../validations/signIn.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 import type { BaseSyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
@@ -32,7 +32,7 @@ export function useSignIn(): InterfaceUseSignInReturn {
   const { register, handleSubmit, setError, formState } = form;
   const { errors } = formState;
 
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.SIGN_IN;
+  const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.SIGN_IN;
 
   const handleError = useCallback(
     (error: unknown) => {

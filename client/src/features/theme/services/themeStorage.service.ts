@@ -1,16 +1,16 @@
-import type { ThemeType } from "@/features/theme/contexts/theme.context";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { THEME_CONSTANT } from "../constants/theme.constant";
+import type { ThemeType } from "../contexts/theme.context";
 
 export const themeStorageService = {
   setTheme: (theme: ThemeType) => {
-    localStorage.setItem(APP_CONSTANT.THEME_STORAGE_KEY, theme);
+    localStorage.setItem(THEME_CONSTANT.THEME_STORAGE_KEY, theme);
   },
 
   clear: () => {
-    localStorage.removeItem(APP_CONSTANT.THEME_STORAGE_KEY);
+    localStorage.removeItem(THEME_CONSTANT.THEME_STORAGE_KEY);
   },
 
   getTheme: (): ThemeType | null => {
-    return localStorage.getItem(APP_CONSTANT.THEME_STORAGE_KEY) as ThemeType;
+    return localStorage.getItem(THEME_CONSTANT.THEME_STORAGE_KEY) as ThemeType;
   },
 };

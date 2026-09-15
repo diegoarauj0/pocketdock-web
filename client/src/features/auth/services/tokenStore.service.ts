@@ -1,13 +1,13 @@
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 
 export const tokenStoreService = {
-  get: (): string | null => localStorage.getItem(APP_CONSTANT.ACCESS_TOKEN_STORAGE_KEY),
+  get: (): string | null => localStorage.getItem(AUTH_CONSTANT.ACCESS_TOKEN_STORAGE_KEY),
 
   set: (token: string) => {
-    localStorage.setItem(APP_CONSTANT.ACCESS_TOKEN_STORAGE_KEY, token);
+    localStorage.setItem(AUTH_CONSTANT.ACCESS_TOKEN_STORAGE_KEY, token);
   },
 
   clear: () => {
-    localStorage.removeItem(APP_CONSTANT.ACCESS_TOKEN_STORAGE_KEY);
+    localStorage.removeItem(AUTH_CONSTANT.ACCESS_TOKEN_STORAGE_KEY);
   },
 };

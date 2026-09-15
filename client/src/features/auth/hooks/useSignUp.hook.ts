@@ -8,7 +8,7 @@ import type { InterfaceSignUpRequest } from "../services/auth.service";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { getSignUpSchema } from "../validations/signUp.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 import type { BaseSyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
@@ -34,7 +34,7 @@ export function useSignUp(): InterfaceUseSignUpReturn {
   const { register, handleSubmit, setError, formState } = form;
   const { errors } = formState;
 
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.SIGN_UP;
+  const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.SIGN_UP;
 
   const handleError = useCallback(
     (error: unknown) => {

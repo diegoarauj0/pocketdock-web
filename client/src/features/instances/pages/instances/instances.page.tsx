@@ -5,7 +5,7 @@ import { useInstancesQuery } from "@/features/instances/queries/useInstances.que
 import { ApiResponseError } from "@/shared/http/http.client";
 import { notificationService } from "@/shared/services/notification.service";
 import { HeaderComponent } from "@/shared/components/header/header.component";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { INSTANCE_CONSTANT } from "@/features/instances/constants/instance.constant";
 import * as S from "./instances.styled";
 import { Plus } from "lucide-react";
 
@@ -15,7 +15,7 @@ export function InstancesPage() {
 
   const total = instances?.length || 0;
 
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.CREATE_INSTANCE;
+  const notificationID = INSTANCE_CONSTANT.NOTIFICATION_IDS.CREATE_INSTANCE;
 
   const handleCreateInstance = () => {
     notificationService.loading("Creating instance...", notificationID);

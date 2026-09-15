@@ -1,11 +1,11 @@
-import { APP_CONSTANT } from "@/app/app.constant";
+import { NOTIFICATION_CONSTANT } from "@/shared/constants/notification.constant";
 import { toast } from "react-toastify";
 
 export const notificationService = {
   loading: (content: string, notificationID?: string): string => {
     if (notificationID && toast.isActive(notificationID || "")) {
       toast.update(notificationID || "", {
-        autoClose: APP_CONSTANT.NOTIFICATION_AUTO_CLOSE,
+        autoClose: NOTIFICATION_CONSTANT.NOTIFICATION_AUTO_CLOSE,
         isLoading: true,
         render: content,
       });
@@ -19,7 +19,7 @@ export const notificationService = {
   success: (content: string, notificationID?: string): string | undefined => {
     if (notificationID && toast.isActive(notificationID || "")) {
       toast.update(notificationID, {
-        autoClose: APP_CONSTANT.NOTIFICATION_AUTO_CLOSE,
+        autoClose: NOTIFICATION_CONSTANT.NOTIFICATION_AUTO_CLOSE,
         isLoading: false,
         render: content,
         type: "success",
@@ -34,7 +34,7 @@ export const notificationService = {
   error: (content: string, notificationID?: string): string | undefined => {
     if (notificationID && toast.isActive(notificationID || "")) {
       toast.update(notificationID, {
-        autoClose: APP_CONSTANT.NOTIFICATION_AUTO_CLOSE,
+        autoClose: NOTIFICATION_CONSTANT.NOTIFICATION_AUTO_CLOSE,
         isLoading: false,
         render: content,
         type: "error",
@@ -49,7 +49,7 @@ export const notificationService = {
   warning: (content: string, notificationID?: string): string | undefined => {
     if (notificationID && toast.isActive(notificationID || "")) {
       toast.update(notificationID, {
-        autoClose: APP_CONSTANT.NOTIFICATION_AUTO_CLOSE,
+        autoClose: NOTIFICATION_CONSTANT.NOTIFICATION_AUTO_CLOSE,
         isLoading: false,
         render: content,
         type: "warning",

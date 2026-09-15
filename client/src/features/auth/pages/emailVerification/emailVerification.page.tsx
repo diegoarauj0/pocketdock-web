@@ -4,11 +4,11 @@ import { CodeInputsComponent } from "@/shared/components/codeInputs/codeInputs.c
 import { FormHeaderComponent } from "../../components/formHeader/formHeader.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { useEmailVerification } from "../../hooks/useEmailVerification.hook";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../../constants/auth.constant";
 import * as S from "./emailVerification.styled";
 import { APP_PATH } from "@/app/app.path";
 
-const CODE_LENGTH = APP_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
+const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
 export function EmailVerificationPage() {
   const emailVerification = useEmailVerification();

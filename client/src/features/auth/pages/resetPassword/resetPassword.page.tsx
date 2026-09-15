@@ -5,11 +5,11 @@ import { FormHeaderComponent } from "../../components/formHeader/formHeader.comp
 import { AuthFieldComponent } from "../../components/authField/authField.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { useResetPassword } from "../../hooks/useResetPassword.hook";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../../constants/auth.constant";
 import * as S from "./resetPassword.styled";
 import { APP_PATH } from "@/app/app.path";
 
-const CODE_LENGTH = APP_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
+const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
 type ResetPasswordStep = "email" | "password" | "code";
 

@@ -5,12 +5,12 @@ import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useLocation, useNavigate } from "react-router";
-import { APP_CONSTANT } from "@/app/app.constant";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { useCallback, useState } from "react";
 import { APP_PATH } from "@/app/app.path";
 import type { SubmitEvent } from "react";
 
-const CODE_LENGTH = APP_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
+const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
 interface InterfaceEmailLocationState {
   email?: string;
@@ -43,7 +43,7 @@ export function useEmailVerification(): InterfaceUseEmailVerificationReturn {
 
   const stateEmail = (location.state as InterfaceEmailLocationState | null)?.email;
   const email = typeof stateEmail === "string" ? stateEmail.trim() : "";
-  const notificationID = APP_CONSTANT.NOTIFICATION_IDS.EMAIL_VERIFICATION;
+  const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.EMAIL_VERIFICATION;
 
   const handleError = useCallback(
     (error: unknown) => {
