@@ -11,4 +11,5 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "src"),
     },
   },
+  envDir: path.resolve(import.meta.dirname, "..")
 });

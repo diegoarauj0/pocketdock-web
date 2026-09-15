@@ -1,12 +1,12 @@
 import { MailStrategyID } from "src/modules/mail/strategies/base.strategy";
 import { randomBytes } from "node:crypto";
 import { config } from "dotenv";
+import path from "node:path";
 import { z } from "zod";
 
 config({
-  path: [`.env.${process.env.NODE_ENV || "development"}`, ".env"],
+  path: [path.join(__dirname, "..", "..", "..", ".env")],
 });
-
 const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
