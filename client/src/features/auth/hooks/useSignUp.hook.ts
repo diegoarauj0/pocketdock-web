@@ -1,6 +1,5 @@
 import { type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
 import type { InterfaceSignUpFormValues } from "../validations/signUp.validation";
-import type { InterfaceSignInFormValues } from "../validations/signIn.validation";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useSignUpMutation } from "../mutations/useSignUp.mutation";
@@ -9,12 +8,15 @@ import { getSignUpSchema } from "../validations/signUp.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { useCallback, useMemo } from "react";
+import { translateServerError } from "@/features/locale/services/translateServerError.service";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
 
 export function useSignUp() {
-  const signUpSchema = useMemo(() => getSignUpSchema(), []);
+  const { t } = useTranslation(["auth", "common"]);
+  const signUpSchema = useMemo(() => getSignUpSchema(t), [t]);
   const signUpMutation = useSignUpMutation();
   const navigate = useNavigate();
 
@@ -34,23 +36,28 @@ export function useSignUp() {
           const details = error.details as InterfaceValidationErrorDetails[];
 
           details.forEach(({ name, reasons }) => {
-            setError(name as keyof InterfaceSignInFormValues, { type: "server", message: reasons[0].message });
+            setError(name as keyof InterfaceSignUpFormValues, {
+              type: "server",
+              message: reasons[0].message,
+            });
           });
         }
       }
 
-      notificationService.error("Unknown error.", notificationID);
+      notificationService.error(translateServerError(t, error), notificationID);
     },
-    [notificationID, setError],
+    [notificationID, setError, t],
   );
 
   const handleSuccess = useCallback(
     (_data: void, variables: InterfaceSignUpRequest) => {
-      notificationService.success("Account created! Check your email to verify your account.", notificationID);
+      notificationService.success(t("NOTIFICATION_SIGN_UP_SUCCESS"), notificationID);
 
-      navigate(APP_PATH.AUTH.EMAIL_VERIFICATION, { state: { email: variables.email } });
+      navigate(APP_PATH.AUTH.EMAIL_VERIFICATION, {
+        state: { email: variables.email },
+      });
     },
-    [notificationID, navigate],
+    [notificationID, navigate, t],
   );
 
   const submitHandler = handleSubmit(async (values) => {
@@ -60,7 +67,7 @@ export function useSignUp() {
       email: values.email,
     };
 
-    notificationService.loading("Creating your account...", notificationID);
+    notificationService.loading(t("NOTIFICATION_SIGN_UP_LOADING"), notificationID);
 
     signUpMutation.mutate(request, {
       onSuccess: handleSuccess,
@@ -68,5 +75,10 @@ export function useSignUp() {
     });
   });
 
-  return { register, errors, isSubmitting: signUpMutation.isPending, handleSubmit: submitHandler };
+  return {
+    register,
+    errors,
+    isSubmitting: signUpMutation.isPending,
+    handleSubmit: submitHandler,
+  };
 }

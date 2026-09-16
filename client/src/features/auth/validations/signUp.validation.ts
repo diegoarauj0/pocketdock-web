@@ -1,26 +1,47 @@
 import { z } from "zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
+import type { TFunction } from "i18next";
 
-export function getSignUpSchema() {
+export function getSignUpSchema(t: TFunction) {
   return z
     .object({
       username: z
         .string()
-        .min(AUTH_CONSTANT.USERNAME_MIN_LENGTH, "Name is required.")
-        .max(AUTH_CONSTANT.USERNAME_MAX_LENGTH, `Name must be at most ${AUTH_CONSTANT.USERNAME_MAX_LENGTH} characters.`),
+        .min(AUTH_CONSTANT.USERNAME_MIN_LENGTH, t("VALIDATION_NAME_REQUIRED"))
+        .max(
+          AUTH_CONSTANT.USERNAME_MAX_LENGTH,
+          t("VALIDATION_NAME_MAX_LENGTH", {
+            max: AUTH_CONSTANT.USERNAME_MAX_LENGTH,
+          }),
+        ),
       email: z
-        .email("Enter a valid email.")
-        .min(AUTH_CONSTANT.EMAIL_MIN_LENGTH, "Email is required.")
-        .max(AUTH_CONSTANT.EMAIL_MAX_LENGTH, `Email must be at most ${AUTH_CONSTANT.EMAIL_MAX_LENGTH} characters.`),
+        .email(t("VALIDATION_EMAIL_FORMAT"))
+        .min(AUTH_CONSTANT.EMAIL_MIN_LENGTH, t("VALIDATION_EMAIL_REQUIRED"))
+        .max(
+          AUTH_CONSTANT.EMAIL_MAX_LENGTH,
+          t("VALIDATION_EMAIL_MAX_LENGTH", {
+            max: AUTH_CONSTANT.EMAIL_MAX_LENGTH,
+          }),
+        ),
       password: z
         .string()
-        .min(AUTH_CONSTANT.PASSWORD_MIN_LENGTH, `Password must be at least ${AUTH_CONSTANT.PASSWORD_MIN_LENGTH} characters.`)
-        .max(AUTH_CONSTANT.PASSWORD_MAX_LENGTH, `Password must be at most ${AUTH_CONSTANT.PASSWORD_MAX_LENGTH} characters.`),
+        .min(
+          AUTH_CONSTANT.PASSWORD_MIN_LENGTH,
+          t("VALIDATION_PASSWORD_MIN_LENGTH", {
+            min: AUTH_CONSTANT.PASSWORD_MIN_LENGTH,
+          }),
+        )
+        .max(
+          AUTH_CONSTANT.PASSWORD_MAX_LENGTH,
+          t("VALIDATION_PASSWORD_MAX_LENGTH", {
+            max: AUTH_CONSTANT.PASSWORD_MAX_LENGTH,
+          }),
+        ),
       confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       path: ["confirmPassword"],
-      message: "Passwords do not match.",
+      message: t("VALIDATION_PASSWORDS_MATCH"),
     });
 }
 

@@ -9,9 +9,11 @@ import { useStateQuery } from "../../queries/useState.query";
 import { Link, useParams } from "react-router";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./instance.styled";
+import { useTranslation } from "react-i18next";
 
 export function InstancePage() {
   const { ID } = useParams<{ ID: string }>();
+  const { t } = useTranslation("instances");
 
   const instanceQuery = useInstanceQuery(ID);
   const stateQuery = useStateQuery(ID);
@@ -36,12 +38,12 @@ export function InstancePage() {
               <CircleAlert size={48} />
             </S.ErrorIcon>
 
-            <S.ErrorTitle>Could not load the instance</S.ErrorTitle>
-            <S.ErrorMessage>Something went wrong while loading the instance data. Try again later.</S.ErrorMessage>
+            <S.ErrorTitle>{t("INSTANCE_LOAD_ERROR_TITLE")}</S.ErrorTitle>
+            <S.ErrorMessage>{t("INSTANCE_LOAD_ERROR_MESSAGE")}</S.ErrorMessage>
 
             <S.ErrorBackLink>
               <Link to={APP_PATH.INSTANCES}>
-                <ArrowLeft /> Back to instances
+                <ArrowLeft /> {t("INSTANCE_BACK_TO_LIST")}
               </Link>
             </S.ErrorBackLink>
           </S.ErrorState>
@@ -61,7 +63,7 @@ export function InstancePage() {
         <S.InstanceHeader>
           <S.PreviewLink>
             <Link to={APP_PATH.INSTANCES}>
-              <ArrowLeft /> Preview
+              <ArrowLeft /> {t("INSTANCE_PREVIEW")}
             </Link>
           </S.PreviewLink>
 
@@ -77,15 +79,15 @@ export function InstancePage() {
               onClick={state.status === "running" ? handleStopInstance : handleStartInstance}
             >
               {state.status === "running" ? <Square /> : <Play />}
-              {state.status === "running" ? "Stop" : "Start"}
+              {state.status === "running" ? t("INSTANCE_STOP") : t("INSTANCE_START")}
             </S.StartOrStopInstance>
             <S.DeleteInstance type="button" onClick={handleDeleteInstance}>
-              <Trash /> Remove
+              <Trash /> {t("INSTANCE_REMOVE")}
             </S.DeleteInstance>
           </S.ButtonGroup>
 
           <S.Status $isRunning={state.status === "running"}>
-            {state.status === "running" ? "• Running" : "• Stopped"}
+            {state.status === "running" ? t("INSTANCE_RUNNING_STATUS") : t("INSTANCE_STOPPED_STATUS")}
           </S.Status>
         </S.InstanceHeader>
 

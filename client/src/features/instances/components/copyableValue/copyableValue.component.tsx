@@ -1,6 +1,7 @@
 import { Check, Copy } from "lucide-react";
 import * as S from "./copyableValue.styled";
 import { useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface InterfaceCopyableValueProps {
   panelURL: string;
@@ -8,6 +9,7 @@ interface InterfaceCopyableValueProps {
 }
 
 export function CopyableValueComponent({ panelURL, value }: InterfaceCopyableValueProps) {
+  const { t } = useTranslation("instances");
   const [copied, setCopied] = useState<boolean>(false);
 
   const handleCopy = useCallback(async () => {
@@ -25,7 +27,7 @@ export function CopyableValueComponent({ panelURL, value }: InterfaceCopyableVal
       <S.FieldValue>{panelURL}</S.FieldValue>
       <S.CopyButton type="button" onClick={() => handleCopy()}>
         {copied ? <Check size={14} /> : <Copy size={14} />}
-        {copied ? "Copied" : "Copy"}
+        {copied ? t("INSTANCE_COPIED") : t("INSTANCE_COPY")}
       </S.CopyButton>
     </S.CopyableValue>
   );

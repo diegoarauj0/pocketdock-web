@@ -13,13 +13,13 @@ export class EmailAndPasswordDto {
   @ApiProperty({
     type: "string",
     format: "password",
-    description: `Senha do usuário (entre ${PASSWORD_CONSTANT.MIN_LENGTH} e ${PASSWORD_CONSTANT.MAX_LENGTH} caracteres)`,
-    minLength: PASSWORD_CONSTANT.MIN_LENGTH,
+    description: `Senha do usuário`,
+    minLength: 1,
     maxLength: PASSWORD_CONSTANT.MAX_LENGTH,
     example: "senha-segura-123",
   })
   @IsString()
-  @MinLength(PASSWORD_CONSTANT.MIN_LENGTH)
+  @MinLength(1)
   @MaxLength(PASSWORD_CONSTANT.MAX_LENGTH)
   @IsNotEmpty()
   public password!: string;

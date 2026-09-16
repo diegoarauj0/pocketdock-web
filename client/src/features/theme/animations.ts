@@ -53,14 +53,13 @@ export const fadeInDown = (delayMs = 0) => css`
   animation: ${fadeInDownKeyframes} ${FADE_DURATION} ${FADE_EASING} ${delayMs}ms both;
 `;
 
-export const staggerFadeInUp = (
-  fromDelayMs = 0,
-  stepMs = STAGGER_STEP_MS,
-  childSelector = "& > *",
-) => css`
-  ${Array.from({ length: STAGGER_CHILD_COUNT }, (_, index) => css`
-    ${childSelector}:nth-child(${index + 1}) {
-      animation: ${fadeInUpKeyframes} ${FADE_DURATION} ${FADE_EASING} ${fromDelayMs + index * stepMs}ms both;
-    }
-  `)}
+export const staggerFadeInUp = (fromDelayMs = 0, stepMs = STAGGER_STEP_MS, childSelector = "& > *") => css`
+  ${Array.from(
+    { length: STAGGER_CHILD_COUNT },
+    (_, index) => css`
+      ${childSelector}:nth-child(${index + 1}) {
+        animation: ${fadeInUpKeyframes} ${FADE_DURATION} ${FADE_EASING} ${fromDelayMs + index * stepMs}ms both;
+      }
+    `,
+  )}
 `;

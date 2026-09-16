@@ -9,7 +9,7 @@ export const AUTH_CONSTANT = {
     SIGN_UP: "signUp",
     EMAIL_VERIFICATION: "emailVerification",
     RESET_PASSWORD: "resetPassword",
-    OAUTH_CALLBACK: "oauthCallback"
+    OAUTH_CALLBACK: "oauthCallback",
   },
 
   NOTIFICATION_IDS: {
@@ -17,6 +17,7 @@ export const AUTH_CONSTANT = {
     SIGN_UP: "signUp",
     EMAIL_VERIFICATION: "emailVerification",
     RESET_PASSWORD: "resetPassword",
+    OAUTH_SIGN_IN: "oauthSignIn",
   },
 
   EMAIL_MAX_LENGTH: 255,

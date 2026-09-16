@@ -1,6 +1,7 @@
 import { PrimaryButtonComponent } from "@/shared/components/primaryButton/primaryButton.component";
 import { HeaderComponent } from "@/shared/components/header/header.component";
 import { useAuth } from "@/features/auth/contexts/auth.context";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./home.styled";
@@ -8,6 +9,7 @@ import * as S from "./home.styled";
 export function HomePage() {
   const navigate = useNavigate();
   const { state } = useAuth();
+  const { t } = useTranslation("home");
 
   const isAuthenticated = state === "authenticated";
 
@@ -20,14 +22,12 @@ export function HomePage() {
       <HeaderComponent />
 
       <S.Content>
-        <S.Title>Your PocketBase servers, under control.</S.Title>
-        <S.Description>
-          Keep your PocketBase instances organized, available, and under control from one simple workspace.
-        </S.Description>
+        <S.Title>{t("TITLE")}</S.Title>
+        <S.Description>{t("DESCRIPTION")}</S.Description>
 
         <S.Actions>
           <PrimaryButtonComponent type="button" onClick={handleNavigate}>
-            {isAuthenticated ? "View my instances" : "Create account"}
+            {isAuthenticated ? t("VIEW_MY_INSTANCES") : t("CREATE_ACCOUNT")}
           </PrimaryButtonComponent>
         </S.Actions>
       </S.Content>

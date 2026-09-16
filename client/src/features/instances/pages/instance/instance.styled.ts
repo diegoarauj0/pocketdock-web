@@ -28,7 +28,7 @@ export const InstanceHeader = styled.div`
   display: grid;
 
   grid-template-rows: ${({ theme }) => theme.spacing[12]} ${({ theme }) => theme.spacing[20]} ${({ theme }) =>
-      theme.spacing[10]};
+    theme.spacing[10]};
   grid-template-columns: ${({ theme }) => theme.spacing[36]} auto auto;
 `;
 
@@ -149,12 +149,6 @@ export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
     margin-right: ${({ theme }) => theme.spacing[2]};
   }
 `;
-
-
-
-
-
-
 
 export const ErrorState = styled.div`
   display: flex;

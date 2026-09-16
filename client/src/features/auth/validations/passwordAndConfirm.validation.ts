@@ -1,24 +1,29 @@
 import { z } from "zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
+import type { TFunction } from "i18next";
 
-export function getPasswordAndConfirmSchema() {
+export function getPasswordAndConfirmSchema(t: TFunction) {
   return z
     .object({
       password: z
         .string()
         .min(
           AUTH_CONSTANT.PASSWORD_MIN_LENGTH,
-          `Password must be at least ${AUTH_CONSTANT.PASSWORD_MIN_LENGTH} characters.`,
+          t("VALIDATION_PASSWORD_MIN_LENGTH", {
+            min: AUTH_CONSTANT.PASSWORD_MIN_LENGTH,
+          }),
         )
         .max(
           AUTH_CONSTANT.PASSWORD_MAX_LENGTH,
-          `Password must be at most ${AUTH_CONSTANT.PASSWORD_MAX_LENGTH} characters.`,
+          t("VALIDATION_PASSWORD_MAX_LENGTH", {
+            max: AUTH_CONSTANT.PASSWORD_MAX_LENGTH,
+          }),
         ),
       confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       path: ["confirmPassword"],
-      message: "Passwords do not match.",
+      message: t("VALIDATION_PASSWORDS_MATCH"),
     });
 }
 

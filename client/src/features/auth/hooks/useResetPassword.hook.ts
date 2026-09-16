@@ -9,7 +9,9 @@ import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useState } from "react";
+import { translateServerError } from "@/features/locale/services/translateServerError.service";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
 import {
@@ -21,6 +23,7 @@ type ResetPasswordStep = "email" | "password" | "code";
 
 export function useResetPassword() {
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
 
   const [step, setStep] = useState<ResetPasswordStep>("email");
 
@@ -32,14 +35,16 @@ export function useResetPassword() {
   const forgotPasswordMutation = useForgotPasswordMutation();
 
   const emailForm = useForm<InterfaceEmailFormValues>({
-    resolver: zodResolver(getEmailSchema()),
+    resolver: zodResolver(getEmailSchema(t)),
   });
 
   const passwordForm = useForm<InterfacePasswordAndConfirmFormValues>({
-    resolver: zodResolver(getPasswordAndConfirmSchema()),
+    resolver: zodResolver(getPasswordAndConfirmSchema(t)),
   });
 
-  const verificationCode = useVerificationCode({ length: AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH });
+  const verificationCode = useVerificationCode({
+    length: AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH,
+  });
 
   const notificationID = AUTH_CONSTANT.NOTIFICATION_IDS.RESET_PASSWORD;
 
@@ -50,14 +55,18 @@ export function useResetPassword() {
 
       if (error instanceof ApiResponseError) {
         if (error.code === ERROR_CODES.INVALID_EMAIL_VERIFICATION_CODE) {
-          notificationService.error("The code you entered is invalid or has expired.", notificationID);
-          verificationCode.setError("The code you entered is invalid or has expired.");
+          const invalidCodeMessage = translateServerError(t, error);
+
+          notificationService.error(invalidCodeMessage, notificationID);
+          verificationCode.setError(invalidCodeMessage);
 
           return verificationCode.reset();
         }
 
         if (error.code === ERROR_CODES.CONCURRENT_EMAIL_VERIFICATION) {
-          notificationService.error("We already sent you a code. Please check your inbox.", notificationID);
+          notificationService.error(translateServerError(t, error), notificationID);
+
+          return;
         }
 
         if (error.code === ERROR_CODES.VALIDATION_ERROR) {
@@ -66,7 +75,7 @@ export function useResetPassword() {
           details.forEach(({ name, reasons }) => {
             if (name === "code") {
               setStep("code");
-              notificationService.error("We already sent you a code. Please check your inbox.", notificationID);
+              notificationService.error(t("NOTIFICATION_CODE_ALREADY_SENT"), notificationID);
               verificationCode.setError(reasons[0].message);
             }
 
@@ -77,42 +86,44 @@ export function useResetPassword() {
 
             if (name === "password") {
               setStep("password");
-              passwordForm.setError("password", { message: reasons[0].message });
+              passwordForm.setError("password", {
+                message: reasons[0].message,
+              });
             }
           });
         }
       }
 
-      notificationService.error("Unknown error.", notificationID);
+      notificationService.error(translateServerError(t, error), notificationID);
     },
-    [emailForm, passwordForm, notificationID, verificationCode],
+    [emailForm, passwordForm, notificationID, verificationCode, t],
   );
 
   const handleVerifySuccess = useCallback(() => {
     setIsSubmitting(false);
 
-    notificationService.success("Password updated! You can now sign in.", notificationID);
+    notificationService.success(t("NOTIFICATION_PASSWORD_UPDATED"), notificationID);
 
     navigate(APP_PATH.AUTH.SIGN_IN);
-  }, [notificationID, navigate]);
+  }, [notificationID, navigate, t]);
 
   const handleResendSuccess = useCallback(() => {
     setIsResending(false);
 
-    notificationService.success("A new reset code was sent to your email.", notificationID);
+    notificationService.success(t("NOTIFICATION_RESET_CODE_SENT"), notificationID);
 
     verificationCode.reset();
-  }, [notificationID, verificationCode]);
+  }, [notificationID, verificationCode, t]);
 
   const handleResend = useCallback(() => {
     setIsResending(true);
 
-    notificationService.loading("Resending your reset code...", notificationID);
+    notificationService.loading(t("NOTIFICATION_RESET_CODE_RESENDING"), notificationID);
 
     const email = emailForm.getValues("email");
 
     forgotPasswordResendMutation.mutate({ email }, { onSuccess: handleResendSuccess, onError: handleError });
-  }, [emailForm, forgotPasswordResendMutation, notificationID, handleResendSuccess, handleError]);
+  }, [emailForm, forgotPasswordResendMutation, notificationID, handleResendSuccess, handleError, t]);
 
   const handleEmail = emailForm.handleSubmit(() => {
     if (step !== "email") return;
@@ -123,17 +134,17 @@ export function useResetPassword() {
   const handleForgotPasswordSuccess = useCallback(() => {
     setIsSubmitting(false);
 
-    notificationService.success("We sent a reset code to your email.", notificationID);
+    notificationService.success(t("NOTIFICATION_RESET_CODE_SENT_SUMMARY"), notificationID);
 
     setStep("code");
-  }, [notificationID]);
+  }, [notificationID, t]);
 
   const handlePassword = passwordForm.handleSubmit(({ password }) => {
     if (step !== "password") return;
 
     setIsSubmitting(true);
 
-    notificationService.loading("Sending your reset code...", notificationID);
+    notificationService.loading(t("NOTIFICATION_RESET_CODE_SENDING"), notificationID);
 
     const email = emailForm.getValues("email");
 
@@ -148,7 +159,7 @@ export function useResetPassword() {
 
     setIsSubmitting(true);
 
-    notificationService.loading("Verifying your code...", notificationID);
+    notificationService.loading(t("NOTIFICATION_RESET_CODE_VERIFYING"), notificationID);
 
     const email = emailForm.getValues("email");
 

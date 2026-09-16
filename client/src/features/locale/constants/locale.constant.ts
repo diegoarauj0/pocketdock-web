@@ -1,0 +1,5 @@
+export const LOCALE_CONSTANT = {
+  STORAGE_KEY: "POCKETDOCK_LOCALE",
+  FALLBACK_LANGUAGE: "en",
+  SUPPORTED_LANGUAGES: ["en", "pt-BR"],
+} as const;

@@ -6,7 +6,9 @@ import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useLocation, useNavigate } from "react-router";
 import { useAuth } from "../contexts/auth.context";
+import { translateServerError } from "@/features/locale/services/translateServerError.service";
 import { useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 
 const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
@@ -17,6 +19,7 @@ interface InterfaceEmailLocationState {
 
 export function useEmailVerification() {
   const { signIn } = useAuth();
+  const { t } = useTranslation(["auth", "common"]);
 
   const verifyMutation = useSignUpVerifyMutation();
   const resendMutation = useSignUpResendMutation();
@@ -38,50 +41,56 @@ export function useEmailVerification() {
     (error: unknown) => {
       if (error instanceof ApiResponseError) {
         if (error.code === ERROR_CODES.INVALID_EMAIL_VERIFICATION_CODE) {
-          notificationService.error("The code you entered is invalid or has expired.");
+          const invalidCodeMessage = translateServerError(t, error);
+
+          notificationService.error(invalidCodeMessage);
 
           reset();
-          verificationCode.setError("The code you entered is invalid or has expired.");
+          verificationCode.setError(invalidCodeMessage);
+
+          return;
         }
 
         if (error.code === ERROR_CODES.CONCURRENT_EMAIL_VERIFICATION) {
-          notificationService.error("We already sent you a code. Please check your inbox.");
+          notificationService.error(translateServerError(t, error));
+
+          return;
         }
       }
 
-      notificationService.error("Unknown error.", notificationID);
+      notificationService.error(translateServerError(t, error), notificationID);
     },
-    [notificationID, reset, verificationCode],
+    [notificationID, reset, verificationCode, t],
   );
 
   const handleVerifySuccess = useCallback(
     ({ access }: { access: string }) => {
-      notificationService.success("Email verified!.", notificationID);
+      notificationService.success(t("NOTIFICATION_EMAIL_VERIFIED"), notificationID);
 
       signIn(access);
 
       navigate(APP_PATH.HOME);
     },
-    [notificationID, navigate, signIn],
+    [notificationID, navigate, signIn, t],
   );
 
   const handleResendSuccess = useCallback(() => {
-    notificationService.success("A new verification code was sent to your email.", notificationID);
+    notificationService.success(t("NOTIFICATION_VERIFICATION_CODE_SENT"), notificationID);
 
     reset();
-  }, [notificationID, reset]);
+  }, [notificationID, reset, t]);
 
   const submitHandler = handleSubmit((code) => {
-    notificationService.loading("Verifying your email...", notificationID);
+    notificationService.loading(t("NOTIFICATION_EMAIL_VERIFYING"), notificationID);
 
     verifyMutation.mutate({ email, code }, { onSuccess: handleVerifySuccess, onError: handleError });
   });
 
   const handleResend = useCallback(() => {
-    notificationService.loading("Resending your verification code...", notificationID);
+    notificationService.loading(t("NOTIFICATION_VERIFICATION_CODE_RESENDING"), notificationID);
 
     resendMutation.mutate({ email }, { onSuccess: handleResendSuccess, onError: handleError });
-  }, [email, handleError, handleResendSuccess, notificationID, resendMutation]);
+  }, [email, handleError, handleResendSuccess, notificationID, resendMutation, t]);
 
   return {
     isSubmitting: verifyMutation.isPending,

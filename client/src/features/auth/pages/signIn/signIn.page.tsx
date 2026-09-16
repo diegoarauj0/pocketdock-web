@@ -5,60 +5,55 @@ import { FormHeaderComponent } from "../../components/formHeader/formHeader.comp
 import { AuthFieldComponent } from "../../components/authField/authField.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { useOAuthSignIn } from "../../hooks/useOAuthSignIn.hook";
+import { useTranslation } from "react-i18next";
 import { useSignIn } from "../../hooks/useSignIn.hook";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./signIn.styled";
 
-const features: string[] = [
-  "Stop and start without losing data",
-  "Individual panel for each instance",
-];
-
 export function SignInPage() {
   const { register, errors, isSubmitting, handleSubmit } = useSignIn();
   const { isRedirecting, signInWithGoogle } = useOAuthSignIn();
+  const { t } = useTranslation(["auth", "common"]);
+
+  const features: string[] = [t("SIGN_IN_FEATURE_STOP_START"), t("SIGN_IN_FEATURE_INDIVIDUAL_PANEL")];
 
   return (
     <S.SignInWrapper>
-      <AuthIntroComponent
-        headline={`Your PocketBase servers,\nunder control.`}
-        description="Create instances in seconds, stop them when you are not using them, and remove them in one click — all from a single panel."
-        features={features}
-      >
+      <AuthIntroComponent headline={t("SIGN_IN_HEADLINE")} description={t("SIGN_IN_DESCRIPTION")} features={features}>
         <S.FormWrapper>
           <S.FormCard>
             <FormHeaderComponent
-              brand="PocketDock"
-              title="Sign in to your account"
-              subtitle="Access your panel to manage your PocketBase instances."
+              brand={t("BRAND_POCKETDOCK", { ns: "common" })}
+              title={t("SIGN_IN_TITLE")}
+              subtitle={t("SIGN_IN_SUBTITLE")}
             />
 
             <S.Form onSubmit={handleSubmit}>
               <AuthFieldComponent
                 htmlFor="email"
-                label="Email"
+                label={t("EMAIL_LABEL")}
                 type="email"
-                placeholder="you@company.com"
+                placeholder={t("EMAIL_PLACEHOLDER")}
                 error={errors.email?.message}
                 register={register("email")}
               />
               <AuthFieldComponent
                 htmlFor="password"
-                label="Password"
+                label={t("PASSWORD_LABEL")}
                 type="password"
-                placeholder="••••••••"
+                placeholder={t("PASSWORD_PLACEHOLDER")}
                 error={errors.password?.message}
                 register={register("password")}
               />
 
               <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                Access
+                {t("SIGN_IN_SUBMIT")}
               </PrimaryButtonComponent>
             </S.Form>
 
             <S.OAuthDivider>
               <S.OAuthDividerLine />
-              or continue with
+              {t("SIGN_IN_OAUTH_DIVIDER")}
               <S.OAuthDividerLine />
             </S.OAuthDivider>
 
@@ -67,14 +62,14 @@ export function SignInPage() {
             </S.OAuthSection>
 
             <AuthLinkPromptComponent
-              text="Don't have an account?"
-              linkLabel="Create account"
+              text={t("SIGN_IN_NO_ACCOUNT")}
+              linkLabel={t("SIGN_IN_CREATE_ACCOUNT_LINK")}
               linkTo={APP_PATH.AUTH.SIGN_UP}
             />
 
             <AuthLinkPromptComponent
-              text="Forgot your password?"
-              linkLabel="Reset it"
+              text={t("SIGN_IN_FORGOT_PASSWORD")}
+              linkLabel={t("SIGN_IN_RESET_LINK")}
               linkTo={APP_PATH.AUTH.RESET_PASSWORD}
             />
           </S.FormCard>

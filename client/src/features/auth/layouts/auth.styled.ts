@@ -10,5 +10,4 @@ export const AuthMain = styled.main`
   background-color: ${({ theme }) => theme.background.dark};
 
   color: ${({ theme }) => theme.text.default};
-
 `;

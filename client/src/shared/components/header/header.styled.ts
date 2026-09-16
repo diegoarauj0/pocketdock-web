@@ -76,7 +76,9 @@ export const LogoutButton = styled.button`
   border-radius: ${({ theme }) => theme.radius.md};
 
   cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
 
   &:hover {
     color: ${({ theme }) => theme.text.default};
@@ -105,10 +107,16 @@ export const SignInLink = styled(Link)`
   border-radius: ${({ theme }) => theme.radius.md};
 
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
-    background-color: color-mix(in srgb, ${({ theme }) => theme.inverse.background} 85%, ${({ theme }) => theme.inverse.text});
+    background-color: color-mix(
+      in srgb,
+      ${({ theme }) => theme.inverse.background} 85%,
+      ${({ theme }) => theme.inverse.text}
+    );
   }
 
   &:focus-visible {

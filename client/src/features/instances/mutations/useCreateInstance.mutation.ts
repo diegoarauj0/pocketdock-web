@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InterfaceInstance } from "../services/instances.service";
+import { useTranslation } from "react-i18next";
 import { instancesService } from "../services/instances.service";
 
 interface InterfaceCreateInstanceContext {
@@ -9,6 +10,7 @@ interface InterfaceCreateInstanceContext {
 
 export function useCreateInstanceMutation() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation("instances");
 
   return useMutation<InterfaceInstance, unknown, void, InterfaceCreateInstanceContext>({
     mutationFn: () => instancesService.createInstance(),
@@ -21,7 +23,7 @@ export function useCreateInstanceMutation() {
 
       const optimisticInstance: InterfaceInstance = {
         ID: crypto.randomUUID(),
-        containerName: "Creating instance...",
+        containerName: t("INSTANCE_CREATING_PLACEHOLDER"),
         defaultPassword: "",
         createdAt,
         updatedAt: createdAt,

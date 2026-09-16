@@ -4,75 +4,73 @@ import { AuthFieldComponent } from "../../components/authField/authField.compone
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { AuthLinkPromptComponent } from "../../components/authLinkPrompt/authLinkPrompt.component";
 import { FormHeaderComponent } from "../../components/formHeader/formHeader.component";
+import { useTranslation } from "react-i18next";
 import { useSignUp } from "../../hooks/useSignUp.hook";
 import * as S from "./signUp.styled";
 
-const features: string[] = [
-  "Deploy in seconds",
-  "Manage every instance in one place",
-  "Built for simple, reliable workflows",
-];
-
 export function SignUpPage() {
   const { register, errors, isSubmitting, handleSubmit } = useSignUp();
+  const { t } = useTranslation(["auth", "common"]);
+
+  const features: string[] = [
+    t("SIGN_UP_FEATURE_DEPLOY_SECONDS"),
+    t("SIGN_UP_FEATURE_MANAGE_PLACE"),
+    t("SIGN_UP_FEATURE_RELIABLE"),
+  ];
 
   return (
     <S.SignUpWrapper>
-      <AuthIntroComponent
-        headline={`Everything your\nservers need.`}
-        description="Keep your PocketBase instances organized, available, and under control from one simple workspace."
-        features={features}
-      >
+      <AuthIntroComponent headline={t("SIGN_UP_HEADLINE")} description={t("SIGN_UP_DESCRIPTION")} features={features}>
         <S.FormWrapper>
           <S.FormCard>
             <FormHeaderComponent
-              brand="PocketDock"
-              title="Create your account"
-              subtitle="Create your workspace and start managing your PocketBase instances."
+              brand={t("BRAND_POCKETDOCK", { ns: "common" })}
+              title={t("SIGN_UP_TITLE")}
+              subtitle={t("SIGN_UP_SUBTITLE")}
             />
 
             <S.Form onSubmit={handleSubmit}>
               <AuthFieldComponent
                 htmlFor="username"
-                label="Name"
+                label={t("SIGN_UP_NAME_LABEL")}
                 type="text"
-                placeholder="Your name"
+                placeholder={t("SIGN_UP_NAME_PLACEHOLDER")}
                 error={errors.username?.message}
                 register={register("username")}
               />
               <AuthFieldComponent
                 htmlFor="email"
-                label="Email"
+                label={t("EMAIL_LABEL")}
                 type="email"
-                placeholder="you@company.com"
+                placeholder={t("EMAIL_PLACEHOLDER")}
                 error={errors.email?.message}
                 register={register("email")}
               />
               <AuthFieldComponent
                 htmlFor="password"
-                label="Password"
+                label={t("PASSWORD_LABEL")}
                 type="password"
-                placeholder="••••••••"
+                placeholder={t("PASSWORD_PLACEHOLDER")}
                 error={errors.password?.message}
                 register={register("password")}
               />
               <AuthFieldComponent
                 htmlFor="confirm-password"
-                label="Confirm password"
+                label={t("SIGN_UP_CONFIRM_PASSWORD_LABEL")}
                 type="password"
-                placeholder="••••••••"
+                placeholder={t("PASSWORD_PLACEHOLDER")}
                 error={errors.confirmPassword?.message}
                 register={register("confirmPassword")}
               />
 
               <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                Create Account
+                {t("SIGN_UP_SUBMIT")}
               </PrimaryButtonComponent>
             </S.Form>
 
             <AuthLinkPromptComponent
-              text="Already have an account?"
-              linkLabel="Sign in"
+              text={t("SIGN_UP_HAS_ACCOUNT")}
+              linkLabel={t("SIGN_UP_SIGN_IN_LINK")}
               linkTo={APP_PATH.AUTH.SIGN_IN}
             />
           </S.FormCard>

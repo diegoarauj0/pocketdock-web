@@ -18,5 +18,7 @@ export const Prompt = styled.p`
 export const PromptLink = styled(Link)`
   color: ${({ theme }) => theme.primary};
   text-decoration: none;
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 `;

@@ -4,6 +4,7 @@ import { CodeInputsComponent } from "@/shared/components/codeInputs/codeInputs.c
 import { FormHeaderComponent } from "../../components/formHeader/formHeader.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { useEmailVerification } from "../../hooks/useEmailVerification.hook";
+import { useTranslation } from "react-i18next";
 import { AUTH_CONSTANT } from "../../constants/auth.constant";
 import * as S from "./emailVerification.styled";
 import { APP_PATH } from "@/app/app.path";
@@ -12,21 +13,22 @@ const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
 export function EmailVerificationPage() {
   const emailVerification = useEmailVerification();
+  const { t } = useTranslation(["auth", "common"]);
 
   const { email, error, handleResend, handleSubmit, isResending, isSubmitting } = emailVerification;
 
   return (
     <S.EmailVerificationWrapper>
-      <AuthIntroComponent
-        headline={`Confirm your\nemail address.`}
-        description="Keep your PocketBase instances organized, available, and under control from one simple workspace."
-      >
+      <AuthIntroComponent headline={t("EMAIL_VERIFICATION_HEADLINE")} description={t("EMAIL_VERIFICATION_DESCRIPTION")}>
         <S.FormWrapper>
           <S.FormCard>
             <FormHeaderComponent
-              brand="PocketDock"
-              title="Verify your email"
-              subtitle={`We sent a ${CODE_LENGTH}-character code to ${email}. Enter it below to confirm your account.`}
+              brand={t("BRAND_POCKETDOCK", { ns: "common" })}
+              title={t("EMAIL_VERIFICATION_TITLE")}
+              subtitle={t("EMAIL_VERIFICATION_SUBTITLE", {
+                codeLength: CODE_LENGTH,
+                email,
+              })}
             />
 
             <S.Form onSubmit={handleSubmit}>
@@ -39,18 +41,22 @@ export function EmailVerificationPage() {
               {error && <S.ErrorMessage role="alert">{error}</S.ErrorMessage>}
 
               <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                Verify email
+                {t("EMAIL_VERIFICATION_SUBMIT")}
               </PrimaryButtonComponent>
             </S.Form>
 
             <S.ResendPrompt>
-              Didn't receive the code?{" "}
+              {t("EMAIL_VERIFICATION_RESEND_PROMPT")}{" "}
               <S.ResendButton type="button" onClick={handleResend} disabled={isResending}>
-                Resend code
+                {t("EMAIL_VERIFICATION_RESEND_LINK")}
               </S.ResendButton>
             </S.ResendPrompt>
 
-            <AuthLinkPromptComponent text="Back to" linkLabel="sign in" linkTo={APP_PATH.AUTH.SIGN_IN} />
+            <AuthLinkPromptComponent
+              text={t("EMAIL_VERIFICATION_BACK_TO")}
+              linkLabel={t("EMAIL_VERIFICATION_SIGN_IN_LINK")}
+              linkTo={APP_PATH.AUTH.SIGN_IN}
+            />
           </S.FormCard>
         </S.FormWrapper>
       </AuthIntroComponent>

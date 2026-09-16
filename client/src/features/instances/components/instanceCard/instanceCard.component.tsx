@@ -1,5 +1,7 @@
 import type { InterfaceInstance } from "@/features/instances/services/instances.service";
+import { formatDateTime } from "@/shared/utils/formatDate.util";
 import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
+import { useTranslation } from "react-i18next";
 import * as S from "./instanceCard.styled";
 import { Container } from "lucide-react";
 
@@ -7,19 +9,9 @@ interface InterfaceInstanceCardProps {
   instance: InterfaceInstance;
 }
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  day: "2-digit",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-function formatDate(value: string): string {
-  return dateFormatter.format(new Date(value));
-}
-
 export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) {
+  const { t } = useTranslation("instances");
+
   return (
     <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.ID}`}>
       <S.Header>
@@ -36,13 +28,13 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
 
       <S.MetaList>
         <S.MetaItem>
-          <S.Label>Created:</S.Label>
-          <S.Value>{formatDate(instance.createdAt)}</S.Value>
+          <S.Label>{t("INSTANCE_CARD_CREATED")}</S.Label>
+          <S.Value>{formatDateTime(instance.createdAt)}</S.Value>
         </S.MetaItem>
 
         <S.MetaItem>
-          <S.Label>Updated:</S.Label>
-          <S.Value>{formatDate(instance.updatedAt)}</S.Value>
+          <S.Label>{t("INSTANCE_CARD_UPDATED")}</S.Label>
+          <S.Value>{formatDateTime(instance.updatedAt)}</S.Value>
         </S.MetaItem>
       </S.MetaList>
     </S.Card>

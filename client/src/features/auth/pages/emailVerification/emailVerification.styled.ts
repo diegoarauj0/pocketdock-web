@@ -38,7 +38,7 @@ export const Form = styled.form`
   gap: ${({ theme }) => theme.spacing[5]};
 `;
 
-export const ErrorMessage = styled.p``
+export const ErrorMessage = styled.p``;
 
 export const ResendPrompt = styled.p`
   margin: ${({ theme }) => theme.spacing[5]} 0 0;

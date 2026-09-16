@@ -21,7 +21,9 @@ export const Button = styled.button`
 
   font-weight: 600;
 
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
 
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.background.light};

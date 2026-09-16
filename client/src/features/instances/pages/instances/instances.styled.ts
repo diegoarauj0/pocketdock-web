@@ -73,10 +73,16 @@ export const NewButton = styled.button`
   border-radius: ${({ theme }) => theme.radius.md};
 
   cursor: pointer;
-  transition: background-color 0.15s ease, opacity 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    opacity 0.15s ease;
 
   &:hover {
-    background-color: color-mix(in srgb, ${({ theme }) => theme.inverse.background} 85%, ${({ theme }) => theme.inverse.text});
+    background-color: color-mix(
+      in srgb,
+      ${({ theme }) => theme.inverse.background} 85%,
+      ${({ theme }) => theme.inverse.text}
+    );
   }
 
   &:focus-visible {
@@ -84,7 +90,6 @@ export const NewButton = styled.button`
     outline-offset: ${({ theme }) => theme.spacing[0.5]};
   }
 `;
-
 
 export const CardsGrid = styled.div`
   display: flex;

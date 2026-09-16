@@ -1,36 +1,36 @@
 import { InstanceCardComponent } from "@/features/instances/components/instanceCard/instanceCard.component";
 import { useCreateInstanceMutation } from "@/features/instances/mutations/useCreateInstance.mutation";
 import { LoadingScreenComponent } from "@/shared/components/loadingScreen/loadingScreen.component";
+import { translateServerError } from "@/features/locale/services/translateServerError.service";
 import { useInstancesQuery } from "@/features/instances/queries/useInstances.query";
-import { ApiResponseError } from "@/shared/http/http.client";
 import { notificationService } from "@/shared/services/notification.service";
 import { HeaderComponent } from "@/shared/components/header/header.component";
 import { INSTANCE_CONSTANT } from "@/features/instances/constants/instance.constant";
+import { useTranslation } from "react-i18next";
 import * as S from "./instances.styled";
 import { Plus } from "lucide-react";
 
 export function InstancesPage() {
   const { data: instances, isLoading, isError } = useInstancesQuery();
   const createInstanceMutation = useCreateInstanceMutation();
+  const { t } = useTranslation("instances");
 
   const total = instances?.length || 0;
 
   const notificationID = INSTANCE_CONSTANT.NOTIFICATION_IDS.CREATE_INSTANCE;
 
   const handleCreateInstance = () => {
-    notificationService.loading("Creating instance...", notificationID);
+    notificationService.loading(t("NOTIFICATION_CREATE_INSTANCE_LOADING"), notificationID);
 
     createInstanceMutation.mutate(undefined, {
       onSuccess: () => {
-        notificationService.success("Instance created successfully.", notificationID);
+        notificationService.success(t("NOTIFICATION_CREATE_INSTANCE_SUCCESS"), notificationID);
       },
       onError: (error) => {
-        if (error instanceof ApiResponseError) {
-          notificationService.error(error.message, notificationID);
-          return;
-        }
-
-        notificationService.error("Could not create the instance.", notificationID);
+        notificationService.error(
+          translateServerError(t, error, t("NOTIFICATION_CREATE_INSTANCE_ERROR")),
+          notificationID,
+        );
       },
     });
   };
@@ -44,13 +44,13 @@ export function InstancesPage() {
         <S.Content>
           <S.InstancesHeader>
             <S.TextGroup>
-              <S.Title>My instances</S.Title>
-              <S.Subtitle>{total} instance(s)</S.Subtitle>
+              <S.Title>{t("INSTANCES_TITLE")}</S.Title>
+              <S.Subtitle>{t("INSTANCE_COUNT", { count: total })}</S.Subtitle>
             </S.TextGroup>
 
             <S.NewButton type="button" onClick={handleCreateInstance}>
               <Plus size={16} />
-              New instance
+              {t("INSTANCES_NEW_BUTTON")}
             </S.NewButton>
           </S.InstancesHeader>
         </S.Content>
@@ -65,13 +65,13 @@ export function InstancesPage() {
       <S.Content>
         <S.InstancesHeader>
           <S.TextGroup>
-            <S.Title>My instances</S.Title>
-            <S.Subtitle>{total} instance(s)</S.Subtitle>
+            <S.Title>{t("INSTANCES_TITLE")}</S.Title>
+            <S.Subtitle>{t("INSTANCE_COUNT", { count: total })}</S.Subtitle>
           </S.TextGroup>
 
           <S.NewButton type="button" onClick={handleCreateInstance}>
             <Plus size={16} />
-            New instance
+            {t("INSTANCES_NEW_BUTTON")}
           </S.NewButton>
         </S.InstancesHeader>
 

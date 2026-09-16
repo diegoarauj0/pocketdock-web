@@ -5,6 +5,7 @@ import { FormHeaderComponent } from "../../components/formHeader/formHeader.comp
 import { AuthFieldComponent } from "../../components/authField/authField.component";
 import { AuthIntroComponent } from "../../components/authIntro/authIntro.component";
 import { useResetPassword } from "../../hooks/useResetPassword.hook";
+import { useTranslation } from "react-i18next";
 import { AUTH_CONSTANT } from "../../constants/auth.constant";
 import * as S from "./resetPassword.styled";
 import { APP_PATH } from "@/app/app.path";
@@ -15,31 +16,32 @@ const STEPS: ResetPasswordStep[] = ["email", "password", "code"];
 
 export function ResetPasswordPage() {
   const { handlers, registrars, errors, step, values, previousStep, stats } = useResetPassword();
+  const { t } = useTranslation(["auth", "common"]);
 
   const { isResending, isSubmitting } = stats;
   const { handleCode, handleEmail, handlePassword, handleResend, onChangeCode } = handlers;
 
   const headerByStep = {
     email: {
-      title: "Reset your password",
-      subtitle: "Enter the email linked to your account and we will help you recover access.",
+      title: t("RESET_PASSWORD_EMAIL_TITLE"),
+      subtitle: t("RESET_PASSWORD_EMAIL_SUBTITLE"),
     },
     password: {
-      title: "Set a new password",
-      subtitle: "Choose a strong password that you have not used before for your account.",
+      title: t("RESET_PASSWORD_NEW_TITLE"),
+      subtitle: t("RESET_PASSWORD_NEW_SUBTITLE"),
     },
     code: {
-      title: "Verify your email",
-      subtitle: `We sent a ${AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH}-character code to ${values.email}. Enter it below to confirm it is really you.`,
+      title: t("RESET_PASSWORD_CODE_TITLE"),
+      subtitle: t("RESET_PASSWORD_CODE_SUBTITLE", {
+        codeLength: AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH,
+        email: values.email,
+      }),
     },
-  } as const;
+  };
 
   return (
     <S.ResetPasswordWrapper>
-      <AuthIntroComponent
-        headline={`Recover your\naccount access.`}
-        description="Keep your PocketBase instances organized, available, and under control from one simple workspace."
-      >
+      <AuthIntroComponent headline={t("RESET_PASSWORD_HEADLINE")} description={t("RESET_PASSWORD_DESCRIPTION")}>
         <S.FormWrapper>
           <S.FormCard>
             <S.StepIndicator>
@@ -49,7 +51,7 @@ export function ResetPasswordPage() {
             </S.StepIndicator>
 
             <FormHeaderComponent
-              brand="PocketDock"
+              brand={t("BRAND_POCKETDOCK", { ns: "common" })}
               title={headerByStep[step].title}
               subtitle={headerByStep[step].subtitle}
             />
@@ -58,14 +60,14 @@ export function ResetPasswordPage() {
               <S.Form onSubmit={handleEmail}>
                 <AuthFieldComponent
                   htmlFor="email"
-                  label="Email"
+                  label={t("EMAIL_LABEL")}
                   type="email"
-                  placeholder="you@company.com"
+                  placeholder={t("EMAIL_PLACEHOLDER")}
                   register={registrars.email}
                   error={errors.email}
                 />
 
-                <PrimaryButtonComponent type="submit">Continue</PrimaryButtonComponent>
+                <PrimaryButtonComponent type="submit">{t("RESET_PASSWORD_CONTINUE")}</PrimaryButtonComponent>
               </S.Form>
             )}
 
@@ -73,23 +75,23 @@ export function ResetPasswordPage() {
               <S.Form onSubmit={handlePassword}>
                 <AuthFieldComponent
                   htmlFor="new-password"
-                  label="New password"
+                  label={t("RESET_PASSWORD_NEW_PASSWORD_LABEL")}
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t("PASSWORD_PLACEHOLDER")}
                   register={registrars.password}
                   error={errors.password}
                 />
                 <AuthFieldComponent
                   htmlFor="confirm-password"
-                  label="Confirm new password"
+                  label={t("RESET_PASSWORD_CONFIRM_PASSWORD_LABEL")}
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t("PASSWORD_PLACEHOLDER")}
                   register={registrars.confirmPassword}
                   error={errors.confirmPassword}
                 />
 
                 <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                  Continue
+                  {t("RESET_PASSWORD_CONTINUE")}
                 </PrimaryButtonComponent>
               </S.Form>
             )}
@@ -102,16 +104,16 @@ export function ResetPasswordPage() {
                   onChange={onChangeCode}
                 />
 
-               {errors.code && <S.ErrorMessage role="alert">{errors.code}</S.ErrorMessage>}
+                {errors.code && <S.ErrorMessage role="alert">{errors.code}</S.ErrorMessage>}
 
                 <PrimaryButtonComponent type="submit" disabled={isSubmitting}>
-                  Reset password
+                  {t("RESET_PASSWORD_SUBMIT")}
                 </PrimaryButtonComponent>
 
                 <S.ResendPrompt>
-                  Didn't receive the code?{" "}
+                  {t("RESET_PASSWORD_RESEND_PROMPT")}{" "}
                   <S.ResendButton type="button" onClick={handleResend} disabled={isResending}>
-                    Resend code
+                    {t("RESET_PASSWORD_RESEND_LINK")}
                   </S.ResendButton>
                 </S.ResendPrompt>
               </S.Form>
@@ -119,13 +121,13 @@ export function ResetPasswordPage() {
 
             {step !== "email" && (
               <S.BackButton type="button" onClick={previousStep}>
-                Back
+                {t("RESET_PASSWORD_BACK")}
               </S.BackButton>
             )}
 
             <AuthLinkPromptComponent
-              text="Remembered your password?"
-              linkLabel="Sign in"
+              text={t("RESET_PASSWORD_REMEMBERED")}
+              linkLabel={t("RESET_PASSWORD_SIGN_IN_LINK")}
               linkTo={APP_PATH.AUTH.SIGN_IN}
             />
           </S.FormCard>

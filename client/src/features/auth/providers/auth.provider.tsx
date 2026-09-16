@@ -97,7 +97,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         errorCode = error.code;
       }
 
-      const originalRequest = axiosError.config as AxiosRequestConfig & { _retry?: boolean };
+      const originalRequest = axiosError.config as AxiosRequestConfig & {
+        _retry?: boolean;
+      };
 
       if (errorCode !== ERROR_CODES.INVALID_SESSION && errorCode !== ERROR_CODES.INVALID_TOKEN) {
         return Promise.reject(error);

@@ -45,5 +45,13 @@ export function useVerificationCode(props: InterfaceUseVerificationCodeParams) {
     setCode("");
   }, []);
 
-  return { handleSubmit, handleCodeChange, reset, error, setError, code, setCode };
+  return {
+    handleSubmit,
+    handleCodeChange,
+    reset,
+    error,
+    setError,
+    code,
+    setCode,
+  };
 }

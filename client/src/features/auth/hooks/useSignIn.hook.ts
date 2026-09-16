@@ -7,12 +7,15 @@ import { getSignInSchema } from "../validations/signIn.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { useCallback, useMemo } from "react";
+import { translateServerError } from "@/features/locale/services/translateServerError.service";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
 
 export function useSignIn() {
-  const signInSchema = useMemo(() => getSignInSchema(), []);
+  const { t } = useTranslation(["auth", "common"]);
+  const signInSchema = useMemo(() => getSignInSchema(t), [t]);
   const signInMutation = useSignInMutation();
   const navigate = useNavigate();
 
@@ -29,34 +32,48 @@ export function useSignIn() {
     (error: unknown) => {
       if (error instanceof ApiResponseError) {
         if (error.code === ERROR_CODES.INVALID_CREDENTIAL) {
-          notificationService.error("Email or password is invalid.");
+          const invalidCredentialsMessage = translateServerError(t, error);
 
-          setError("email", { type: "server", message: "Email or password is invalid." });
-          setError("password", { type: "server", message: "Email or password is invalid." });
+          notificationService.error(invalidCredentialsMessage, notificationID);
+
+          setError("email", {
+            type: "server",
+            message: invalidCredentialsMessage,
+          });
+
+          setError("password", {
+            type: "server",
+            message: invalidCredentialsMessage,
+          });
+
+          return;
         }
 
         if (error.code === ERROR_CODES.VALIDATION_ERROR) {
           const details = error.details as InterfaceValidationErrorDetails[];
 
           details.forEach(({ name, reasons }) => {
-            setError(name as keyof InterfaceSignInFormValues, { type: "server", message: reasons[0].message });
+            setError(name as keyof InterfaceSignInFormValues, {
+              type: "server",
+              message: reasons[0].message,
+            });
           });
         }
       }
 
-      notificationService.error("Unknown error.", notificationID);
+      notificationService.error(translateServerError(t, error), notificationID);
     },
-    [notificationID, setError],
+    [notificationID, setError, t],
   );
 
   const handleSuccess = useCallback(() => {
-    notificationService.success("Welcome back! You are now signed in.", notificationID);
+    notificationService.success(t("NOTIFICATION_SIGN_IN_SUCCESS"), notificationID);
 
     navigate(APP_PATH.HOME);
-  }, [notificationID, navigate]);
+  }, [notificationID, navigate, t]);
 
   const submitHandler = handleSubmit(async (values) => {
-    notificationService.loading("Signing in...", notificationID);
+    notificationService.loading(t("NOTIFICATION_SIGN_IN_LOADING"), notificationID);
 
     signInMutation.mutate(values, {
       onSuccess: handleSuccess,
@@ -64,5 +81,10 @@ export function useSignIn() {
     });
   });
 
-  return { register, errors, isSubmitting: signInMutation.isPending, handleSubmit: submitHandler };
+  return {
+    register,
+    errors,
+    isSubmitting: signInMutation.isPending,
+    handleSubmit: submitHandler,
+  };
 }

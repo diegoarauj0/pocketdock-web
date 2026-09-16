@@ -13,7 +13,10 @@ export const notificationService = {
       return notificationID;
     }
 
-    return toast(content, { isLoading: true, toastId: notificationID }) as string;
+    return toast(content, {
+      isLoading: true,
+      toastId: notificationID,
+    }) as string;
   },
 
   success: (content: string, notificationID?: string): string | undefined => {
@@ -28,7 +31,10 @@ export const notificationService = {
       return;
     }
 
-    return toast(content, { type: "success", toastId: notificationID }) as string;
+    return toast(content, {
+      type: "success",
+      toastId: notificationID,
+    }) as string;
   },
 
   error: (content: string, notificationID?: string): string | undefined => {
@@ -58,7 +64,10 @@ export const notificationService = {
       return;
     }
 
-    return toast(content, { type: "warning", toastId: notificationID }) as string;
+    return toast(content, {
+      type: "warning",
+      toastId: notificationID,
+    }) as string;
   },
 
   clear: (notificationID: string) => {
