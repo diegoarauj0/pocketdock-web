@@ -16,8 +16,8 @@ export class AccountsService {
     return this.accountsRepository.findByTypeAndAccountID(props);
   }
 
-  public create(providerAccountID: string, type: AccountProvider, userID: string): Promise<AccountEntity> {
-    const account = this.accountsRepository.create({ providerAccountID, provider: type, userID });
+  public create(providerAccountID: string, type: AccountProvider, userId: string): Promise<AccountEntity> {
+    const account = this.accountsRepository.create({ providerAccountID, provider: type, userId });
     return this.accountsRepository.save(account);
   }
 }

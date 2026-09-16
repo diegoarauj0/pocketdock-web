@@ -5,7 +5,7 @@ import { IsEnum, IsNotEmpty, IsString } from "class-validator";
 export class StrategyIDParamsDto {
   @ApiProperty({
     enum: OAuthStrategyID,
-    description: "ID da estratégia OAuth",
+    description: "id da estratégia OAuth",
     example: OAuthStrategyID.GOOGLE,
   })
   @IsNotEmpty()
@@ -44,7 +44,7 @@ export class AuthorizeResponseDto {
 
   @ApiProperty({
     enum: OAuthStrategyID,
-    description: "ID da estratégia OAuth",
+    description: "id da estratégia OAuth",
     example: OAuthStrategyID.GOOGLE,
   })
   public strategyID!: OAuthStrategyID;

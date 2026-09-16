@@ -1,35 +1,35 @@
 import { CryptoService } from "src/common/services/crypto.service";
-import { OAuthEmailConflictException, OAuthEmailConflictReason } from "../exceptions/oAuthEmailConflict.exception";
+import { OAuthEmailConflictException, OAuthEmailConflictReason } from "../exceptions/OAuthEmailConflict.exception";
 import { InvalidOAuthStateException, InvalidOAuthStateReason } from "../exceptions/invalidOAuthState.exception";
 import { AccountsService } from "src/modules/accounts/services/accounts.service";
 import { AccountProvider } from "src/modules/accounts/account.entity";
 import { UsersService } from "src/modules/users/services/users.service";
 import { OAuthStrategyID } from "../strategies/base.strategy";
-import { OAuthStrategyRegistry } from "../oAuthStrategy.registry";
+import { OAuthStrategyRegistry } from "../OAuthStrategy.registry";
 import { UserEntity } from "src/modules/users/user.entity";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class OAuthService {
-  private readonly oAuthStrategyIDToAccountTypeMap: Record<OAuthStrategyID, AccountProvider> = {
+  private readonly OAuthStrategyIDToAccountTypeMap: Record<OAuthStrategyID, AccountProvider> = {
     [OAuthStrategyID.GOOGLE]: AccountProvider.GOOGLE,
   };
 
   constructor(
     private readonly cryptoService: CryptoService,
-    private readonly oAuthStrategyRegistry: OAuthStrategyRegistry,
+    private readonly OAuthStrategyRegistry: OAuthStrategyRegistry,
     private readonly accountsService: AccountsService,
     private readonly usersService: UsersService,
   ) {}
 
   public async callback(OAuthStrategyID: OAuthStrategyID, code: string): Promise<UserEntity> {
-    const { username, ID, email } = await this.oAuthStrategyRegistry.strategies[OAuthStrategyID].callback(code);
+    const { username, id, email } = await this.OAuthStrategyRegistry.strategies[OAuthStrategyID].callback(code);
 
-    const type = this.oAuthStrategyIDToAccountTypeMap[OAuthStrategyID];
+    const type = this.OAuthStrategyIDToAccountTypeMap[OAuthStrategyID];
 
     const existingAccount = await this.accountsService.findByTypeAndAccountID({
       relations: { user: true },
-      providerAccountID: ID,
+      providerAccountID: id,
       type: type,
     });
 
@@ -44,15 +44,15 @@ export class OAuthService {
         throw new OAuthEmailConflictException(OAuthEmailConflictReason.EXISTING_ACCOUNT_EMAIL_NOT_VERIFIED);
       }
 
-      await this.accountsService.create(ID, type, existingUser.ID);
+      await this.accountsService.create(id, type, existingUser.id);
 
       return existingUser;
     }
 
     const user = await this.usersService.create(email, username);
-    await this.usersService.verifyEmailByID(user.ID);
+    await this.usersService.verifyEmailById(user.id);
 
-    await this.accountsService.create(ID, type, user.ID);
+    await this.accountsService.create(id, type, user.id);
 
     return user;
   }
@@ -60,7 +60,7 @@ export class OAuthService {
   public createAuthorizeURL(OAuthStrategyID: OAuthStrategyID): { authorizeURL: string; state: string } {
     const state = this.cryptoService.randomHash();
 
-    const authorizeURL = this.oAuthStrategyRegistry.strategies[OAuthStrategyID].createAuthorizeURL(state);
+    const authorizeURL = this.OAuthStrategyRegistry.strategies[OAuthStrategyID].createAuthorizeURL(state);
 
     return { authorizeURL, state };
   }

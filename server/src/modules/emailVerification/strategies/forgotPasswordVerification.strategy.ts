@@ -9,7 +9,7 @@ export class ForgotPasswordVerificationStrategy implements InterfaceBaseVerifica
 
   constructor(private readonly usersService: UsersService) {}
 
-  public async execute(_, userID: string, payload: { hash: string }): Promise<void> {
-    await this.usersService.updateHash(userID, payload.hash);
+  public async execute(_, userId: string, payload: { hash: string }): Promise<void> {
+    await this.usersService.updateHash(userId, payload.hash);
   }
 }

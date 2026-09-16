@@ -4,13 +4,13 @@ import * as typeorm from "typeorm";
 @typeorm.Entity("instances")
 export class InstanceEntity {
   @typeorm.PrimaryColumn({ generated: "uuid", unique: true, type: "uuid" })
-  public ID!: string;
+  public id!: string;
 
   @typeorm.Column({ type: "uuid", nullable: false })
-  public userID!: UserEntity["ID"];
+  public userId!: UserEntity["id"];
 
   @typeorm.ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
-  @typeorm.JoinColumn({ name: "userID" })
+  @typeorm.JoinColumn({ name: "userId" })
   public user!: UserEntity;
 
   @typeorm.Index()

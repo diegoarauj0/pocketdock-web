@@ -14,7 +14,7 @@ import { Injectable, Logger } from "@nestjs/common";
 interface InterfaceSendProps {
   emailVerificationType: EmailVerificationType;
   payload?: Record<string, unknown>;
-  userID: string;
+  userId: string;
   email: string;
   locale: Locale;
 }
@@ -65,7 +65,7 @@ export class EmailVerificationService {
       });
     }
 
-    const { affected } = await this.emailVerificationRepository.revoke(existsEmailVerification.ID);
+    const { affected } = await this.emailVerificationRepository.revoke(existsEmailVerification.id);
 
     if (affected === undefined || affected === 0) {
       throw new concurrentEmailVerification.ConcurrentEmailVerificationException(
@@ -80,7 +80,7 @@ export class EmailVerificationService {
       const emailVerification = this.emailVerificationRepository.create({
         expiresAt: new Date(Date.now() + EMAIL_VERIFICATION_CONSTANT.EXPIRES_IN_MS),
         payload: existsEmailVerification.payload,
-        userID: existsEmailVerification.userID,
+        userId: existsEmailVerification.userId,
         type: emailVerificationType,
         revoked: false,
         email: email,
@@ -102,7 +102,7 @@ export class EmailVerificationService {
   }
 
   public async send(props: InterfaceSendProps): Promise<void> {
-    const { emailVerificationType, userID, email, payload, locale } = props;
+    const { emailVerificationType, userId, email, payload, locale } = props;
 
     const existsEmailVerification = await this.emailVerificationRepository.findByTypeAndEmailAndNotRevoked(
       emailVerificationType,
@@ -125,7 +125,7 @@ export class EmailVerificationService {
         expiresAt: new Date(Date.now() + EMAIL_VERIFICATION_CONSTANT.EXPIRES_IN_MS),
         type: emailVerificationType,
         payload: payload,
-        userID: userID,
+        userId: userId,
         revoked: false,
         email: email,
         hash: hash,
@@ -151,9 +151,9 @@ export class EmailVerificationService {
     const emailVerification = await this.verifyAndRevoke({ emailVerificationType, code, email });
 
     const payload = emailVerification.payload;
-    const userID = emailVerification.userID;
+    const userId = emailVerification.userId;
 
-    await this.verificationStrategyRegistry.strategies[emailVerificationType].execute(email, userID, payload);
+    await this.verificationStrategyRegistry.strategies[emailVerificationType].execute(email, userId, payload);
 
     return emailVerification;
   }
@@ -202,14 +202,14 @@ export class EmailVerificationService {
     }
 
     if (emailVerification.expiresAt < new Date()) {
-      await this.emailVerificationRepository.revoke(emailVerification.ID);
+      await this.emailVerificationRepository.revoke(emailVerification.id);
 
       throw new invalidEmailVerificationCode.InvalidEmailVerificationCodeException(
         invalidEmailVerificationCode.InvalidEmailVerificationCodeReason.EXPIRED,
       );
     }
 
-    const { affected } = await this.emailVerificationRepository.revoke(emailVerification.ID);
+    const { affected } = await this.emailVerificationRepository.revoke(emailVerification.id);
 
     if (affected === 0 || affected === undefined) {
       throw new invalidEmailVerificationCode.InvalidEmailVerificationCodeException(

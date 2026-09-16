@@ -1,6 +1,6 @@
 import { EmailVerificationModule } from "../emailVerification/emailVerification.module";
 import { GoogleOAuthStrategy } from "./strategies/google.strategy";
-import { OAuthStrategyRegistry } from "./oAuthStrategy.registry";
+import { OAuthStrategyRegistry } from "./OAuthStrategy.registry";
 import { OAuthController } from "./controllers/OAuth.controller";
 import { AuthController } from "./controllers/auth.controller";
 import { AccountsModule } from "../accounts/accounts.module";

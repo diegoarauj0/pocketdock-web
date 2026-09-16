@@ -77,7 +77,7 @@ export function InstancesPage() {
 
         <S.CardsGrid>
           {instances?.map((instance) => (
-            <InstanceCardComponent key={instance.ID} instance={instance} />
+            <InstanceCardComponent key={instance.id} instance={instance} />
           ))}
         </S.CardsGrid>
       </S.Content>

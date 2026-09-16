@@ -10,8 +10,8 @@ export class UsersService {
     return this.usersRepository.findByEmail(email);
   }
 
-  public findByID(ID: string): Promise<UserEntity | null> {
-    return this.usersRepository.findByID(ID);
+  public findById(id: string): Promise<UserEntity | null> {
+    return this.usersRepository.findById(id);
   }
 
   public async create(email: string, username: string, hash?: string): Promise<UserEntity> {
@@ -28,16 +28,16 @@ export class UsersService {
     return this.usersRepository.remove(user);
   }
 
-  public async verifyEmailByID(ID: string): Promise<boolean> {
-    const { affected } = await this.usersRepository.verifyEmailByID(ID);
+  public async verifyEmailById(id: string): Promise<boolean> {
+    const { affected } = await this.usersRepository.verifyEmailById(id);
 
     if (affected === 0 || affected === undefined) return false;
 
     return true;
   }
 
-  public async updateHash(ID: string, hash: string): Promise<boolean> {
-    const { affected } = await this.usersRepository.updateHash(ID, hash);
+  public async updateHash(id: string, hash: string): Promise<boolean> {
+    const { affected } = await this.usersRepository.updateHash(id, hash);
 
     if (affected === 0 || affected === undefined) return false;
 

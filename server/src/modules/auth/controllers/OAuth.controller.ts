@@ -1,7 +1,7 @@
 import { ApiCreatedResponse, ApiFoundResponse, ApiOperation } from "@nestjs/swagger";
 import { ApiInvalidOAuthStateResponse } from "src/common/decorators/swagger/invalidOAuthState.decorator";
-import { ApiOAuthEmailConflictResponse } from "src/common/decorators/swagger/oAuthEmailConflict.decorator";
-import { ApiOAuthStrategyErrorResponse } from "src/common/decorators/swagger/oAuthStrategy.decorator";
+import { ApiOAuthEmailConflictResponse } from "src/common/decorators/swagger/OAuthEmailConflict.decorator";
+import { ApiOAuthStrategyErrorResponse } from "src/common/decorators/swagger/OAuthStrategy.decorator";
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
 import { StrategyIDParamsDto, CallbackQueriesDto, AuthorizeResponseDto } from "../dtos/OAuth.dto";
 import { SessionService } from "src/modules/sessions/services/session.service";
@@ -51,7 +51,7 @@ export class OAuthController {
     const user = await this.OAuthService.callback(strategyID, code);
 
     const { refresh } = await this.sessionService.create({
-      userID: user.ID,
+      userId: user.id,
       ipAddress,
       userAgent,
     });

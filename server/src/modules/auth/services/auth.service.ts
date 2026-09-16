@@ -39,7 +39,7 @@ export class AuthService {
     }
 
     if (user.emailVerified === false) {
-      throw new InvalidCredentialException(InvalidCredentialReason.EMAIL_NOT_VERIFY);
+      throw new InvalidCredentialException(InvalidCredentialReason.EMAIL_NOT_VERIFIED);
     }
 
     if (result === false) {
@@ -62,7 +62,7 @@ export class AuthService {
 
     await this.emailVerificationService.send({
       emailVerificationType: EmailVerificationType.SIGN_UP,
-      userID: user.ID,
+      userId: user.id,
       email: email,
       locale: locale,
     });
@@ -80,7 +80,7 @@ export class AuthService {
     await this.emailVerificationService.send({
       emailVerificationType: EmailVerificationType.FORGOT_PASSWORD,
       payload: { hash: hash },
-      userID: user.ID,
+      userId: user.id,
       email: email,
       locale: locale,
     });

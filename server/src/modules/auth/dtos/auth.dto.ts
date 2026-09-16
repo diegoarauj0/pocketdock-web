@@ -1,8 +1,8 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { PASSWORD_CONSTANT } from "src/common/password.constant";
 import { EMAIL_VERIFICATION_CONSTANT } from "src/modules/emailVerification/emailVerification.constant";
 import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
+import { PASSWORD_CONSTANT } from "src/common/password.constant";
 import { USER_CONSTANT } from "src/modules/users/user.constant";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class EmailAndPasswordDto {
   @ApiProperty({ type: "string", format: "email", description: "E-mail do usuário", example: "diegoaraujo@email.com" })

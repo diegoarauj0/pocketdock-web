@@ -13,7 +13,7 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
   const { t } = useTranslation("instances");
 
   return (
-    <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.ID}`}>
+    <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.id}`}>
       <S.Header>
         <S.IconArea>
           <Container size={24} />
@@ -23,7 +23,7 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
       </S.Header>
 
       <S.Content>
-        <S.Id>{instance.ID}</S.Id>
+        <S.Id>{instance.id}</S.Id>
       </S.Content>
 
       <S.MetaList>

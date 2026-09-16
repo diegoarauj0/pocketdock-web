@@ -1,5 +1,5 @@
 export interface InterfacePublicUser {
-  ID: string;
+  id: string;
   username: string;
   createdAt: string;
   updatedAt: string;

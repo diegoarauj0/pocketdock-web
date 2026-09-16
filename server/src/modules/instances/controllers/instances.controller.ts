@@ -2,7 +2,7 @@ import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalid
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiCreatedResponse } from "@nestjs/swagger";
 import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
-import { InstanceIDParamsDto, InstancePrivateDto, InstanceStatsDto } from "../dtos/instance.dto";
+import { InstanceIdParamsDto, InstancePrivateDto, InstanceStatsDto } from "../dtos/instance.dto";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { Session } from "src/modules/auth/decorators/session.decorator";
 import { InstancesService } from "../services/instances.service";
@@ -43,7 +43,7 @@ export class InstancesController {
   @Get()
   @HttpCode(HttpStatus.OK)
   public async findAll(@Session() { user }: { user: UserEntity }) {
-    const instances = await this.instancesService.findAllByUserId(user.ID);
+    const instances = await this.instancesService.findAllByUserId(user.id);
 
     return instances.map((instance) => InstanceMapper.toPrivate(instance));
   }
@@ -56,10 +56,10 @@ export class InstancesController {
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Get(":ID")
+  @Get(":id")
   @HttpCode(HttpStatus.OK)
-  public async findOne(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.findOwnedById(ID, user.ID);
+  public async findOne(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
+    const instance = await this.instancesService.findOwnedById(id, user.id);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -72,10 +72,10 @@ export class InstancesController {
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Post(":ID/stop")
+  @Post(":id/stop")
   @HttpCode(HttpStatus.OK)
-  public async stop(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.stop(ID, user.ID);
+  public async stop(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
+    const instance = await this.instancesService.stop(id, user.id);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -88,10 +88,10 @@ export class InstancesController {
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Post(":ID/start")
+  @Post(":id/start")
   @HttpCode(HttpStatus.OK)
-  public async start(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.start(ID, user.ID);
+  public async start(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
+    const instance = await this.instancesService.start(id, user.id);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -104,10 +104,10 @@ export class InstancesController {
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Delete(":ID")
+  @Delete(":id")
   @HttpCode(HttpStatus.OK)
-  public async remove(@Session() { user }: { user: UserEntity }, @Param() { ID }: InstanceIDParamsDto) {
-    const instance = await this.instancesService.remove(ID, user.ID);
+  public async remove(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
+    const instance = await this.instancesService.remove(id, user.id);
 
     return InstanceMapper.toPrivate(instance);
   }
@@ -121,13 +121,13 @@ export class InstancesController {
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
-  @Get("stats/:ID")
+  @Get("stats/:id")
   @HttpCode(HttpStatus.OK)
   public async stats(
     @Session() { user }: { user: UserEntity },
-    @Param() { ID }: InstanceIDParamsDto,
+    @Param() { id }: InstanceIdParamsDto,
   ): Promise<InstanceStatsDto> {
-    const stats = await this.instancesService.stats(ID, user.ID);
+    const stats = await this.instancesService.stats(id, user.id);
 
     return stats;
   }

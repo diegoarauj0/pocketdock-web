@@ -14,7 +14,7 @@ export interface InterfaceEmailContent {
   description: string;
 }
 
-type InterfaceDictionary = Record<
+type DictionaryType = Record<
   EmailVerificationType,
   Omit<InterfaceEmailContent, "subject" | "greetingPrefix" | "expiresInMessage">
 > & {
@@ -29,7 +29,7 @@ export class MailTranslationService {
 
   private readonly i18nPath = path.join(process.cwd(), "src", "modules", "mail", "i18n");
 
-  private readonly cache = new Map<Locale, InterfaceDictionary>();
+  private readonly cache = new Map<Locale, DictionaryType>();
 
   public async translate(locale: Locale, emailVerificationType: EmailVerificationType): Promise<InterfaceEmailContent> {
     const dictionary = await this.load(locale);
@@ -44,7 +44,7 @@ export class MailTranslationService {
     };
   }
 
-  private async load(locale: Locale): Promise<InterfaceDictionary> {
+  private async load(locale: Locale): Promise<DictionaryType> {
     const cachedDictionary = this.cache.get(locale);
 
     if (cachedDictionary) return cachedDictionary;
@@ -54,7 +54,7 @@ export class MailTranslationService {
 
       const source = await fs.readFile(filePath, "utf8");
 
-      const dictionary = JSON.parse(source) as InterfaceDictionary;
+      const dictionary = JSON.parse(source) as DictionaryType;
 
       this.cache.set(locale, dictionary);
 

@@ -5,44 +5,46 @@ import { Injectable } from "@nestjs/common";
 import { env } from "src/config/env";
 
 interface InterfaceCreateAccessTokenProps {
-  sessionID: string;
-  userID: string;
+  sessionId: string;
+  userId: string;
 }
 
 interface InterfaceCreateRefreshTokenProps {
-  sessionID: string;
-  userID: string;
+  sessionId: string;
+  userId: string;
 }
 
 @Injectable()
 export class JWTService {
   public createAccessToken(props: InterfaceCreateAccessTokenProps): string {
-    const { sessionID, userID } = props;
+    const { sessionId, userId } = props;
 
-    return JWT.sign({ sessionID, userID, type: "access" }, env.SECRET, {
+    return JWT.sign({ sessionId, userId, type: "access" }, env.SECRET, {
       expiresIn: SESSION_CONSTANT.ACCESS_EXPIRES_IN_MS / 1000,
     });
   }
 
   public createRefreshToken(props: InterfaceCreateRefreshTokenProps): string {
-    const { sessionID, userID } = props;
+    const { sessionId, userId } = props;
 
-    return JWT.sign({ sessionID, userID, type: "refresh" }, env.SECRET, {
+    return JWT.sign({ sessionId, userId, type: "refresh" }, env.SECRET, {
       expiresIn: SESSION_CONSTANT.SESSION_EXPIRES_IN_MS / 1000,
     });
   }
 
   public verifyRefreshToken(refresh: string): InterfaceCreateRefreshTokenProps {
     try {
-      const { sessionID, type, userID } = JWT.verify(refresh, env.SECRET) as {
-        sessionID: string;
-        userID: string;
+      const { sessionId, type, userId } = JWT.verify(refresh, env.SECRET) as {
+        sessionId: string;
+        userId: string;
         type: string;
       };
 
-      if (type !== "refresh") throw new InvalidTokenException("refresh", InvalidTokenReason.INVALID);
+      if (typeof sessionId !== "string" || typeof userId !== "string" || type !== "refresh") {
+        throw new InvalidTokenException("refresh", InvalidTokenReason.INVALID);
+      }
 
-      return { sessionID, userID };
+      return { sessionId: sessionId, userId: userId };
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
         throw new InvalidTokenException("refresh", InvalidTokenReason.INVALID);
@@ -58,15 +60,17 @@ export class JWTService {
 
   public verifyAccessToken(access: string): InterfaceCreateAccessTokenProps {
     try {
-      const { sessionID, type, userID } = JWT.verify(access, env.SECRET) as {
-        sessionID: string;
-        userID: string;
+      const { sessionId, type, userId } = JWT.verify(access, env.SECRET) as {
+        sessionId: string;
+        userId: string;
         type: string;
       };
 
-      if (type !== "access") throw new InvalidTokenException("access", InvalidTokenReason.INVALID);
+      if (typeof sessionId !== "string" || typeof userId !== "string" || type !== "access") {
+        throw new InvalidTokenException("access", InvalidTokenReason.INVALID);
+      }
 
-      return { sessionID, userID };
+      return { sessionId: sessionId, userId: userId };
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
         throw new InvalidTokenException("access", InvalidTokenReason.INVALID);

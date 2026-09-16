@@ -9,13 +9,13 @@ export enum AccountProvider {
 @typeorm.Unique(["provider", "providerAccountID"])
 export class AccountEntity {
   @typeorm.PrimaryColumn({ type: "uuid", generated: "uuid", nullable: false })
-  public ID!: string;
+  public id!: string;
 
   @typeorm.Column({ type: "uuid", nullable: false })
-  public userID!: string;
+  public userId!: string;
 
   @typeorm.ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
-  @typeorm.JoinColumn({ name: "userID" })
+  @typeorm.JoinColumn({ name: "userId" })
   public user!: UserEntity;
 
   @typeorm.Column({ type: "enum", enum: AccountProvider, nullable: false })

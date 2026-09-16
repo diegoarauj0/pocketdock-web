@@ -7,5 +7,5 @@ export interface InterfaceBaseOAuthStrategy {
 
   createAuthorizeURL(state: string): string;
 
-  callback(code: string): Promise<{ email: string; username: string; ID: string }>;
+  callback(code: string): Promise<{ email: string; username: string; id: string }>;
 }

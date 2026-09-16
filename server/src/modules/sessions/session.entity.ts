@@ -11,15 +11,15 @@ export enum SessionRevokeType {
 @typeorm.Entity("sessions")
 export class SessionEntity {
   @typeorm.PrimaryColumn({ generated: "uuid", unique: true, type: "uuid" })
-  public ID!: string;
+  public id!: string;
 
   @typeorm.ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
-  @typeorm.JoinColumn({ name: "userID" })
+  @typeorm.JoinColumn({ name: "userId" })
   public user!: UserEntity;
 
   @typeorm.Index()
   @typeorm.Column({ type: "uuid", nullable: false })
-  public userID!: string;
+  public userId!: string;
 
   @typeorm.Column({ type: "varchar", length: 255, nullable: false })
   public refreshTokenHash!: string;

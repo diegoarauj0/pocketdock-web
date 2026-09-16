@@ -41,7 +41,7 @@ export class AuthController {
   @AllowAnonymous()
   @ApiValidationResponse()
   @HttpCode(HttpStatus.OK)
-  @Post("forgotPassword/verify")
+  @Post("forgot-password/verify")
   @ApiInvalidEmailVerificationCodeResponse()
   public async forgotPasswordVerifyEmail(@Body() body: DTOs.VerifyEmailBodyDto): Promise<void> {
     await this.emailVerificationService.execute({
@@ -59,7 +59,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
-  @Post("forgotPassword/resend")
+  @Post("forgot-password/resend")
   @ApiOkResponse({ type: SuccessResponseDto() })
   public async forgotPasswordResendEmail(
     @Body() body: DTOs.EmailBodyDto,
@@ -77,7 +77,7 @@ export class AuthController {
     description: "Inicia o fluxo de recuperação de senha enviando um código de verificação por e-mail.",
   })
   @AllowAnonymous()
-  @Post("forgotPassword")
+  @Post("forgot-password")
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
@@ -94,7 +94,7 @@ export class AuthController {
     description: "Valida o e-mail e o código de verificação do cadastro, cria a sessão e retorna o token de acesso.",
   })
   @AllowAnonymous()
-  @Post("signUp/verify")
+  @Post("sign-up/verify")
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
   @ApiInvalidEmailVerificationCodeResponse()
@@ -112,7 +112,7 @@ export class AuthController {
     });
 
     const { access, refresh } = await this.sessionService.create({
-      userID: emailVerification.userID,
+      userId: emailVerification.userId,
       ipAddress,
       userAgent,
     });
@@ -127,7 +127,7 @@ export class AuthController {
     description: "Envia novamente o código de verificação por e-mail para concluir o cadastro.",
   })
   @AllowAnonymous()
-  @Post("signUp/resend")
+  @Post("sign-up/resend")
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
   @HttpCode(HttpStatus.OK)
@@ -147,7 +147,7 @@ export class AuthController {
     summary: "Cadastrar usuário",
     description: "Cria um novo usuário com e-mail, senha e nome de usuário e envia o código de verificação por e-mail.",
   })
-  @Post("signUp")
+  @Post("sign-up")
   @AllowAnonymous()
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
@@ -164,7 +164,7 @@ export class AuthController {
     summary: "Entrar na conta",
     description: "Autentica o usuário com e-mail e senha, cria uma sessão e retorna o token de acesso.",
   })
-  @Post("signIn")
+  @Post("sign-in")
   @AllowAnonymous()
   @ApiValidationResponse()
   @ApiInvalidCredentialResponse()
@@ -178,7 +178,7 @@ export class AuthController {
   ): Promise<DTOs.TokenResponseDto> {
     const user = await this.authService.signIn(body);
 
-    const { access, refresh } = await this.sessionService.create({ userID: user.ID, ipAddress, userAgent });
+    const { access, refresh } = await this.sessionService.create({ userId: user.id, ipAddress, userAgent });
 
     this.setRefreshCookie(refresh, res);
 
@@ -211,7 +211,7 @@ export class AuthController {
     summary: "Obter usuário atual",
     description: "Retorna os dados públicos do usuário autenticado.",
   })
-  @Get("@me")
+  @Get("me")
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
@@ -233,9 +233,9 @@ export class AuthController {
   @ApiOkResponse({ type: SuccessResponseDto() })
   public async logout(
     @Res({ passthrough: true }) res: Response,
-    @Session() { sessionID }: { sessionID: string },
+    @Session() { sessionId }: { sessionId: string },
   ): Promise<void> {
-    await this.sessionService.revoke(sessionID);
+    await this.sessionService.revoke(sessionId);
 
     this.clearRefreshCookie(res);
   }
@@ -244,7 +244,7 @@ export class AuthController {
     summary: "Encerrar todas as sessões",
     description: "Revoga todas as sessões do usuário autenticado e limpa o cookie de refresh token.",
   })
-  @Post("logoutAll")
+  @Post("logout-all")
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
@@ -254,7 +254,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Session() { user }: { user: UserEntity },
   ): Promise<void> {
-    await this.sessionService.revokeAll(user.ID);
+    await this.sessionService.revokeAll(user.id);
 
     this.clearRefreshCookie(res);
   }

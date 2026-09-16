@@ -11,12 +11,12 @@ export class UsersRepository {
     private readonly usersRepository: Repository<UserEntity>,
   ) {}
 
-  public verifyEmailByID(ID: string): Promise<UpdateResult> {
-    return this.usersRepository.update({ ID: ID }, { emailVerified: true });
+  public verifyEmailById(id: string): Promise<UpdateResult> {
+    return this.usersRepository.update({ id: id }, { emailVerified: true });
   }
 
-  public updateHash(ID: string, hash: string): Promise<UpdateResult> {
-    return this.usersRepository.update({ ID: ID }, { hash: hash });
+  public updateHash(id: string, hash: string): Promise<UpdateResult> {
+    return this.usersRepository.update({ id: id }, { hash: hash });
   }
 
   public remove(user: UserEntity): Promise<UserEntity> {
@@ -27,8 +27,8 @@ export class UsersRepository {
     return this.usersRepository.findOneBy({ email: email });
   }
 
-  public findByID(ID: string): Promise<UserEntity | null> {
-    return this.usersRepository.findOneBy({ ID: ID });
+  public findById(id: string): Promise<UserEntity | null> {
+    return this.usersRepository.findOneBy({ id: id });
   }
 
   public create(props: Partial<UserEntity>): UserEntity {

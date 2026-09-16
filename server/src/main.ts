@@ -1,7 +1,7 @@
 import { DockerProvisionerService } from "./infrastructure/docker/services/dockerProvisioner.service";
 import { INestApplication, LogLevel } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
-import { Swagger } from "./config/swagger";
+import { setupSwagger } from "./config/swagger";
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
 import { env } from "./config/env";
@@ -29,7 +29,7 @@ function configureApp(app: INestApplication) {
 
   app.use(cookieParser());
 
-  Swagger(app);
+  setupSwagger(app);
 }
 
 bootstrap().catch((error) => {

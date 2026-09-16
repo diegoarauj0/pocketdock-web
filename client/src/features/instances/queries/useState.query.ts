@@ -1,10 +1,10 @@
 import { instancesService } from "../services/instances.service";
 import { useQuery } from "@tanstack/react-query";
 
-export function useStateQuery(ID?: string | undefined) {
+export function useStateQuery(id?: string | undefined) {
   return useQuery({
-    queryFn: () => instancesService.stats(ID || ""),
-    queryKey: ["instance", "state", ID],
-    enabled: ID !== undefined,
+    queryFn: () => instancesService.stats(id || ""),
+    queryKey: ["instance", "state", id],
+    enabled: id !== undefined,
   });
 }

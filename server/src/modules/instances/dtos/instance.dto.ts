@@ -2,27 +2,27 @@ import { IsNotEmpty, IsString, IsUUID } from "class-validator";
 import { InstanceEntity } from "../instance.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
-export class InstanceIDParamsDto {
+export class InstanceIdParamsDto {
   @ApiProperty({
     type: "string",
     format: "uuid",
-    description: "ID da instância",
+    description: "id da instância",
     example: "123e4567-e89b-12d3-a456-426614174000",
   })
   @IsString()
   @IsNotEmpty()
   @IsUUID()
-  public ID!: InstanceEntity["ID"];
+  public id!: InstanceEntity["id"];
 }
 
 export class InstancePrivateDto {
   @ApiProperty({
     type: "string",
     format: "uuid",
-    description: "ID da instância",
+    description: "id da instância",
     example: "123e4567-e89b-12d3-a456-426614174000",
   })
-  public ID!: InstanceEntity["ID"];
+  public id!: InstanceEntity["id"];
 
   @ApiProperty({
     type: "string",
@@ -86,7 +86,7 @@ export class InstanceStatsDto {
   @ApiProperty({
     enum: ["running", "stopped"],
     enumName: "InstanceStatus",
-    description: "Status simplificado da instância (rodando ou parada)",
+    description: "Status simplificado da instância ('running' ou 'stopped')",
     example: "running",
   })
   public status!: "running" | "stopped";

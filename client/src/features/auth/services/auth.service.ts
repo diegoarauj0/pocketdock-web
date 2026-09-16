@@ -38,19 +38,19 @@ export interface InterfaceVerifyEmailRequest {
 
 export const authService = {
   forgotPassword: (request: InterfaceForgotPasswordRequest): Promise<void> => {
-    return httpService.post<void, InterfaceForgotPasswordRequest>("/api/auth/forgotPassword", request);
+    return httpService.post<void, InterfaceForgotPasswordRequest>("/api/auth/forgot-password", request);
   },
 
   forgotPasswordResendEmail: (request: InterfaceEmailRequest): Promise<void> => {
-    return httpService.post<void, InterfaceEmailRequest>("/api/auth/forgotPassword/resend", request);
+    return httpService.post<void, InterfaceEmailRequest>("/api/auth/forgot-password/resend", request);
   },
 
   forgotPasswordVerifyEmail: (request: InterfaceVerifyEmailRequest): Promise<void> => {
-    return httpService.post<void, InterfaceVerifyEmailRequest>("/api/auth/forgotPassword/verify", request);
+    return httpService.post<void, InterfaceVerifyEmailRequest>("/api/auth/forgot-password/verify", request);
   },
 
   me: (): Promise<InterfacePublicUser> => {
-    return httpService.get<InterfacePublicUser>("/api/auth/@me");
+    return httpService.get<InterfacePublicUser>("/api/auth/me");
   },
 
   authorize: (strategyID: string): Promise<InterfaceAuthorizeResponse> => {
@@ -62,7 +62,7 @@ export const authService = {
   },
 
   signIn: (request: InterfaceSignInRequest): Promise<InterfaceTokenResponse> => {
-    return httpService.post<InterfaceTokenResponse, InterfaceSignInRequest>("/api/auth/signIn", request);
+    return httpService.post<InterfaceTokenResponse, InterfaceSignInRequest>("/api/auth/sign-in", request);
   },
 
   logout: (): Promise<void> => {
@@ -70,14 +70,14 @@ export const authService = {
   },
 
   signUp: (request: InterfaceSignUpRequest): Promise<void> => {
-    return httpService.post<void, InterfaceSignUpRequest>("/api/auth/signUp", request);
+    return httpService.post<void, InterfaceSignUpRequest>("/api/auth/sign-up", request);
   },
 
   signUpResendEmail: (request: InterfaceEmailRequest): Promise<void> => {
-    return httpService.post<void, InterfaceEmailRequest>("/api/auth/signUp/resend", request);
+    return httpService.post<void, InterfaceEmailRequest>("/api/auth/sign-up/resend", request);
   },
 
   signUpVerifyEmail: (request: InterfaceVerifyEmailRequest): Promise<InterfaceTokenResponse> => {
-    return httpService.post<InterfaceTokenResponse, InterfaceVerifyEmailRequest>("/api/auth/signUp/verify", request);
+    return httpService.post<InterfaceTokenResponse, InterfaceVerifyEmailRequest>("/api/auth/sign-up/verify", request);
   },
 };

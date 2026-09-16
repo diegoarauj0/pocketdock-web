@@ -4,7 +4,7 @@ import { UserEntity } from "./user.entity";
 export class UserMapper {
   public static toPublic(user: UserEntity): PublicUserResponseDto {
     return {
-      ID: user.ID,
+      id: user.id,
       username: user.username,
       updatedAt: user.updatedAt,
       createdAt: user.createdAt,

@@ -9,7 +9,7 @@ export class SignUpVerificationStrategy implements InterfaceBaseVerificationStra
 
   constructor(private readonly usersService: UsersService) {}
 
-  public async execute(_, userID: string): Promise<void> {
-    await this.usersService.verifyEmailByID(userID);
+  public async execute(_, userId: string): Promise<void> {
+    await this.usersService.verifyEmailById(userId);
   }
 }

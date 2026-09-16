@@ -5,10 +5,10 @@ import { InstanceEntity } from "./instance.entity";
 export class InstanceMapper {
   public static toPrivate(instance: InstanceEntity): InstancePrivateDto {
     return {
-      ID: instance.ID,
+      id: instance.id,
       containerName: instance.containerName,
       defaultPassword: instance.defaultPassword,
-      url: `${env.INSTANCE_PROTOCOL}://${instance.ID}.${env.INSTANCE_DOMAIN}`,
+      url: `${env.INSTANCE_PROTOCOL}://${instance.id}.${env.INSTANCE_DOMAIN}`,
       createdAt: instance.createdAt,
       updatedAt: instance.updatedAt,
     };

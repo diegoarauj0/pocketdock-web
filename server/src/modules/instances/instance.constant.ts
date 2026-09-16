@@ -12,4 +12,7 @@ export const INSTANCE_CONSTANT = {
   LABEL_MANAGED: "com.pocketdock.managed",
   LABEL_VERSION: "com.pocketdock.version",
   LABEL_TYPE: "com.pocketdock.type",
+
+  SUPERUSER_CREATE_ATTEMPTS: 5,
+  SUPERUSER_CREATE_RETRY_DELAY_MS: 2000,
 } as const;

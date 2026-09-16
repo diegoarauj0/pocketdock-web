@@ -1,4 +1,4 @@
-import { OAuthStrategyErrorReason, OAuthStrategyException } from "../exceptions/oAuthStrategy.exception";
+import { OAuthStrategyErrorReason, OAuthStrategyException } from "../exceptions/OAuthStrategy.exception";
 import { InterfaceBaseOAuthStrategy, OAuthStrategyID } from "./base.strategy";
 import { Logger } from "@nestjs/common";
 import { env } from "src/config/env";
@@ -57,7 +57,7 @@ export class GoogleOAuthStrategy implements InterfaceBaseOAuthStrategy {
     return url.toString();
   }
 
-  public async callback(code: string): Promise<{ email: string; username: string; ID: string }> {
+  public async callback(code: string): Promise<{ email: string; username: string; id: string }> {
     this.logger.debug("Requesting access token from Google");
     const { access_token } = await this.requestTokenByCode(code);
 
@@ -67,7 +67,7 @@ export class GoogleOAuthStrategy implements InterfaceBaseOAuthStrategy {
     this.logger.debug(`Google user retrieved (id=${userInfo.sub})`);
 
     return {
-      ID: userInfo.sub,
+      id: userInfo.sub,
       email: userInfo.email,
       username: userInfo.name,
     };

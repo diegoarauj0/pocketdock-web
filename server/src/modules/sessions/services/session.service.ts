@@ -11,7 +11,7 @@ import { Injectable, Logger } from "@nestjs/common";
 interface InterfaceCreateProps {
   ipAddress?: string;
   userAgent?: string;
-  userID: string;
+  userId: string;
 }
 
 @Injectable()
@@ -26,22 +26,22 @@ export class SessionService {
   ) {}
 
   public async create(props: InterfaceCreateProps): Promise<{ refresh: string; access: string }> {
-    const { userID, ipAddress, userAgent } = props;
+    const { userId, ipAddress, userAgent } = props;
 
-    this.logger.debug("Creating session.", { userID });
+    this.logger.debug("Creating session.", { userId });
 
     const session = this.sessionRepository.create({
       expiresAt: new Date(Date.now() + SESSION_CONSTANT.SESSION_EXPIRES_IN_MS),
       userAgent: userAgent ?? null,
       ipAddress: ipAddress ?? null,
-      ID: this.cryptoService.randomUUID(),
-      userID: userID,
+      id: this.cryptoService.randomUUID(),
+      userId: userId,
       revoked: false,
     });
 
     const refresh = this.jwtService.createRefreshToken({
-      sessionID: session.ID,
-      userID: userID,
+      sessionId: session.id,
+      userId: userId,
     });
 
     session.refreshTokenHash = this.cryptoService.hash(refresh);
@@ -49,34 +49,34 @@ export class SessionService {
     await this.sessionRepository.save(session);
 
     const access = this.jwtService.createAccessToken({
-      sessionID: session.ID,
-      userID: userID,
+      sessionId: session.id,
+      userId: userId,
     });
 
-    this.logger.debug("Session created.", { sessionID: session.ID, userID });
+    this.logger.debug("Session created.", { sessionId: session.id, userId });
 
     return { refresh, access };
   }
 
   public async refresh(refresh: string): Promise<{ refresh: string; access: string }> {
-    const { sessionID, userID } = this.jwtService.verifyRefreshToken(refresh);
+    const { sessionId, userId } = this.jwtService.verifyRefreshToken(refresh);
 
-    const session = await this.sessionRepository.findByID(sessionID);
+    const session = await this.sessionRepository.findById(sessionId);
 
     if (session === null) {
-      this.logger.debug("Refresh attempted for unknown session.", { sessionID });
+      this.logger.debug("Refresh attempted for unknown session.", { sessionId });
 
       throw new InvalidSessionException(InvalidSessionReason.NOT_FOUND, true);
     }
 
     if (session.revoked) {
-      this.logger.warn("Refresh attempted for revoked session.", { sessionID: session.ID, userID: session.userID });
+      this.logger.warn("Refresh attempted for revoked session.", { sessionId: session.id, userId: session.userId });
 
       throw new InvalidSessionException(InvalidSessionReason.REVOKED, true);
     }
 
     if (session.expiresAt.getTime() < Date.now()) {
-      this.logger.debug("Refresh attempted for expired session.", { sessionID: session.ID });
+      this.logger.debug("Refresh attempted for expired session.", { sessionId: session.id });
 
       throw new InvalidSessionException(InvalidSessionReason.EXPIRED, true);
     }
@@ -85,18 +85,18 @@ export class SessionService {
 
     if (this.cryptoService.timingSafeEqual(hash, session.refreshTokenHash) === false) {
       this.logger.warn("Refresh token reuse detected. Session revoked.", {
-        sessionID: session.ID,
-        userID: session.userID,
+        sessionId: session.id,
+        userId: session.userId,
       });
 
-      await this.sessionRepository.revokeByID(session.ID, SessionRevokeType.TOKEN_REUSE);
+      await this.sessionRepository.revokeById(session.id, SessionRevokeType.TOKEN_REUSE);
 
       throw new InvalidSessionException(InvalidSessionReason.TOKEN_REUSE, true);
     }
 
     const newRefresh = this.jwtService.createRefreshToken({
-      sessionID: session.ID,
-      userID: session.userID,
+      sessionId: session.id,
+      userId: session.userId,
     });
 
     session.refreshTokenHash = this.cryptoService.hash(newRefresh);
@@ -104,41 +104,41 @@ export class SessionService {
     await this.sessionRepository.save(session);
 
     const access = this.jwtService.createAccessToken({
-      sessionID: session.ID,
-      userID: userID,
+      sessionId: session.id,
+      userId: userId,
     });
 
-    this.logger.debug("Session refreshed.", { sessionID: session.ID });
+    this.logger.debug("Session refreshed.", { sessionId: session.id });
 
     return { refresh: newRefresh, access };
   }
 
-  public async verifyAccessToken(access: string): Promise<{ sessionID: string; user: UserEntity }> {
-    const { sessionID, userID } = this.jwtService.verifyAccessToken(access);
+  public async verifyAccessToken(access: string): Promise<{ sessionId: string; user: UserEntity }> {
+    const { sessionId, userId } = this.jwtService.verifyAccessToken(access);
 
-    const user = await this.usersService.findByID(userID);
+    const user = await this.usersService.findById(userId);
 
     if (user === null) {
-      this.logger.warn("Access token valid but user not found.", { sessionID, userID });
+      this.logger.warn("Access token valid but user not found.", { sessionId, userId });
 
       throw new InvalidSessionException(InvalidSessionReason.USER_NOT_FOUND, true);
     }
 
     return {
-      sessionID: sessionID,
+      sessionId: sessionId,
       user: user,
     };
   }
 
-  public async revoke(sessionID: string): Promise<void> {
-    await this.sessionRepository.revokeByID(sessionID, SessionRevokeType.LOGOUT);
+  public async revoke(sessionId: string): Promise<void> {
+    await this.sessionRepository.revokeById(sessionId, SessionRevokeType.LOGOUT);
 
-    this.logger.log("Session revoked.", { sessionID, reason: SessionRevokeType.LOGOUT });
+    this.logger.log("Session revoked.", { sessionId, reason: SessionRevokeType.LOGOUT });
   }
 
-  public async revokeAll(userID: string): Promise<void> {
-    await this.sessionRepository.revokeAllByUserID(userID, SessionRevokeType.LOGOUT_ALL);
+  public async revokeAll(userId: string): Promise<void> {
+    await this.sessionRepository.revokeAllByUserID(userId, SessionRevokeType.LOGOUT_ALL);
 
-    this.logger.log("All sessions revoked.", { userID, reason: SessionRevokeType.LOGOUT_ALL });
+    this.logger.log("All sessions revoked.", { userId, reason: SessionRevokeType.LOGOUT_ALL });
   }
 }

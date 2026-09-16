@@ -6,7 +6,7 @@ export interface InterfaceInstance {
   updatedAt: string;
   createdAt: string;
   url: string;
-  ID: string;
+  id: string;
 }
 
 export type InterfaceInstanceStatus = "running" | "stopped";
@@ -32,23 +32,23 @@ export const instancesService = {
     return httpService.post("/api/instances", undefined);
   },
 
-  findOneInstanceById: (ID: string): Promise<InterfaceInstance> => {
-    return httpService.get(`/api/instances/${ID}`);
+  findOneInstanceById: (id: string): Promise<InterfaceInstance> => {
+    return httpService.get(`/api/instances/${id}`);
   },
 
-  deleteInstance: (ID: string): Promise<InterfaceInstance> => {
-    return httpService.delete(`/api/instances/${ID}`);
+  deleteInstance: (id: string): Promise<InterfaceInstance> => {
+    return httpService.delete(`/api/instances/${id}`);
   },
 
-  stopInstance: (ID: string): Promise<InterfaceInstance> => {
-    return httpService.post(`/api/instances/${ID}/stop`, undefined);
+  stopInstance: (id: string): Promise<InterfaceInstance> => {
+    return httpService.post(`/api/instances/${id}/stop`, undefined);
   },
 
-  startInstance: (ID: string): Promise<InterfaceInstance> => {
-    return httpService.post(`/api/instances/${ID}/start`, undefined);
+  startInstance: (id: string): Promise<InterfaceInstance> => {
+    return httpService.post(`/api/instances/${id}/start`, undefined);
   },
 
-  stats: (ID: string): Promise<InterfaceState> => {
-    return httpService.get(`/api/instances/stats/${ID}`);
+  stats: (id: string): Promise<InterfaceState> => {
+    return httpService.get(`/api/instances/stats/${id}`);
   },
 };

@@ -21,7 +21,7 @@ export function InstanceInformationComponent({ instance }: InterfaceInstanceInfo
 
       <S.InstanceRow>
         <S.FieldLabel>{t("INSTANCE_INFORMATION_ID")}</S.FieldLabel>
-        <S.FieldValue>{instance.ID}</S.FieldValue>
+        <S.FieldValue>{instance.id}</S.FieldValue>
       </S.InstanceRow>
 
       <S.InstanceRow>

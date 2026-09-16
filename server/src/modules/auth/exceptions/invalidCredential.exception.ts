@@ -1,11 +1,11 @@
 import { BaseException, BaseExceptionCode } from "src/common/exceptions/base.exception";
 import { HttpStatus } from "@nestjs/common";
-import { env } from "process";
+import { env } from "src/config/env";
 
 export enum InvalidCredentialReason {
   INVALID_CREDENTIAL = "INVALID_CREDENTIAL",
   INVALID_PASSWORD = "INVALID_PASSWORD",
-  EMAIL_NOT_VERIFY = "EMAIL_NOT_VERIFY",
+  EMAIL_NOT_VERIFIED = "EMAIL_NOT_VERIFIED",
   USER_NOT_FOUND = "USER_NOT_FOUND",
 }
 

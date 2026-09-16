@@ -2,7 +2,7 @@ import { InvalidTokenException, InvalidTokenReason } from "src/modules/sessions/
 import { SessionService } from "src/modules/sessions/services/session.service";
 import { IS_ALLOW_ANONYMOUS } from "../decorators/allowAnonymous.decorator";
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
-import { IS_OPTIONAL_AUTHS } from "../decorators/optionalAuth.decorator";
+import { IS_OPTIONAL_AUTH } from "../decorators/optionalAuth.decorator";
 import { UserEntity } from "src/modules/users/user.entity";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<
       Request & {
-        sessionID: string;
+        sessionId: string;
         user: UserEntity;
       }
     >();
@@ -27,7 +27,7 @@ export class AuthGuard implements CanActivate {
       context.getClass(),
     ]);
 
-    const isOptionalAuths = this.reflector.getAllAndOverride<boolean | undefined>(IS_OPTIONAL_AUTHS, [
+    const isOptionalAuth = this.reflector.getAllAndOverride<boolean | undefined>(IS_OPTIONAL_AUTH, [
       context.getHandler(),
       context.getClass(),
     ]);
@@ -37,7 +37,7 @@ export class AuthGuard implements CanActivate {
     const authorization = request.headers.authorization;
 
     if (!authorization || !authorization.startsWith("Bearer ")) {
-      if (isOptionalAuths) return true;
+      if (isOptionalAuth) return true;
 
       throw new InvalidTokenException("access", InvalidTokenReason.REQUIRED);
     }
@@ -45,14 +45,14 @@ export class AuthGuard implements CanActivate {
     const token = authorization.replace("Bearer ", "");
 
     if (token === "") {
-      if (isOptionalAuths) return true;
+      if (isOptionalAuth) return true;
 
       throw new InvalidTokenException("access", InvalidTokenReason.REQUIRED);
     }
 
-    const { sessionID, user } = await this.sessionService.verifyAccessToken(token);
+    const { sessionId, user } = await this.sessionService.verifyAccessToken(token);
 
-    request.sessionID = sessionID;
+    request.sessionId = sessionId;
     request.user = user;
 
     return true;

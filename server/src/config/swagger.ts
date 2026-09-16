@@ -2,7 +2,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import { INestApplication, Logger } from "@nestjs/common";
 import { env } from "./env";
 
-export function Swagger(app: INestApplication<any>) {
+export function setupSwagger(app: INestApplication<any>) {
   if (env.NODE_ENV !== "production") {
     const builder = new DocumentBuilder().setTitle("PocketDock API").setVersion("1.0.0");
 

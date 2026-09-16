@@ -10,10 +10,10 @@ export enum EmailVerificationType {
 @typeorm.Index("IDX_unique_active_email_verification", ["email", "type"], { unique: true, where: '"revoked" = false' })
 export class EmailVerificationEntity {
   @typeorm.PrimaryColumn({ generated: "uuid", unique: true, type: "uuid" })
-  public ID!: string;
+  public id!: string;
 
   @typeorm.Column({ type: "uuid", nullable: false })
-  public userID!: UserEntity["ID"];
+  public userId!: UserEntity["id"];
 
   @typeorm.Column({ type: "varchar", length: 255, nullable: false })
   public email!: UserEntity["email"];
@@ -22,7 +22,7 @@ export class EmailVerificationEntity {
   public payload!: Record<string, unknown> | true;
 
   @typeorm.ManyToOne(() => UserEntity, { onDelete: "CASCADE" })
-  @typeorm.JoinColumn({ name: "userID" })
+  @typeorm.JoinColumn({ name: "userId" })
   public user!: UserEntity;
 
   @typeorm.Column({ type: "enum", enum: EmailVerificationType, nullable: false })

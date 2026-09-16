@@ -6,7 +6,7 @@ import { applyDecorators } from "@nestjs/common";
 export function ApiValidationResponse() {
   return applyDecorators(
     ApiBadRequestResponse({
-      description: "Campo invalid (body, params ou query).",
+      description: "Campo inválido (body, params ou query).",
       type: ErrorResponseDto("ValidationErrorException", "Invalid field.", 400, BaseExceptionCode.VALIDATION_ERROR),
     }),
   );

@@ -9,7 +9,7 @@ export function ApiOAuthStrategyErrorResponse() {
       description: "Falha ao se comunicar com o provedor OAuth.",
       type: ErrorResponseDto(
         "OAuthStrategyException",
-        'Failed to communicate with OAuth strategy "{strategyID}".',
+        "Failed to communicate with OAuth strategy.",
         HttpStatus.BAD_GATEWAY,
         BaseExceptionCode.OAUTH_STRATEGY_ERROR,
       ),

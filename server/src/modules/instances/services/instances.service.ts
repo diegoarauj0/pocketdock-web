@@ -24,10 +24,6 @@ interface InterfaceState {
   status: "running" | "stopped";
 }
 
-const SUPERUSER_CREATE_ATTEMPTS = 5;
-
-const SUPERUSER_CREATE_RETRY_DELAY_MS = 2000;
-
 @Injectable()
 export class InstancesService {
   private readonly logger = new Logger(InstancesService.name);
@@ -39,8 +35,8 @@ export class InstancesService {
   ) {}
 
   public async create(user: UserEntity): Promise<InstanceEntity> {
-    const ID = this.cryptoService.randomUUID();
-    const containerName = `${INSTANCE_CONSTANT.CONTAINER_NAME_PREFIX}-${ID}`;
+    const id = this.cryptoService.randomUUID();
+    const containerName = `${INSTANCE_CONSTANT.CONTAINER_NAME_PREFIX}-${id}`;
 
     try {
       const image = `${INSTANCE_CONSTANT.REPOSITORY}:${INSTANCE_CONSTANT.VERSION}`;
@@ -48,11 +44,11 @@ export class InstancesService {
       const labels = {
         [INSTANCE_CONSTANT.LABEL_VERSION]: INSTANCE_CONSTANT.VERSION,
         [INSTANCE_CONSTANT.LABEL_TYPE]: INSTANCE_CONSTANT.TYPE,
-        [INSTANCE_CONSTANT.LABEL_INSTANCE_ID]: ID,
+        [INSTANCE_CONSTANT.LABEL_INSTANCE_ID]: id,
         [INSTANCE_CONSTANT.LABEL_MANAGED]: "true",
 
         "traefik.enable": "true",
-        [`traefik.http.routers.${containerName}.rule`]: `Host(\`${ID}.${env.INSTANCE_DOMAIN}\`)`,
+        [`traefik.http.routers.${containerName}.rule`]: `Host(\`${id}.${env.INSTANCE_DOMAIN}\`)`,
         [`traefik.http.routers.${containerName}.entrypoints`]: "web",
         [`traefik.http.services.${containerName}.loadbalancer.server.port`]: `${INSTANCE_CONSTANT.PORT}`,
       };
@@ -86,8 +82,8 @@ export class InstancesService {
 
       let instance = this.instanceRepository.create({
         containerName: containerName,
-        userID: user.ID,
-        ID,
+        userId: user.id,
+        id,
         defaultPassword,
       });
 
@@ -95,13 +91,13 @@ export class InstancesService {
 
       return instance;
     } catch (error) {
-      this.logger.error("Failed to create instance container.", { userID: user.ID, containerName });
+      this.logger.error("Failed to create instance container.", { userId: user.id, containerName });
       this.logger.error(error);
 
-      const { affected } = await this.instanceRepository.delete(ID);
+      const { affected } = await this.instanceRepository.delete(id);
 
       if (affected) {
-        this.logger.warn(`Rolled back instance ${ID}`);
+        this.logger.warn(`Rolled back instance ${id}`);
       }
 
       try {
@@ -122,12 +118,12 @@ export class InstancesService {
     }
   }
 
-  public async findAllByUserId(userID: string): Promise<InstanceEntity[]> {
-    return this.instanceRepository.findByUserId(userID);
+  public async findAllByUserId(userId: string): Promise<InstanceEntity[]> {
+    return this.instanceRepository.findByUserId(userId);
   }
 
-  public async findOwnedById(ID: string, userID: string): Promise<InstanceEntity> {
-    const instance = await this.instanceRepository.findByIdAndUserId(ID, userID);
+  public async findOwnedById(id: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.instanceRepository.findByIdAndUserId(id, userId);
 
     if (instance === null) {
       throw new InstanceNotFoundException();
@@ -136,15 +132,15 @@ export class InstancesService {
     return instance;
   }
 
-  public async stop(ID: string, userID: string): Promise<InstanceEntity> {
-    const instance = await this.findOwnedById(ID, userID);
+  public async stop(id: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.findOwnedById(id, userId);
 
     try {
       await this.dockerContainerService.stopContainer(instance.containerName);
 
       return instance;
     } catch (error) {
-      this.logger.error("Failed to stop instance container.", { ID });
+      this.logger.error("Failed to stop instance container.", { id });
       this.logger.error(error);
 
       if (isAlreadyStopped(error)) {
@@ -155,15 +151,15 @@ export class InstancesService {
     }
   }
 
-  public async start(ID: string, userID: string): Promise<InstanceEntity> {
-    const instance = await this.findOwnedById(ID, userID);
+  public async start(id: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.findOwnedById(id, userId);
 
     try {
       await this.dockerContainerService.startContainer(instance.containerName);
 
       return instance;
     } catch (error) {
-      this.logger.error("Failed to start instance container.", { ID });
+      this.logger.error("Failed to start instance container.", { id });
       this.logger.error(error);
 
       if (isAlreadyRunning(error)) {
@@ -174,20 +170,20 @@ export class InstancesService {
     }
   }
 
-  public async remove(ID: string, userID: string): Promise<InstanceEntity> {
-    const instance = await this.findOwnedById(ID, userID);
+  public async remove(id: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.findOwnedById(id, userId);
 
     try {
       await this.dockerContainerService.deleteContainer(instance.containerName, true);
     } catch {
-      this.logger.error("Failed to remove instance container.", { ID, containerName: instance.containerName });
+      this.logger.error("Failed to remove instance container.", { id, containerName: instance.containerName });
       throw new InstanceContainerException(ContainerErrorReason.REMOVE_FAILED);
     }
 
     try {
       return await this.instanceRepository.remove(instance);
     } catch (error) {
-      this.logger.error("Failed to remove instance database row.", { ID });
+      this.logger.error("Failed to remove instance database row.", { id });
 
       throw error;
     }
@@ -227,8 +223,8 @@ export class InstancesService {
     };
   }
 
-  public async stats(ID: string, userID: string): Promise<InterfaceState> {
-    const instance = await this.findOwnedById(ID, userID);
+  public async stats(id: string, userId: string): Promise<InterfaceState> {
+    const instance = await this.findOwnedById(id, userId);
     const status = await this.dockerContainerService.getContainerStatus(instance.containerName);
 
     if (status.running === false || status.paused === true) {
@@ -249,7 +245,7 @@ export class InstancesService {
   private async createSuperuser(containerName: string, email: string, password: string): Promise<void> {
     const cmd = ["/pb/pocketbase", "superuser", "upsert", email, password];
 
-    for (let attempt = 1; attempt <= SUPERUSER_CREATE_ATTEMPTS; attempt++) {
+    for (let attempt = 1; attempt <= INSTANCE_CONSTANT.SUPERUSER_CREATE_ATTEMPTS; attempt++) {
       try {
         const { exitCode, stdout, stderr } = await this.dockerContainerService.execContainer(containerName, cmd);
 
@@ -266,7 +262,7 @@ export class InstancesService {
         this.logger.warn(`Superuser upsert attempt ${attempt} failed for instance ${containerName}.`, error);
       }
 
-      await setTimeout(SUPERUSER_CREATE_RETRY_DELAY_MS);
+      await setTimeout(INSTANCE_CONSTANT.SUPERUSER_CREATE_RETRY_DELAY_MS);
     }
 
     throw new InstanceContainerException(ContainerErrorReason.SUPERUSER_CREATE_FAILED);

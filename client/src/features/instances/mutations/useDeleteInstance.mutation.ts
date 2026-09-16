@@ -3,6 +3,6 @@ import { instancesService } from "../services/instances.service";
 
 export function useDeleteInstanceMutation() {
   return useMutation({
-    mutationFn: (ID: string) => instancesService.deleteInstance(ID),
+    mutationFn: (id: string) => instancesService.deleteInstance(id),
   });
 }

@@ -11,8 +11,8 @@ export class SessionRepository {
     private readonly sessionRepository: Repository<SessionEntity>,
   ) {}
 
-  public findByID(ID: string): Promise<SessionEntity | null> {
-    return this.sessionRepository.findOne({ where: { ID: ID } });
+  public findById(id: string): Promise<SessionEntity | null> {
+    return this.sessionRepository.findOne({ where: { id: id } });
   }
 
   public create(props: Partial<SessionEntity>): SessionEntity {
@@ -23,16 +23,16 @@ export class SessionRepository {
     return this.sessionRepository.save(session);
   }
 
-  public revokeByID(ID: string, revokeType: SessionRevokeType): Promise<UpdateResult> {
+  public revokeById(id: string, revokeType: SessionRevokeType): Promise<UpdateResult> {
     return this.sessionRepository.update(
-      { ID: ID, revoked: false },
+      { id: id, revoked: false },
       { revoked: true, revokeType: revokeType, revokedAt: new Date() },
     );
   }
 
-  public revokeAllByUserID(userID: string, revokeType: SessionRevokeType): Promise<UpdateResult> {
+  public revokeAllByUserID(userId: string, revokeType: SessionRevokeType): Promise<UpdateResult> {
     return this.sessionRepository.update(
-      { userID: userID, revoked: false },
+      { userId: userId, revoked: false },
       { revoked: true, revokeType: revokeType, revokedAt: new Date() },
     );
   }

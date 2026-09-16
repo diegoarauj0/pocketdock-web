@@ -5,7 +5,7 @@ import { USER_CONSTANT } from "./user.constant";
 @Entity({ name: "users" })
 export class UserEntity {
   @PrimaryColumn({ generated: "uuid", unique: true, type: "uuid" })
-  public ID!: string;
+  public id!: string;
 
   @Column({ type: "varchar", length: USER_CONSTANT.USERNAME_MAX_LENGTH, nullable: false })
   public username!: string;

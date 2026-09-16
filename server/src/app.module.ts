@@ -1,4 +1,4 @@
-import { ValidationErrorException } from "./common/exceptions/validation.exception";
+import { ValidationException } from "./common/exceptions/validation.exception";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { GlobalExceptionFilter } from "./common/filters/globalException.filter";
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
@@ -23,7 +23,7 @@ import { Module, ValidationPipe } from "@nestjs/common";
       provide: APP_PIPE,
       useFactory: () => {
         return new ValidationPipe({
-          exceptionFactory: (errors) => new ValidationErrorException(errors),
+          exceptionFactory: (errors) => new ValidationException(errors),
           whitelist: true,
           transform: true,
         });

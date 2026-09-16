@@ -10,12 +10,12 @@ export class InstanceRepository {
     private readonly instanceRepository: Repository<InstanceEntity>,
   ) {}
 
-  public findByIdAndUserId(ID: string, userID: string): Promise<InstanceEntity | null> {
-    return this.instanceRepository.findOne({ where: { ID: ID, userID: userID } });
+  public findByIdAndUserId(id: string, userId: string): Promise<InstanceEntity | null> {
+    return this.instanceRepository.findOne({ where: { id: id, userId: userId } });
   }
 
-  public findByUserId(userID: string): Promise<InstanceEntity[]> {
-    return this.instanceRepository.find({ where: { userID: userID } });
+  public findByUserId(userId: string): Promise<InstanceEntity[]> {
+    return this.instanceRepository.find({ where: { userId: userId } });
   }
 
   public create(props: Partial<InstanceEntity>): InstanceEntity {
@@ -30,7 +30,7 @@ export class InstanceRepository {
     return this.instanceRepository.remove(instance);
   }
 
-  public delete(ID: string): Promise<DeleteResult> {
-    return this.instanceRepository.delete({ ID: ID });
+  public delete(id: string): Promise<DeleteResult> {
+    return this.instanceRepository.delete({ id: id });
   }
 }

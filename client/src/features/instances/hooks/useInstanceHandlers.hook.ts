@@ -12,11 +12,11 @@ import type { InterfaceState } from "../services/instances.service";
 
 interface InterfaceInstanceHandlersProps {
   stateQuery: UseQueryResult<NoInfer<InterfaceState>, Error>;
-  ID: string;
+  id: string;
 }
 
 export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
-  const { ID, stateQuery } = props;
+  const { id, stateQuery } = props;
 
   const navigate = useNavigate();
   const { t } = useTranslation("instances");
@@ -25,8 +25,8 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
   const startInstanceMutation = useStartInstanceMutation();
   const deleteInstanceMutation = useDeleteInstanceMutation();
 
-  const handleMutationError = (error: unknown, ID: string, genericMessage: string) => {
-    notificationService.error(translateServerError(t, error, genericMessage), ID);
+  const handleMutationError = (error: unknown, id: string, genericMessage: string) => {
+    notificationService.error(translateServerError(t, error, genericMessage), id);
   };
 
   const handleStopInstance = () => {
@@ -34,7 +34,7 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
 
     notificationService.loading(t("NOTIFICATION_STOP_INSTANCE_LOADING"), notificationID);
 
-    stopInstanceMutation.mutate(ID || "", {
+    stopInstanceMutation.mutate(id || "", {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_STOP_INSTANCE_SUCCESS"), notificationID);
         stateQuery.refetch();
@@ -48,7 +48,7 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
 
     notificationService.loading(t("NOTIFICATION_START_INSTANCE_LOADING"), notificationID);
 
-    startInstanceMutation.mutate(ID || "", {
+    startInstanceMutation.mutate(id || "", {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_START_INSTANCE_SUCCESS"), notificationID);
         stateQuery.refetch();
@@ -62,7 +62,7 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
 
     notificationService.loading(t("NOTIFICATION_DELETE_INSTANCE_LOADING"), notificationID);
 
-    deleteInstanceMutation.mutate(ID || "", {
+    deleteInstanceMutation.mutate(id || "", {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_DELETE_INSTANCE_SUCCESS"), notificationID);
         navigate(APP_PATH.INSTANCES);

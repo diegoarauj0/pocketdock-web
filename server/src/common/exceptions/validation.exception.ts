@@ -1,24 +1,24 @@
-import { ValidationError } from "class-validator";
 import { BaseException, BaseExceptionCode } from "./base.exception";
+import { ValidationError } from "class-validator";
 import { HttpStatus } from "@nestjs/common";
 
-interface InterfaceValidationErrorReason {
+interface InterfaceValidationReason {
   message: string;
   code: string;
 }
 
-interface InterfaceValidationErrorDetails {
-  reasons: InterfaceValidationErrorReason[];
+interface InterfaceValidationDetails {
+  reasons: InterfaceValidationReason[];
   value: string | number | boolean | Date;
   name: string;
 }
 
-export class ValidationErrorException extends BaseException<InterfaceValidationErrorDetails[]> {
+export class ValidationException extends BaseException<InterfaceValidationDetails[]> {
   constructor(errors: ValidationError[]) {
-    const details: InterfaceValidationErrorDetails[] = [];
+    const details: InterfaceValidationDetails[] = [];
 
     for (const error of errors) {
-      const reasons: InterfaceValidationErrorReason[] = [];
+      const reasons: InterfaceValidationReason[] = [];
 
       for (const constraint in error.constraints) {
         reasons.push({ code: constraint, message: error.constraints[constraint] });

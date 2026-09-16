@@ -18,8 +18,8 @@ export class EmailVerificationRepository {
     return this.emailVerificationRepository.findOne({ where: { email: email, type: type, revoked: false } });
   }
 
-  public revoke(ID: string): Promise<UpdateResult> {
-    return this.emailVerificationRepository.update({ ID: ID, revoked: false }, { revoked: true });
+  public revoke(id: string): Promise<UpdateResult> {
+    return this.emailVerificationRepository.update({ id: id, revoked: false }, { revoked: true });
   }
 
   public create(props: Partial<EmailVerificationEntity>): EmailVerificationEntity {

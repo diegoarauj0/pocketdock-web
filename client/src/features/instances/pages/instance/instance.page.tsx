@@ -12,15 +12,15 @@ import * as S from "./instance.styled";
 import { useTranslation } from "react-i18next";
 
 export function InstancePage() {
-  const { ID } = useParams<{ ID: string }>();
+  const { id } = useParams<{ id: string }>();
   const { t } = useTranslation("instances");
 
-  const instanceQuery = useInstanceQuery(ID);
-  const stateQuery = useStateQuery(ID);
+  const instanceQuery = useInstanceQuery(id);
+  const stateQuery = useStateQuery(id);
 
   const { handleDeleteInstance, handleStartInstance, handleStopInstance } = useInstanceHandlers({
     stateQuery,
-    ID: ID ?? "",
+    id: id ?? "",
   });
 
   if (stateQuery.isPending || instanceQuery.isPending) {

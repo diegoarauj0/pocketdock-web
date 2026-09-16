@@ -22,7 +22,7 @@ export function useCreateInstanceMutation() {
       const createdAt = new Date().toISOString();
 
       const optimisticInstance: InterfaceInstance = {
-        ID: crypto.randomUUID(),
+        id: crypto.randomUUID(),
         containerName: t("INSTANCE_CREATING_PLACEHOLDER"),
         defaultPassword: "",
         createdAt,
@@ -44,7 +44,7 @@ export function useCreateInstanceMutation() {
     },
     onSuccess: (createdInstance, _variables, context) => {
       queryClient.setQueryData<InterfaceInstance[]>(["instances"], (oldInstances = []) =>
-        oldInstances.map((instance) => (instance.ID === context?.optimisticInstance.ID ? createdInstance : instance)),
+        oldInstances.map((instance) => (instance.id === context?.optimisticInstance.id ? createdInstance : instance)),
       );
     },
     onSettled: () => {

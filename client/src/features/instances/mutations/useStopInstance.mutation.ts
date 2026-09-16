@@ -3,6 +3,6 @@ import { instancesService } from "../services/instances.service";
 
 export function useStopInstanceMutation() {
   return useMutation({
-    mutationFn: (ID: string) => instancesService.stopInstance(ID),
+    mutationFn: (id: string) => instancesService.stopInstance(id),
   });
 }
