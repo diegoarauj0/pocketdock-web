@@ -1,15 +1,10 @@
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { notificationService } from "@/shared/services/notification.service";
-import { useOAuthAuthorizeMutation } from "../mutations/useOAuthAuthorizeMutation.hook";
+import { useOAuthAuthorizeMutation } from "../mutations/useOAuthAuthorize.mutation";
 import { OAUTH_CONSTANT } from "../constants/oauth.constant";
 import { useCallback } from "react";
 
-interface InterfaceUseOAuthSignInReturn {
-  isRedirecting: boolean;
-  signInWithGoogle: () => void;
-}
-
-export function useOAuthSignIn(): InterfaceUseOAuthSignInReturn {
+export function useOAuthSignIn() {
   const authorizeMutation = useOAuthAuthorizeMutation();
 
   const handleError = useCallback((error: unknown) => {

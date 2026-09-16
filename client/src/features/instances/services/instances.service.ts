@@ -17,7 +17,7 @@ interface InterfaceCalculateUsage {
   used: number;
 }
 
-interface InterfaceState {
+export interface InterfaceState {
   memory: InterfaceCalculateUsage;
   cpu: InterfaceCalculateUsage;
   status: InterfaceInstanceStatus;

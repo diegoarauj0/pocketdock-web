@@ -1,14 +1,13 @@
-import { useSignUpResendMutation } from "../mutations/useSignUpResendMutation.hook";
-import { useSignUpVerifyMutation } from "../mutations/useSignUpVerifyMutation.hook";
+import { useSignUpResendMutation } from "../mutations/useSignUpResend.mutation";
+import { useSignUpVerifyMutation } from "../mutations/useSignUpVerify.mutation";
 import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";
+import { AUTH_CONSTANT } from "../constants/auth.constant";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
 import { useLocation, useNavigate } from "react-router";
-import { AUTH_CONSTANT } from "../constants/auth.constant";
+import { useAuth } from "../contexts/auth.context";
 import { useCallback } from "react";
 import { APP_PATH } from "@/app/app.path";
-import type { SubmitEvent } from "react";
-import { useAuth } from "../contexts/auth.context";
 
 const CODE_LENGTH = AUTH_CONSTANT.EMAIL_VERIFICATION_CODE_LENGTH;
 
@@ -16,18 +15,7 @@ interface InterfaceEmailLocationState {
   email?: string;
 }
 
-interface InterfaceUseEmailVerificationReturn {
-  handleSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
-  handleResend: () => void;
-  handleCodeChange: (nextCode: string) => void;
-  isSubmitting: boolean;
-  isResending: boolean;
-  error: string | undefined;
-  code: string;
-  email: string;
-}
-
-export function useEmailVerification(): InterfaceUseEmailVerificationReturn {
+export function useEmailVerification() {
   const { signIn } = useAuth();
 
   const verifyMutation = useSignUpVerifyMutation();

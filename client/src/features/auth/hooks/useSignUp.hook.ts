@@ -3,26 +3,17 @@ import type { InterfaceSignUpFormValues } from "../validations/signUp.validation
 import type { InterfaceSignInFormValues } from "../validations/signIn.validation";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
-import { useSignUpMutation } from "../mutations/useSignUpMutation.hook";
+import { useSignUpMutation } from "../mutations/useSignUp.mutation";
 import type { InterfaceSignUpRequest } from "../services/auth.service";
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import { getSignUpSchema } from "../validations/signUp.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
-import type { BaseSyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
 
-interface InterfaceUseSignUpReturn {
-  handleSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  register: UseFormRegister<InterfaceSignUpFormValues>;
-  errors: FieldErrors<InterfaceSignUpFormValues>;
-  isSubmitting: boolean;
-}
-
-export function useSignUp(): InterfaceUseSignUpReturn {
+export function useSignUp() {
   const signUpSchema = useMemo(() => getSignUpSchema(), []);
   const signUpMutation = useSignUpMutation();
   const navigate = useNavigate();

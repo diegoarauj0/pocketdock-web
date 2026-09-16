@@ -2,25 +2,16 @@ import { type InterfaceValidationErrorDetails } from "@/shared/services/http.ser
 import type { InterfaceSignInFormValues } from "../validations/signIn.validation";
 import { notificationService } from "@/shared/services/notification.service";
 import { ApiResponseError, ERROR_CODES } from "@/shared/http/http.client";
-import { useSignInMutation } from "../mutations/useSignInMutation.hook";
-import type { FieldErrors, UseFormRegister } from "react-hook-form";
+import { useSignInMutation } from "../mutations/useSignIn.mutation";
 import { getSignInSchema } from "../validations/signIn.validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AUTH_CONSTANT } from "../constants/auth.constant";
-import type { BaseSyntheticEvent } from "react";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
 
-interface InterfaceUseSignInReturn {
-  handleSubmit: (event?: BaseSyntheticEvent) => Promise<void>;
-  register: UseFormRegister<InterfaceSignInFormValues>;
-  errors: FieldErrors<InterfaceSignInFormValues>;
-  isSubmitting: boolean;
-}
-
-export function useSignIn(): InterfaceUseSignInReturn {
+export function useSignIn() {
   const signInSchema = useMemo(() => getSignInSchema(), []);
   const signInMutation = useSignInMutation();
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
-import { useForgotPasswordVerifyMutation } from "../mutations/useForgotPasswordVerifyMutation.hook";
-import { useForgotPasswordResendMutation } from "../mutations/useForgotPasswordResendMutation.hook";
+import { useForgotPasswordVerifyMutation } from "../mutations/useForgotPasswordVerify.mutation";
+import { useForgotPasswordResendMutation } from "../mutations/useForgotPasswordResend.mutation";
 import { getEmailSchema, type InterfaceEmailFormValues } from "../validations/email.validation";
-import { useForgotPasswordMutation } from "../mutations/useForgotPasswordMutation.hook";
+import { useForgotPasswordMutation } from "../mutations/useForgotPassword.mutation";
 import { type InterfaceValidationErrorDetails } from "@/shared/services/http.service";
 import { useVerificationCode } from "@/shared/hooks/useVerificationCode.hook";
 import { notificationService } from "@/shared/services/notification.service";

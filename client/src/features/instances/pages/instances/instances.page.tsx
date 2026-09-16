@@ -1,5 +1,5 @@
 import { InstanceCardComponent } from "@/features/instances/components/instanceCard/instanceCard.component";
-import { useCreateInstanceMutation } from "@/features/instances/mutations/useCreateInstanceMutation.hook";
+import { useCreateInstanceMutation } from "@/features/instances/mutations/useCreateInstance.mutation";
 import { LoadingScreenComponent } from "@/shared/components/loadingScreen/loadingScreen.component";
 import { useInstancesQuery } from "@/features/instances/queries/useInstances.query";
 import { ApiResponseError } from "@/shared/http/http.client";
