@@ -3,6 +3,7 @@ import { DockerNetworkService } from "./dockerNetwork.service";
 import { DockerImageService } from "./dockerImage.service";
 import { Injectable, Logger } from "@nestjs/common";
 import { DockerService } from "./docker.service";
+import path from "node:path";
 
 @Injectable()
 export class DockerProvisionerService {
@@ -70,7 +71,7 @@ export class DockerProvisionerService {
     this.logger.log(`Image "${image}" does not exist. Building...`);
 
     await this.dockerImageService.buildImage({
-      context: INSTANCE_CONSTANT.CONTEXT,
+      context: path.join(__dirname, ".."),
       dockerfile: INSTANCE_CONSTANT.DOCKERFILE,
       tag: image,
       labels: {

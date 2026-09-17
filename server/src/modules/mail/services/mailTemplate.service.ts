@@ -9,7 +9,7 @@ type TemplateDelegate = ReturnType<typeof handlebars.compile>;
 
 @Injectable()
 export class MailTemplateService {
-  private readonly templatesPath = path.join(process.cwd(), "src", "modules", "mail", "templates");
+  private readonly templatesPath = path.join(__dirname, "..", "templates");
 
   private readonly compiledTemplates = new Map<TemplateMail, TemplateDelegate>();
 

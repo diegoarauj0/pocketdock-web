@@ -27,7 +27,7 @@ type DictionaryType = Record<
 export class MailTranslationService {
   private readonly logger = new Logger(MailTranslationService.name);
 
-  private readonly i18nPath = path.join(process.cwd(), "src", "modules", "mail", "i18n");
+  private readonly i18nPath = path.join(__dirname, "..", "i18n");
 
   private readonly cache = new Map<Locale, DictionaryType>();
 

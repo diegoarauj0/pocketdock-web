@@ -1,6 +1,5 @@
 export const INSTANCE_CONSTANT = {
   CONTAINER_NAME_PREFIX: "pocketdock-instance",
-  CONTEXT: "./src/infrastructure/docker",
   REPOSITORY: "pocketdock/pocketbase",
   DOCKERFILE: "pocketbase.Dockerfile",
   TYPE: "pocketbase",
