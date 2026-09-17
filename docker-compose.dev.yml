@@ -46,6 +46,8 @@ services:
     volumes:
       # Docker socket for container management
       - /var/run/docker.sock:/var/run/docker.sock
+      # Env
+      - ./.env:/.env
       # Mount source code and keep node_modules as a named volume
       - ./server:/app
       - server_node_modules:/app/node_modules
@@ -63,6 +65,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
+      # Env
+      - ./.env:/.env
       # Mount source code and keep node_modules as a named volume
       - ./client:/app
       - client_node_modules:/app/node_modules
