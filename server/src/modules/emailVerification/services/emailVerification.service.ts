@@ -40,7 +40,7 @@ interface InterfaceVerifyProps {
 
 @Injectable()
 export class EmailVerificationService {
-  private logger = new Logger(EmailVerificationService.name);
+  private readonly logger = new Logger(EmailVerificationService.name);
 
   constructor(
     private readonly cryptoService: CryptoService,

@@ -32,7 +32,7 @@ export class SessionService {
 
     const session = this.sessionRepository.create({
       expiresAt: new Date(Date.now() + SESSION_CONSTANT.SESSION_EXPIRES_IN_MS),
-      userAgent: userAgent ?? null,
+      userAgent: userAgent?.substring(0, 254) ?? null,
       ipAddress: ipAddress ?? null,
       id: this.cryptoService.randomUUID(),
       userId: userId,

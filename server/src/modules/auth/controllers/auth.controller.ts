@@ -37,7 +37,7 @@ export class AuthController {
     summary: "Verificar código de recuperação de senha",
     description: "Valida o e-mail e o código de verificação enviado ao usuário durante a recuperação de senha.",
   })
-  @ApiOkResponse({ description: "Código de verificação validado com sucesso." })
+  @ApiOkResponse({ description: "Código de verificação validado com sucesso.", type: SuccessResponseDto() })
   @AllowAnonymous()
   @ApiValidationResponse()
   @HttpCode(HttpStatus.OK)
