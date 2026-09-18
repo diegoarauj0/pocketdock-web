@@ -11,6 +11,6 @@ import { Module } from "@nestjs/common";
   imports: [CommonModule, DockerModule, TypeOrmModule.forFeature([InstanceEntity])],
   providers: [InstancesService, InstanceRepository],
   controllers: [InstancesController],
-  exports: [],
+  exports: [InstancesService],
 })
 export class InstanceModule {}
