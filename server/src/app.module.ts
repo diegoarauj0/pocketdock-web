@@ -1,12 +1,15 @@
 import { ValidationException } from "./common/exceptions/validation.exception";
 import { ResponseInterceptor } from "./common/interceptors/response.interceptor";
 import { GlobalExceptionFilter } from "./common/filters/globalException.filter";
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { CustomThrottlerGuard } from "./common/guards/customThrottler.guard";
+import { THROTTLER_CONSTANT } from "./common/throttler.constant";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { ThrottlerModule } from "@nestjs/throttler";
 import { DockerModule } from "./infrastructure/docker/docker.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
+import { InstanceModule } from "./modules/instances/instance.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
-import { InstanceModule } from "./modules/instances/instance.module";
 import { Module, ValidationPipe } from "@nestjs/common";
 
 @Module({
@@ -29,7 +32,25 @@ import { Module, ValidationPipe } from "@nestjs/common";
         });
       },
     },
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
   ],
-  imports: [DatabaseModule, AuthModule, UsersModule, InstanceModule, DockerModule],
+  imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: "default",
+        ttl: THROTTLER_CONSTANT.GLOBAL_TTL_MS,
+        limit: THROTTLER_CONSTANT.GLOBAL_LIMIT,
+        blockDuration: THROTTLER_CONSTANT.GLOBAL_BLOCK_DURATION_MS,
+      },
+    ]),
+    DatabaseModule,
+    AuthModule,
+    UsersModule,
+    InstanceModule,
+    DockerModule,
+  ],
 })
 export class AppModule {}

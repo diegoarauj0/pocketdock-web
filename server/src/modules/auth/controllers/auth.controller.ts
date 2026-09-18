@@ -1,10 +1,11 @@
-import { ApiInvalidEmailVerificationCodeResponse } from "src/common/decorators/swagger/invalidEmailVerificationCode.decorator";
-import { ApiConcurrentEmailVerificationResponse } from "src/common/decorators/swagger/concurrentEmailVerification.decorator";
+import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalidSession.decorator";
+import { ApiRateLimitExceededResponse } from "src/common/decorators/swagger/rateLimitExceeded.decorator";
+import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { EmailVerificationService } from "src/modules/emailVerification/services/emailVerification.service";
 import { ApiInvalidCredentialResponse } from "src/common/decorators/swagger/invalidCredential.decorator";
-import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalidSession.decorator";
-import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
+import { ApiConcurrentEmailVerificationResponse } from "src/common/decorators/swagger/concurrentEmailVerification.decorator";
+import { ApiInvalidEmailVerificationCodeResponse } from "src/common/decorators/swagger/invalidEmailVerificationCode.decorator";
 import { EmailVerificationType } from "src/modules/emailVerification/emailVerification.entity";
 import { Body, Controller, Get, HttpCode, HttpStatus, Ip, Post, Res } from "@nestjs/common";
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
@@ -21,6 +22,8 @@ import { UserEntity } from "src/modules/users/user.entity";
 import { UserMapper } from "src/modules/users/user.mapper";
 import { Session } from "../decorators/session.decorator";
 import { AuthService } from "../services/auth.service";
+import { Throttle } from "@nestjs/throttler";
+import { AUTH_CONSTANT } from "../auth.constant";
 import * as DTOs from "../dtos/auth.dto";
 import type { Response } from "express";
 import { env } from "src/config/env";
@@ -42,6 +45,8 @@ export class AuthController {
   @ApiValidationResponse()
   @HttpCode(HttpStatus.OK)
   @Post("forgot-password/verify")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.FORGOT_PASSWORD })
+  @ApiRateLimitExceededResponse()
   @ApiInvalidEmailVerificationCodeResponse()
   public async forgotPasswordVerifyEmail(@Body() body: DTOs.VerifyEmailBodyDto): Promise<void> {
     await this.emailVerificationService.execute({
@@ -60,6 +65,8 @@ export class AuthController {
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
   @Post("forgot-password/resend")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.FORGOT_PASSWORD })
+  @ApiRateLimitExceededResponse()
   @ApiOkResponse({ type: SuccessResponseDto() })
   public async forgotPasswordResendEmail(
     @Body() body: DTOs.EmailBodyDto,
@@ -78,6 +85,8 @@ export class AuthController {
   })
   @AllowAnonymous()
   @Post("forgot-password")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.FORGOT_PASSWORD })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
@@ -95,6 +104,8 @@ export class AuthController {
   })
   @AllowAnonymous()
   @Post("sign-up/verify")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.EMAIL_VERIFICATION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
   @ApiInvalidEmailVerificationCodeResponse()
@@ -128,6 +139,8 @@ export class AuthController {
   })
   @AllowAnonymous()
   @Post("sign-up/resend")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SIGN_UP })
+  @ApiRateLimitExceededResponse()
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
   @HttpCode(HttpStatus.OK)
@@ -149,6 +162,8 @@ export class AuthController {
   })
   @Post("sign-up")
   @AllowAnonymous()
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SIGN_UP })
+  @ApiRateLimitExceededResponse()
   @ApiValidationResponse()
   @ApiConcurrentEmailVerificationResponse()
   @HttpCode(HttpStatus.CREATED)
@@ -166,6 +181,8 @@ export class AuthController {
   })
   @Post("sign-in")
   @AllowAnonymous()
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SIGN_IN })
+  @ApiRateLimitExceededResponse()
   @ApiValidationResponse()
   @ApiInvalidCredentialResponse()
   @HttpCode(HttpStatus.OK)
@@ -191,6 +208,8 @@ export class AuthController {
   })
   @Post("refresh")
   @AllowAnonymous()
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.REFRESH })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiCookieAuth("refresh-token")
   @ApiInvalidTokenResponse()
@@ -212,6 +231,8 @@ export class AuthController {
     description: "Retorna os dados públicos do usuário autenticado.",
   })
   @Get("me")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SESSION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
@@ -226,6 +247,8 @@ export class AuthController {
     description: "Revoga a sessão atual do usuário e limpa o cookie de refresh token.",
   })
   @Post("logout")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SESSION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()
@@ -245,6 +268,8 @@ export class AuthController {
     description: "Revoga todas as sessões do usuário autenticado e limpa o cookie de refresh token.",
   })
   @Post("logout-all")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.SESSION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiBearerAuth("access-token")
   @ApiInvalidTokenResponse()

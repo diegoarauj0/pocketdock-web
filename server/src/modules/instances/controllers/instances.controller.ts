@@ -1,4 +1,5 @@
 import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalidSession.decorator";
+import { ApiRateLimitExceededResponse } from "src/common/decorators/swagger/rateLimitExceeded.decorator";
 import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiCreatedResponse } from "@nestjs/swagger";
 import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post } from "@nestjs/common";
@@ -8,6 +9,8 @@ import { Session } from "src/modules/auth/decorators/session.decorator";
 import { InstancesService } from "../services/instances.service";
 import { UserEntity } from "src/modules/users/user.entity";
 import { InstanceMapper } from "../instance.mapper";
+import { INSTANCE_CONSTANT } from "../instance.constant";
+import { Throttle } from "@nestjs/throttler";
 
 @Controller("api/instances")
 export class InstancesController {
@@ -22,6 +25,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Post()
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.CREATE })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.CREATED)
   public async create(@Session() { user }: { user: UserEntity }) {
     const instance = await this.instancesService.create(user);
@@ -41,6 +46,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Get()
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.LIST })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async findAll(@Session() { user }: { user: UserEntity }) {
     const instances = await this.instancesService.findAllByUserId(user.id);
@@ -57,6 +64,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Get(":id")
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.VIEW })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async findOne(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
     const instance = await this.instancesService.findOwnedById(id, user.id);
@@ -73,6 +82,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Post(":id/stop")
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.MUTATION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async stop(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
     const instance = await this.instancesService.stop(id, user.id);
@@ -89,6 +100,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Post(":id/start")
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.MUTATION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async start(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
     const instance = await this.instancesService.start(id, user.id);
@@ -105,6 +118,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Delete(":id")
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.MUTATION })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async remove(@Session() { user }: { user: UserEntity }, @Param() { id }: InstanceIdParamsDto) {
     const instance = await this.instancesService.remove(id, user.id);
@@ -122,6 +137,8 @@ export class InstancesController {
   @ApiInvalidTokenResponse()
   @ApiInvalidSessionResponse()
   @Get("stats/:id")
+  @Throttle({ default: INSTANCE_CONSTANT.THROTTLE.VIEW })
+  @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   public async stats(
     @Session() { user }: { user: UserEntity },

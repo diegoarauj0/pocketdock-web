@@ -1,5 +1,6 @@
 import { ApiCreatedResponse, ApiFoundResponse, ApiOperation } from "@nestjs/swagger";
 import { ApiInvalidOAuthStateResponse } from "src/common/decorators/swagger/invalidOAuthState.decorator";
+import { ApiRateLimitExceededResponse } from "src/common/decorators/swagger/rateLimitExceeded.decorator";
 import { ApiOAuthEmailConflictResponse } from "src/common/decorators/swagger/OAuthEmailConflict.decorator";
 import { ApiOAuthStrategyErrorResponse } from "src/common/decorators/swagger/OAuthStrategy.decorator";
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
@@ -11,6 +12,7 @@ import { SESSION_CONSTANT } from "src/modules/sessions/session.constant";
 import { UserAgent } from "src/common/decorators/userAgent.decorator";
 import { Cookie } from "src/common/decorators/cookie.decorator";
 import { OAuthService } from "../services/OAuth.service";
+import { Throttle } from "@nestjs/throttler";
 import { AUTH_CONSTANT } from "../auth.constant";
 import type { Response } from "express";
 import { env } from "src/config/env";
@@ -35,6 +37,8 @@ export class OAuthController {
   @ApiOAuthEmailConflictResponse()
   @ApiOAuthStrategyErrorResponse()
   @Get("callback/:strategyID")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.OAUTH })
+  @ApiRateLimitExceededResponse()
   public async callback(
     @Res({ passthrough: false }) res: Response,
     @Param() params: StrategyIDParamsDto,
@@ -85,6 +89,8 @@ export class OAuthController {
   @AllowAnonymous()
   @ApiValidationResponse()
   @Post("authorize/:strategyID")
+  @Throttle({ default: AUTH_CONSTANT.THROTTLE.OAUTH })
+  @ApiRateLimitExceededResponse()
   public createAuthorizeURL(
     @Param() { strategyID }: StrategyIDParamsDto,
     @Res({ passthrough: true }) res: Response,
