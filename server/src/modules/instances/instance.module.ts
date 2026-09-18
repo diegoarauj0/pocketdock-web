@@ -1,3 +1,4 @@
+import { InstanceCleanupJob } from "./jobs/instanceCleanup.job";
 import { InstanceRepository } from "./repositories/instance.repository";
 import { InstancesController } from "./controllers/instances.controller";
 import { DockerModule } from "src/infrastructure/docker/docker.module";
@@ -9,7 +10,7 @@ import { Module } from "@nestjs/common";
 
 @Module({
   imports: [CommonModule, DockerModule, TypeOrmModule.forFeature([InstanceEntity])],
-  providers: [InstancesService, InstanceRepository],
+  providers: [InstancesService, InstanceCleanupJob, InstanceRepository],
   controllers: [InstancesController],
   exports: [InstancesService],
 })

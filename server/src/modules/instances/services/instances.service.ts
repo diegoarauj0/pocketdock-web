@@ -251,6 +251,31 @@ export class InstancesService {
     }
   }
 
+  public async removeOrphanedInstances(): Promise<number> {
+    const threshold = new Date(Date.now() - INSTANCE_CONSTANT.ORPHAN_GRACE_PERIOD_MS);
+
+    const candidates = await this.instanceRepository.findCreatedBefore(threshold);
+
+    let removed = 0;
+
+    for (const instance of candidates) {
+      const exists = await this.dockerContainerService.containerExists(instance.containerName);
+
+      if (exists) continue;
+
+      try {
+        await this.instanceRepository.remove(instance);
+
+        removed++;
+      } catch (error) {
+        this.logger.error("Failed to remove orphaned instance database row.", { id: instance.id });
+        this.logger.error(error);
+      }
+    }
+
+    return removed;
+  }
+
   private async createSuperuser(containerName: string, email: string, password: string): Promise<void> {
     const cmd = ["/pb/pocketbase", "superuser", "upsert", email, password];
 

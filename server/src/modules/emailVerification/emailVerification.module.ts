@@ -1,4 +1,5 @@
 import { CommonModule } from "src/common/common.module";
+import { EmailVerificationCleanupJob } from "./jobs/emailVerificationCleanup.job";
 import { ForgotPasswordVerificationStrategy } from "./strategies/forgotPasswordVerification.strategy";
 import { EmailVerificationRepository } from "./repositories/emailVerification.repository";
 import { SignUpVerificationStrategy } from "./strategies/signUpVerification.strategy";
@@ -14,6 +15,7 @@ import { Module } from "@nestjs/common";
   imports: [CommonModule, UsersModule, MailModule, TypeOrmModule.forFeature([EmailVerificationEntity])],
   providers: [
     EmailVerificationService,
+    EmailVerificationCleanupJob,
     SignUpVerificationStrategy,
     ForgotPasswordVerificationStrategy,
     VerificationStrategyRegistry,

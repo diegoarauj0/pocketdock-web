@@ -5,6 +5,7 @@ import { CustomThrottlerGuard } from "./common/guards/customThrottler.guard";
 import { THROTTLER_CONSTANT } from "./common/throttler.constant";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import { ThrottlerModule } from "@nestjs/throttler";
+import { ScheduleModule } from "@nestjs/schedule";
 import { DockerModule } from "./infrastructure/docker/docker.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
 import { InstanceModule } from "./modules/instances/instance.module";
@@ -46,6 +47,7 @@ import { Module, ValidationPipe } from "@nestjs/common";
         blockDuration: THROTTLER_CONSTANT.GLOBAL_BLOCK_DURATION_MS,
       },
     ]),
+    ScheduleModule.forRoot(),
     DatabaseModule,
     AuthModule,
     UsersModule,

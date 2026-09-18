@@ -225,4 +225,18 @@ export class EmailVerificationService {
 
     return emailVerification;
   }
+
+  public async revokeExpiredVerifications(): Promise<number> {
+    const { affected } = await this.emailVerificationRepository.revokeExpired(new Date());
+
+    return affected ?? 0;
+  }
+
+  public async deleteOldVerifications(): Promise<number> {
+    const threshold = new Date(Date.now() - EMAIL_VERIFICATION_CONSTANT.VERIFICATION_RETENTION_MS);
+
+    const { affected } = await this.emailVerificationRepository.deleteOlderThan(threshold);
+
+    return affected ?? 0;
+  }
 }

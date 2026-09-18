@@ -146,4 +146,18 @@ export class SessionService {
 
     this.logger.log("All sessions revoked.", { userId, reason: SessionRevokeType.LOGOUT_ALL });
   }
+
+  public async deleteExpiredSessions(): Promise<number> {
+    const { affected } = await this.sessionRepository.deleteExpiredBefore(new Date());
+
+    return affected ?? 0;
+  }
+
+  public async deleteOldRevokedSessions(): Promise<number> {
+    const threshold = new Date(Date.now() - SESSION_CONSTANT.REVOKED_SESSION_RETENTION_MS);
+
+    const { affected } = await this.sessionRepository.deleteRevokedBefore(threshold);
+
+    return affected ?? 0;
+  }
 }
