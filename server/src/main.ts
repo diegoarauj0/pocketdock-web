@@ -12,6 +12,8 @@ async function bootstrap() {
     logger: env.LOG_CONTEXTS as LogLevel[],
   });
 
+  app.enableShutdownHooks();
+
   await app.get(DockerProvisionerService).provision();
 
   configureApp(app);

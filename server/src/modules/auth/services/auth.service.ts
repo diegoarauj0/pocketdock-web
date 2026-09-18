@@ -54,9 +54,9 @@ export class AuthService {
 
     const existsUser = await this.usersService.findByEmail(email);
 
-    if (existsUser) return;
-
     const hash = await this.passwordService.hash(password);
+
+    if (existsUser) return;
 
     const user = await this.usersService.create(email, username, hash);
 
