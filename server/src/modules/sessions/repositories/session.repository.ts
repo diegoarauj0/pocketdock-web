@@ -1,8 +1,7 @@
+import { Repository, DeleteResult, EntityManager, LessThan, UpdateResult } from "typeorm";
 import { SessionEntity, SessionRevokeType } from "../session.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeleteResult, EntityManager, LessThan, UpdateResult } from "typeorm/browser";
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
 
 @Injectable()
 export class SessionRepository {

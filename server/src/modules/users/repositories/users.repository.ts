@@ -1,8 +1,7 @@
 import { InjectRepository } from "@nestjs/typeorm";
-import { UpdateResult } from "typeorm/browser";
+import { Repository, UpdateResult } from "typeorm";
 import { Injectable } from "@nestjs/common";
 import { UserEntity } from "../user.entity";
-import { Repository } from "typeorm";
 
 @Injectable()
 export class UsersRepository {

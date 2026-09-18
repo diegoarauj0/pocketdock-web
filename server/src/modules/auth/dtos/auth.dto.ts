@@ -6,20 +6,20 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class EmailAndPasswordDto {
   @ApiProperty({ type: "string", format: "email", description: "E-mail do usuário", example: "diegoaraujo@email.com" })
-  @IsEmail()
   @IsNotEmpty()
+  @IsEmail()
   public email!: string;
 
   @ApiProperty({
     type: "string",
     format: "password",
     description: `Senha do usuário`,
-    minLength: 1,
+    minLength: PASSWORD_CONSTANT.MIN_LENGTH,
     maxLength: PASSWORD_CONSTANT.MAX_LENGTH,
     example: "senha-segura-123",
   })
   @IsString()
-  @MinLength(1)
+  @MinLength(PASSWORD_CONSTANT.MIN_LENGTH)
   @MaxLength(PASSWORD_CONSTANT.MAX_LENGTH)
   @IsNotEmpty()
   public password!: string;

@@ -1,10 +1,14 @@
+import { InstancesService } from "src/modules/instances/services/instances.service";
 import { UsersRepository } from "../repositories/users.repository";
 import { UserEntity } from "../user.entity";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly instancesService: InstancesService,
+  ) {}
 
   public findByEmail(email: string): Promise<UserEntity | null> {
     return this.usersRepository.findByEmail(email);
@@ -25,6 +29,8 @@ export class UsersService {
   }
 
   public async remove(user: UserEntity): Promise<UserEntity> {
+    await this.instancesService.removeAllContainersByUserId(user.id);
+
     return this.usersRepository.remove(user);
   }
 

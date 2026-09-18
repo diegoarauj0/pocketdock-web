@@ -1,6 +1,6 @@
 import { Column, Entity, Index, PrimaryColumn, UpdateDateColumn } from "typeorm";
-import { CreateDateColumn } from "typeorm/browser";
 import { USER_CONSTANT } from "./user.constant";
+import { CreateDateColumn } from "typeorm";
 
 @Entity({ name: "users" })
 export class UserEntity {

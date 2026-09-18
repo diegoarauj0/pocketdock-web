@@ -1,8 +1,7 @@
 import { EmailVerificationEntity, EmailVerificationType } from "../emailVerification.entity";
-import { DeleteResult, EntityManager, LessThan, UpdateResult } from "typeorm/browser";
+import { Repository, DeleteResult, EntityManager, LessThan, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
-import { Repository } from "typeorm";
 
 @Injectable()
 export class EmailVerificationRepository {

@@ -242,6 +242,15 @@ export class InstancesService {
 
     return { cpu, memory, status: "running" };
   }
+
+  public async removeAllContainersByUserId(userId: string): Promise<void> {
+    const instances = await this.instanceRepository.findByUserId(userId);
+
+    for (const instance of instances) {
+      void this.remove(instance.id, userId);
+    }
+  }
+
   private async createSuperuser(containerName: string, email: string, password: string): Promise<void> {
     const cmd = ["/pb/pocketbase", "superuser", "upsert", email, password];
 

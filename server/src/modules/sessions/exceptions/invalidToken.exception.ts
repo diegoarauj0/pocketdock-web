@@ -12,7 +12,7 @@ export class InvalidTokenException extends BaseException<{ reason: InvalidTokenR
   constructor(name: string, reason: InvalidTokenReason) {
     super({
       code: BaseExceptionCode.INVALID_TOKEN,
-      statusCode: HttpStatus.FORBIDDEN,
+      statusCode: HttpStatus.UNAUTHORIZED,
       message: "Invalid token.",
       details: {
         name: name,

@@ -78,6 +78,11 @@ export class SessionService {
     if (session.expiresAt.getTime() < Date.now()) {
       this.logger.debug("Refresh attempted for expired session.", { sessionId: session.id });
 
+      if (session.revokeType !== SessionRevokeType.EXPIRED) {
+        session.revokeType = SessionRevokeType.EXPIRED;
+        await this.sessionRepository.save(session);
+      }
+
       throw new InvalidSessionException(InvalidSessionReason.EXPIRED, true);
     }
 

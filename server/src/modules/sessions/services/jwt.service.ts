@@ -46,15 +46,7 @@ export class JWTService {
 
       return { sessionId: sessionId, userId: userId };
     } catch (error) {
-      if (error instanceof JsonWebTokenError) {
-        throw new InvalidTokenException("refresh", InvalidTokenReason.INVALID);
-      }
-
-      if (error instanceof TokenExpiredError) {
-        throw new InvalidTokenException("refresh", InvalidTokenReason.EXPIRED);
-      }
-
-      throw error;
+      throw this.handlerError(error, "refresh");
     }
   }
 
@@ -72,15 +64,19 @@ export class JWTService {
 
       return { sessionId: sessionId, userId: userId };
     } catch (error) {
-      if (error instanceof JsonWebTokenError) {
-        throw new InvalidTokenException("access", InvalidTokenReason.INVALID);
-      }
-
-      if (error instanceof TokenExpiredError) {
-        throw new InvalidTokenException("access", InvalidTokenReason.EXPIRED);
-      }
-
-      throw error;
+      throw this.handlerError(error, "access");
     }
+  }
+
+  private handlerError(error: unknown, name: string): any {
+    if (error instanceof TokenExpiredError) {
+      return new InvalidTokenException(name, InvalidTokenReason.EXPIRED);
+    }
+
+    if (error instanceof JsonWebTokenError) {
+      return new InvalidTokenException(name, InvalidTokenReason.INVALID);
+    }
+
+    return error;
   }
 }
