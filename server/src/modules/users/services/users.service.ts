@@ -11,7 +11,7 @@ export class UsersService {
   ) {}
 
   public findByEmail(email: string): Promise<UserEntity | null> {
-    return this.usersRepository.findByEmail(email);
+    return this.usersRepository.findByEmail(email.trim().toLowerCase());
   }
 
   public findById(id: string): Promise<UserEntity | null> {
@@ -20,8 +20,8 @@ export class UsersService {
 
   public async create(email: string, username: string, hash?: string): Promise<UserEntity> {
     const user = this.usersRepository.create({
+      email: email.trim().toLowerCase(),
       username: username.trim(),
-      email: email,
       hash: hash,
     });
 

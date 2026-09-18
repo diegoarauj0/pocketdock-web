@@ -53,15 +53,17 @@ export class EmailVerificationService {
   public async resend(props: InterfaceResendProps): Promise<void> {
     const { emailVerificationType, email, locale } = props;
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const existsEmailVerification = await this.emailVerificationRepository.findByTypeAndEmailAndNotRevoked(
       emailVerificationType,
-      email,
+      normalizedEmail,
     );
 
     if (existsEmailVerification === null) {
       return this.logger.debug("Cannot resend verification email because no active verification exists", {
         emailVerificationType,
-        email,
+        email: normalizedEmail,
       });
     }
 
@@ -74,7 +76,7 @@ export class EmailVerificationService {
     }
 
     const code = this.cryptoService.createRandomCode(EMAIL_VERIFICATION_CONSTANT.CODE_LENGTH);
-    const hash = this.cryptoService.hash(`${email}:${code}`);
+    const hash = this.cryptoService.hash(`${normalizedEmail}:${code}`);
 
     try {
       const emailVerification = this.emailVerificationRepository.create({
@@ -83,13 +85,13 @@ export class EmailVerificationService {
         userId: existsEmailVerification.userId,
         type: emailVerificationType,
         revoked: false,
-        email: email,
+        email: normalizedEmail,
         hash: hash,
       });
 
       await this.emailVerificationRepository.save(emailVerification);
 
-      await this.sendEmail({ emailVerificationType, email, code, locale });
+      await this.sendEmail({ emailVerificationType, email: normalizedEmail, code, locale });
     } catch (error) {
       if (isUniqueConstraintError(error)) {
         throw new concurrentEmailVerification.ConcurrentEmailVerificationException(
@@ -104,21 +106,23 @@ export class EmailVerificationService {
   public async send(props: InterfaceSendProps): Promise<void> {
     const { emailVerificationType, userId, email, payload, locale } = props;
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     const existsEmailVerification = await this.emailVerificationRepository.findByTypeAndEmailAndNotRevoked(
       emailVerificationType,
-      email,
+      normalizedEmail,
     );
 
     if (existsEmailVerification) {
       return this.logger.debug("Verification email was not created because an active verification already exists", {
         emailVerificationType,
-        email,
+        email: normalizedEmail,
       });
     }
 
     const code = this.cryptoService.createRandomCode(EMAIL_VERIFICATION_CONSTANT.CODE_LENGTH);
 
-    const hash = this.cryptoService.hash(`${email}:${code}`);
+    const hash = this.cryptoService.hash(`${normalizedEmail}:${code}`);
 
     try {
       const emailVerification = this.emailVerificationRepository.create({
@@ -127,13 +131,13 @@ export class EmailVerificationService {
         payload: payload,
         userId: userId,
         revoked: false,
-        email: email,
+        email: normalizedEmail,
         hash: hash,
       });
 
       await this.emailVerificationRepository.save(emailVerification);
 
-      await this.sendEmail({ emailVerificationType, email, code, locale });
+      await this.sendEmail({ emailVerificationType, email: normalizedEmail, code, locale });
     } catch (error) {
       if (isUniqueConstraintError(error)) {
         throw new concurrentEmailVerification.ConcurrentEmailVerificationException(
@@ -148,12 +152,14 @@ export class EmailVerificationService {
   public async execute(props: InterfaceVerifyProps): Promise<EmailVerificationEntity> {
     const { code, emailVerificationType, email } = props;
 
-    const emailVerification = await this.verifyAndRevoke({ emailVerificationType, code, email });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const emailVerification = await this.verifyAndRevoke({ emailVerificationType, code, email: normalizedEmail });
 
     const payload = emailVerification.payload;
     const userId = emailVerification.userId;
 
-    await this.verificationStrategyRegistry.strategies[emailVerificationType].execute(email, userId, payload);
+    await this.verificationStrategyRegistry.strategies[emailVerificationType].execute(normalizedEmail, userId, payload);
 
     return emailVerification;
   }
