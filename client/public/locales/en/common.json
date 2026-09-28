@@ -1,0 +1,7 @@
+{
+  "BRAND_POCKETDOCK": "PocketDock",
+  "HEADER_SIGN_IN": "Sign in",
+  "HEADER_SIGN_OUT": "Sign out",
+  "NOTIFICATION_UNKNOWN_ERROR": "Unknown error.",
+  "ERROR_INTERNAL_SERVER_ERROR": "An unexpected error occurred. Please try again later."
+}

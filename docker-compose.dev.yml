@@ -1,0 +1,113 @@
+name: pocketdock-dev
+
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      # Credentials used only in the local development environment
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pocketdock
+    ports:
+      # Exposed so it can be accessed from the host during development
+      - "5432:5432"
+    volumes:
+      # Persistent storage for the database data
+      - db_data:/var/lib/postgresql/data
+
+  server:
+    build:
+      context: ./server
+      target: development
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      # Secret used to sign JWT tokens (dev-only value)
+      SECRET: CAT
+      # Allowed origins for CORS and OAuth redirect in development
+      CORS_ORIGIN: http://localhost:5173
+      OAUTH_SUCCESS_REDIRECT_URL: http://localhost:5173
+      # Connection settings pointing to the `database` service
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pocketdock
+      # Docker socket so the API can manage containers
+      DOCKER_HOST: unix:///var/run/docker.sock
+      # Base domain for instance URLs, e.g. <instance-id>.localhost
+      INSTANCE_DOMAIN: localhost
+      # Protocol used to build the public instance URLs
+      INSTANCE_PROTOCOL: http
+    ports:
+      - "3000:3000"
+    volumes:
+      # Docker socket for container management
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Env
+      - ./.env:/.env
+      # Mount source code and keep node_modules as a named volume
+      - ./server:/app
+      - server_node_modules:/app/node_modules
+    depends_on:
+      - database
+
+  client:
+    build:
+      context: ./client
+      target: development
+    restart: unless-stopped
+    environment:
+      # API URL used by the client during development
+      VITE_API_URL: http://localhost:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      # Env
+      - ./.env:/.env
+      # Mount source code and keep node_modules as a named volume
+      - ./client:/app
+      - client_node_modules:/app/node_modules
+    depends_on:
+      - server
+
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    command:
+      # Traefik dashboard available at http://localhost:8080
+      - --api.insecure=true
+      - --api.dashboard=true
+      # Docker provider to discover the containers
+      - --providers.docker=true
+      # Only containers with Traefik labels are exposed
+      - --providers.docker.exposedbydefault=false
+      # Network where the PocketBase instances run
+      - --providers.docker.network=pocketdock-instances
+      # Default HTTP entrypoint of the proxy
+      - --entrypoints.web.address=:80
+    ports:
+      # Reverse proxy port
+      - "80:80"
+      # Traefik dashboard
+      - "8080:8080"
+    volumes:
+      # Docker socket for the provider to detect the containers
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
+      - instances
+
+volumes:
+  db_data:
+  server_node_modules:
+  client_node_modules:
+
+networks:
+  default:
+    name: pocketdock-control
+  instances:
+    name: pocketdock-instances
+    driver: bridge

@@ -1,0 +1,5 @@
+export const PASSWORD_CONSTANT = {
+  ROUND_SALT: 13,
+  MAX_LENGTH: 128,
+  MIN_LENGTH: 8,
+};

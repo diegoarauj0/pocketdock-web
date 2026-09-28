@@ -1,0 +1,96 @@
+name: pocketdock-prod
+
+services:
+  database:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pocketdock
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  server:
+    build:
+      context: ./server
+      target: production
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # If no secret is defined, a random one is generated on every server start,
+      # causing all users to be logged out whenever the server restarts.
+      # Define a secret to keep sessions stable across restarts.
+      #SECRET: SECRET_CAT
+      # Use the domain that points to the server
+      CORS_ORIGIN: http://localhost
+      # Use the domain that points to the client
+      OAUTH_SUCCESS_REDIRECT_URL: http://localhost
+      POSTGRES_HOST: database
+      POSTGRES_PORT: 5432
+      # Even though the Postgres port is not exposed, it is recommended to change this value
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pocketdock
+      DOCKER_HOST: unix:///var/run/docker.sock
+      # Base domain for instance URLs, e.g. <instance-id>.app.example.com
+      INSTANCE_DOMAIN: app.example.com
+      # Protocol used to build the public instance URLs
+      INSTANCE_PROTOCOL: https
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      database:
+        condition: service_healthy
+
+  client:
+    build:
+      context: ./client
+      target: production
+    restart: unless-stopped
+    environment:
+      # Point to the URL of the server
+      - VITE_API_URL=localhost
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+
+  traefik:
+    image: traefik:v3
+    restart: unless-stopped
+    command:
+      # Docker provider to discover the containers
+      - --providers.docker=true
+      # Only containers with Traefik labels are exposed
+      - --providers.docker.exposedbydefault=false
+      # Network where the PocketBase instances run
+      - --providers.docker.network=pocketdock-instances
+      # Default HTTP entrypoint of the proxy
+      - --entrypoints.web.address=:80
+    ports:
+      # Temporary port so it does not conflict with the client on 80:80.
+      # When routing the client through Traefik, change it to "80:80".
+      - "8080:80"
+    volumes:
+      # Docker socket for the provider to detect the containers
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - default
+      - instances
+
+volumes:
+  db_data:
+
+networks:
+  default:
+    name: pocketdock-control
+  instances:
+    name: pocketdock-instances
+    driver: bridge
