@@ -7,11 +7,3 @@ export function isDockerApiError(error: unknown): error is InterfaceDockerApiErr
 export function isNotFoundError(error: unknown): boolean {
   return isDockerApiError(error) && error.statusCode === 404;
 }
-
-export function isAlreadyStopped(error: unknown): boolean {
-  return isDockerApiError(error) && error.statusCode === 304;
-}
-
-export function isAlreadyRunning(error: unknown): boolean {
-  return isDockerApiError(error) && error.statusCode === 409 && error.message.includes("is already running");
-}

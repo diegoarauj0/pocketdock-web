@@ -1,7 +1,8 @@
-import { isAlreadyRunning, isAlreadyStopped, isDockerApiError } from "src/infrastructure/docker/docker.util";
+import { InterfaceContainerCpuUsage, InterfaceContainerMemoryUsage } from "src/infrastructure/docker/docker.type";
 import { ContainerErrorReason, InstanceContainerException } from "../exceptions/instanceContainer.exception";
 import { DockerContainerService } from "src/infrastructure/docker/services/dockerContainer.service";
 import { InstanceNotFoundException } from "../exceptions/instanceNotFoundException.exception";
+import { isDockerApiError } from "src/infrastructure/docker/docker.util";
 import { InstanceRepository } from "../repositories/instance.repository";
 import { CryptoService } from "src/common/services/crypto.service";
 import { UserEntity } from "src/modules/users/user.entity";
@@ -9,7 +10,6 @@ import { INSTANCE_CONSTANT } from "../instance.constant";
 import { InstanceEntity } from "../instance.entity";
 import { Injectable, Logger } from "@nestjs/common";
 import { setTimeout } from "node:timers/promises";
-import { ContainerStats } from "dockerode";
 import { env } from "src/config/env";
 
 interface InterfaceCalculateUsage {
@@ -132,39 +132,43 @@ export class InstancesService {
     return instance;
   }
 
-  public async stop(id: string, userId: string): Promise<InstanceEntity> {
-    const instance = await this.findOwnedById(id, userId);
+  public async stop(name: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.findOwnedById(name, userId);
+
+    const { running, status } = await this.dockerContainerService.getContainerStatus(instance.containerName);
+
+    if (running === false || status === "exited") {
+      throw new InstanceContainerException(ContainerErrorReason.ALREADY_STOPPED);
+    }
 
     try {
       await this.dockerContainerService.stopContainer(instance.containerName);
 
       return instance;
     } catch (error) {
-      this.logger.error("Failed to stop instance container.", { id });
+      this.logger.error("Failed to stop instance container.", { id: name });
       this.logger.error(error);
-
-      if (isAlreadyStopped(error)) {
-        return instance;
-      }
 
       throw new InstanceContainerException(ContainerErrorReason.STOP_FAILED);
     }
   }
 
-  public async start(id: string, userId: string): Promise<InstanceEntity> {
-    const instance = await this.findOwnedById(id, userId);
+  public async start(name: string, userId: string): Promise<InstanceEntity> {
+    const instance = await this.findOwnedById(name, userId);
+
+    const { running } = await this.dockerContainerService.getContainerStatus(instance.containerName);
+
+    if (running === true) {
+      throw new InstanceContainerException(ContainerErrorReason.ALREADY_RUNNING);
+    }
 
     try {
       await this.dockerContainerService.startContainer(instance.containerName);
 
       return instance;
     } catch (error) {
-      this.logger.error("Failed to start instance container.", { id });
+      this.logger.error("Failed to start instance container.", { id: name });
       this.logger.error(error);
-
-      if (isAlreadyRunning(error)) {
-        throw new InstanceContainerException(ContainerErrorReason.ALREADY_RUNNING);
-      }
 
       throw new InstanceContainerException(ContainerErrorReason.START_FAILED);
     }
@@ -189,37 +193,30 @@ export class InstancesService {
     }
   }
 
-  private calculateMemoryUsage(stats: ContainerStats): InterfaceCalculateUsage {
-    const { memory_stats } = stats;
-
-    const usedBytes = (memory_stats.usage || 0) - (memory_stats.stats?.cache || 0);
-
-    const limitBytes = env.MAX_MEMORY_IN_MB * 1024 * 1024;
+  private calculateMemoryUsage(usage: InterfaceContainerMemoryUsage): InterfaceCalculateUsage {
+    const { usedBytes, limitBytes } = usage;
 
     return {
       used: usedBytes / 1024 / 1024,
-      percent: (usedBytes / limitBytes) * 100,
-      limit: env.MAX_MEMORY_IN_MB ?? 0,
+      percent: limitBytes > 0 ? (usedBytes / limitBytes) * 100 : 0,
+      limit: limitBytes / 1024 / 1024,
     };
   }
 
-  private calculateCpuUsage(stats: ContainerStats): InterfaceCalculateUsage {
-    const { cpu_stats, precpu_stats } = stats;
+  private calculateCpuUsage(usage: InterfaceContainerCpuUsage): InterfaceCalculateUsage {
+    const { totalUsage, previousTotalUsage, systemUsage, previousSystemUsage, onlineCpus } = usage;
 
-    const cpuDelta = cpu_stats.cpu_usage.total_usage - precpu_stats.cpu_usage.total_usage;
-
-    const systemDelta = cpu_stats.system_cpu_usage - precpu_stats.system_cpu_usage;
-
-    const onlineCpus = cpu_stats.online_cpus;
+    const cpuDelta = Math.max(totalUsage - previousTotalUsage, 0);
+    const systemDelta = Math.max(systemUsage - previousSystemUsage, 0);
     const cpuLimit = env.MAX_NANO_CPUS / 1_000_000_000;
 
-    const usedCpus = (cpuDelta / systemDelta) * onlineCpus;
-    const usagePercent = (usedCpus / cpuLimit) * 100;
+    const usedCpus = systemDelta > 0 ? (cpuDelta / systemDelta) * onlineCpus : 0;
+    const usagePercent = cpuLimit > 0 ? (usedCpus / cpuLimit) * 100 : 0;
 
     return {
-      percent: usagePercent || 0,
-      limit: cpuLimit || 0,
-      used: usedCpus || 0,
+      percent: usagePercent,
+      limit: cpuLimit,
+      used: usedCpus,
     };
   }
 
@@ -235,10 +232,13 @@ export class InstancesService {
       };
     }
 
-    const stats = await this.dockerContainerService.getStatsContainer(instance.containerName);
+    const [memoryUsage, cpuUsage] = await Promise.all([
+      this.dockerContainerService.getContainerMemoryUsage(instance.containerName),
+      this.dockerContainerService.getContainerCpuUsage(instance.containerName),
+    ]);
 
-    const cpu = this.calculateCpuUsage(stats);
-    const memory = this.calculateMemoryUsage(stats);
+    const cpu = this.calculateCpuUsage(cpuUsage);
+    const memory = this.calculateMemoryUsage(memoryUsage);
 
     return { cpu, memory, status: "running" };
   }

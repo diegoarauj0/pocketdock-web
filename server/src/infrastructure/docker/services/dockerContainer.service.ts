@@ -1,18 +1,26 @@
-import { InterfaceContainerStatus, InterfaceCreateContainerOptions, InterfaceExecResult } from "../docker.type";
+import {
+  InterfaceContainer,
+  InterfaceContainerCpuUsage,
+  InterfaceContainerMemoryUsage,
+  InterfaceContainerStatus,
+  InterfaceCreateContainerOptions,
+  InterfaceExecResult,
+} from "../docker.type";
 import { DockerService } from "./docker.service";
 import { isNotFoundError } from "../docker.util";
 import { Injectable } from "@nestjs/common";
-import Docker from "dockerode";
 import { Writable } from "node:stream";
+import { env } from "src/config/env";
+import Docker from "dockerode";
 
 @Injectable()
 export class DockerContainerService {
   constructor(private readonly dockerService: DockerService) {}
 
-  public async createContainer(options: InterfaceCreateContainerOptions): Promise<Docker.Container> {
+  public async createContainer(options: InterfaceCreateContainerOptions): Promise<InterfaceContainer> {
     const docker = this.dockerService.getClient();
 
-    return docker.createContainer({
+    const { id } = await docker.createContainer({
       name: options.name,
       Image: options.image,
       Env: options.env,
@@ -22,40 +30,63 @@ export class DockerContainerService {
       HostConfig: options.hostConfig,
       NetworkingConfig: options.networkingConfig,
     });
+
+    return { id };
   }
 
-  public getContainer(name: string): Docker.Container {
+  private getContainer(id: string): Docker.Container {
     const docker = this.dockerService.getClient();
 
-    return docker.getContainer(name);
+    return docker.getContainer(id);
   }
 
-  public async containerExists(name: string): Promise<boolean> {
+  public async containerExists(id: string): Promise<boolean> {
     try {
-      await this.getContainer(name).inspect();
-
+      await this.getContainer(id).inspect();
       return true;
     } catch (error) {
-      if (isNotFoundError(error)) {
-        return false;
-      }
-
+      if (isNotFoundError(error)) return false;
       throw error;
     }
   }
 
-  public async deleteContainer(name: string, force = false): Promise<void> {
-    const container = this.getContainer(name);
+  public async deleteContainer(id: string, force = false): Promise<void> {
+    const container = this.getContainer(id);
 
     await container.remove({
       force,
     });
   }
 
-  public async getStatsContainer(name: string): Promise<Docker.ContainerStats> {
-    const container = this.getContainer(name);
+  public async getStatsContainer(id: string): Promise<Docker.ContainerStats> {
+    const container = this.getContainer(id);
 
     return await container.stats({ stream: false });
+  }
+
+  public async getContainerMemoryUsage(name: string): Promise<InterfaceContainerMemoryUsage> {
+    const { memory_stats } = await this.getStatsContainer(name);
+
+    const usage = memory_stats?.usage ?? 0;
+    const cache = memory_stats?.stats?.cache ?? 0;
+    const limitBytes = memory_stats?.limit ?? env.MAX_MEMORY_IN_MB * 1024 * 1024;
+
+    return {
+      usedBytes: Math.max(usage - cache, 0),
+      limitBytes,
+    };
+  }
+
+  public async getContainerCpuUsage(name: string): Promise<InterfaceContainerCpuUsage> {
+    const { cpu_stats, precpu_stats } = await this.getStatsContainer(name);
+
+    return {
+      totalUsage: cpu_stats?.cpu_usage?.total_usage ?? 0,
+      previousTotalUsage: precpu_stats?.cpu_usage?.total_usage ?? 0,
+      systemUsage: cpu_stats?.system_cpu_usage ?? 0,
+      previousSystemUsage: precpu_stats?.system_cpu_usage ?? 0,
+      onlineCpus: cpu_stats?.online_cpus ?? 0,
+    };
   }
 
   public async getContainerStatus(name: string): Promise<InterfaceContainerStatus> {
@@ -66,6 +97,7 @@ export class DockerContainerService {
     return {
       paused: State.Paused,
       running: State.Running,
+      status: State.Status,
     };
   }
 
@@ -75,8 +107,8 @@ export class DockerContainerService {
     await container.start();
   }
 
-  public async stopContainer(name: string): Promise<void> {
-    const container = this.getContainer(name);
+  public async stopContainer(id: string): Promise<void> {
+    const container = this.getContainer(id);
 
     await container.stop();
   }

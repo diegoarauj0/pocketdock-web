@@ -3,6 +3,24 @@ import type Docker from "dockerode";
 export interface InterfaceContainerStatus {
   running: boolean;
   paused: boolean;
+  status: string;
+}
+
+export interface InterfaceContainer {
+  id: string;
+}
+
+export interface InterfaceContainerMemoryUsage {
+  usedBytes: number;
+  limitBytes: number;
+}
+
+export interface InterfaceContainerCpuUsage {
+  totalUsage: number;
+  previousTotalUsage: number;
+  systemUsage: number;
+  previousSystemUsage: number;
+  onlineCpus: number;
 }
 
 export interface InterfaceExecResult {
@@ -24,6 +42,11 @@ export interface InterfaceBuildImageOptions {
   buildArgs?: Record<string, string>;
 }
 
+interface InterfaceHostConfig {
+  NanoCpus: number;
+  Memory: number;
+}
+
 export interface InterfaceCreateContainerOptions {
   name: string;
   image: string;
@@ -34,7 +57,7 @@ export interface InterfaceCreateContainerOptions {
 
   exposedPorts?: Record<string, Record<string, never>>;
 
-  hostConfig?: Docker.HostConfig;
+  hostConfig?: InterfaceHostConfig;
 
   networkingConfig?: Docker.ContainerCreateOptions["NetworkingConfig"];
 
