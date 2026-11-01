@@ -3,9 +3,10 @@ import { HttpStatus } from "@nestjs/common";
 
 export enum ContainerErrorReason {
   CREATE_FAILED = "CREATE_FAILED",
-  REMOVE_FAILED = "REMOVE_FAILED",
   STOP_FAILED = "STOP_FAILED",
   START_FAILED = "START_FAILED",
+  NOT_READY = "NOT_READY",
+  OPERATION_IN_PROGRESS = "OPERATION_IN_PROGRESS",
   ALREADY_STOPPED = "ALREADY_STOPPED",
   ALREADY_RUNNING = "ALREADY_RUNNING",
   SUPERUSER_CREATE_FAILED = "SUPERUSER_CREATE_FAILED",
@@ -13,9 +14,10 @@ export enum ContainerErrorReason {
 
 const reasonToStatusCodeMap: Record<ContainerErrorReason, HttpStatus> = {
   [ContainerErrorReason.CREATE_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
-  [ContainerErrorReason.REMOVE_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
   [ContainerErrorReason.STOP_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
   [ContainerErrorReason.START_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
+  [ContainerErrorReason.NOT_READY]: HttpStatus.CONFLICT,
+  [ContainerErrorReason.OPERATION_IN_PROGRESS]: HttpStatus.CONFLICT,
   [ContainerErrorReason.ALREADY_STOPPED]: HttpStatus.CONFLICT,
   [ContainerErrorReason.ALREADY_RUNNING]: HttpStatus.CONFLICT,
   [ContainerErrorReason.SUPERUSER_CREATE_FAILED]: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -24,11 +26,13 @@ const reasonToStatusCodeMap: Record<ContainerErrorReason, HttpStatus> = {
 const reasonToMessageMap: Record<ContainerErrorReason, string> = {
   [ContainerErrorReason.CREATE_FAILED]: "Failed to create instance container.",
 
-  [ContainerErrorReason.REMOVE_FAILED]: "Failed to remove instance container.",
-
   [ContainerErrorReason.STOP_FAILED]: "Failed to stop instance container.",
 
   [ContainerErrorReason.START_FAILED]: "Failed to start instance container.",
+
+  [ContainerErrorReason.NOT_READY]: "Instance container is not ready yet.",
+
+  [ContainerErrorReason.OPERATION_IN_PROGRESS]: "Another operation is already in progress for this instance.",
 
   [ContainerErrorReason.ALREADY_STOPPED]: "Instance container is already stopped.",
 

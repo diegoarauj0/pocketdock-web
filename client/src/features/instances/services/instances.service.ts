@@ -1,8 +1,11 @@
 import { httpService } from "@/shared/services/http.service";
 
+export type InterfaceInstanceLifecycleStatus = "pending" | "completed" | "failed";
+
 export interface InterfaceInstance {
   containerName: string;
   defaultPassword: string;
+  status: InterfaceInstanceLifecycleStatus;
   updatedAt: string;
   createdAt: string;
   url: string;

@@ -1,13 +1,13 @@
-import { CryptoService } from "src/common/services/crypto.service";
-import { EmailVerificationEntity, EmailVerificationType } from "../emailVerification.entity";
 import * as invalidEmailVerificationCode from "../exceptions/invalidEmailVerificationCode.exception";
-import * as concurrentEmailVerification from "../exceptions/concurrentEmailVerification.exception";
 import { isUniqueConstraintError } from "src/infrastructure/database/helpers/isUniqueConstraintError";
+import * as concurrentEmailVerification from "../exceptions/concurrentEmailVerification.exception";
+import { EmailVerificationEntity, EmailVerificationType } from "../emailVerification.entity";
 import { EmailVerificationRepository } from "../repositories/emailVerification.repository";
 import { MailTranslationService } from "src/modules/mail/services/mailTranslation.service";
 import { VerificationStrategyRegistry } from "../verificationStrategy.registry";
 import { EMAIL_VERIFICATION_CONSTANT } from "../emailVerification.constant";
 import { MailService } from "src/modules/mail/services/mail.service";
+import { CryptoService } from "src/common/services/crypto.service";
 import { Locale } from "src/modules/mail/mail.constant";
 import { Injectable, Logger } from "@nestjs/common";
 

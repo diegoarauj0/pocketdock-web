@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InterfaceInstance } from "../services/instances.service";
 import { useTranslation } from "react-i18next";
 import { instancesService } from "../services/instances.service";
+import { INSTANCE_CONSTANT } from "../constants/instance.constant";
 
 interface InterfaceCreateInstanceContext {
   previousInstances: InterfaceInstance[] | undefined;
@@ -25,6 +26,7 @@ export function useCreateInstanceMutation() {
         id: crypto.randomUUID(),
         containerName: t("INSTANCE_CREATING_PLACEHOLDER"),
         defaultPassword: "",
+        status: INSTANCE_CONSTANT.STATUS.PENDING,
         createdAt,
         updatedAt: createdAt,
         url: "",

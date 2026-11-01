@@ -1,3 +1,4 @@
+import { INSTANCE_STATUS_LABEL_KEYS } from "@/features/instances/utils/instanceStatus.util";
 import type { InterfaceInstance } from "@/features/instances/services/instances.service";
 import { formatDateTime } from "@/shared/utils/formatDate.util";
 import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
@@ -13,9 +14,9 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
   const { t } = useTranslation("instances");
 
   return (
-    <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.id}`}>
+    <S.Card to={`/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/${instance.id}`} $status={instance.status}>
       <S.Header>
-        <S.IconArea>
+        <S.IconArea $status={instance.status}>
           <Container size={24} />
         </S.IconArea>
 
@@ -23,6 +24,11 @@ export function InstanceCardComponent({ instance }: InterfaceInstanceCardProps) 
       </S.Header>
 
       <S.Content>
+        <S.StatusBadge $status={instance.status}>
+          <S.StatusDot $status={instance.status} />
+          {t(INSTANCE_STATUS_LABEL_KEYS[instance.status])}
+        </S.StatusBadge>
+
         <S.Id>{instance.id}</S.Id>
       </S.Content>
 

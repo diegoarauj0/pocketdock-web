@@ -1,3 +1,5 @@
+import type { InterfaceInstanceLifecycleStatus } from "@/features/instances/services/instances.service";
+import { resolveInstanceStatusColor } from "@/features/instances/utils/instanceStatus.util";
 import styled from "styled-components";
 import { fadeInUp } from "@/features/theme/animations";
 
@@ -74,16 +76,18 @@ export const Subtitle = styled.span`
   color: ${({ theme }) => theme.text.muted};
 `;
 
-export const Status = styled.div<{ $isRunning: boolean }>`
+export const Status = styled.div<{ $status: InterfaceInstanceLifecycleStatus; $isRunning: boolean }>`
   ${fadeInUp(320)}
 
   background-color: ${({ theme }) => theme.background.light};
 
   border-radius: ${({ theme }) => theme.radius.full};
   border: ${({ theme }) => theme.border.thin} solid
-    ${({ theme, $isRunning }) => ($isRunning ? theme.success : theme.text.muted)};
+    ${({ theme, $status, $isRunning }) =>
+      $status === "completed" && !$isRunning ? theme.text.muted : resolveInstanceStatusColor(theme, $status)};
 
-  color: ${({ theme, $isRunning }) => ($isRunning ? theme.text.default : theme.text.muted)};
+  color: ${({ theme, $status, $isRunning }) =>
+    $status === "completed" && !$isRunning ? theme.text.muted : resolveInstanceStatusColor(theme, $status)};
 
   display: flex;
   justify-content: center;
@@ -114,6 +118,13 @@ export const DeleteInstance = styled.button`
 
   padding: ${({ theme }) => theme.spacing[2]} ${({ theme }) => theme.spacing[4]};
 
+  transition: opacity 0.15s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   svg {
     margin-right: ${({ theme }) => theme.spacing[2]};
   }
@@ -140,13 +151,44 @@ export const StartOrStopInstance = styled.button<{ $stop?: boolean }>`
     background-color 0.15s ease,
     border-color 0.15s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.background.light};
     border-color: ${({ theme }) => theme.highlight};
   }
 
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
   svg {
     margin-right: ${({ theme }) => theme.spacing[2]};
+  }
+`;
+
+export const StatusNotice = styled.div<{ $status: InterfaceInstanceLifecycleStatus }>`
+  ${fadeInUp(320)}
+
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[3]};
+
+  padding: ${({ theme }) => theme.spacing[5]} ${({ theme }) => theme.spacing[6]};
+
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  color: ${({ theme, $status }) => resolveInstanceStatusColor(theme, $status)};
+
+  background-color: color-mix(
+    in oklch,
+    ${({ theme, $status }) => resolveInstanceStatusColor(theme, $status)} 10%,
+    ${({ theme }) => theme.background.default}
+  );
+  border: ${({ theme }) => theme.border.thin} solid
+    color-mix(in oklch, ${({ theme, $status }) => resolveInstanceStatusColor(theme, $status)} 35%, transparent);
+  border-radius: ${({ theme }) => theme.radius.lg};
+
+  svg {
+    flex-shrink: 0;
   }
 `;
 

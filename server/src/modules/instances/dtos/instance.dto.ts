@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsUUID } from "class-validator";
-import { InstanceEntity } from "../instance.entity";
+import { InstanceEntity, InstanceStatus } from "../instance.entity";
 import { ApiProperty } from "@nestjs/swagger";
 
 export class InstanceIdParamsDto {
@@ -23,6 +23,14 @@ export class InstancePrivateDto {
     example: "123e4567-e89b-12d3-a456-426614174000",
   })
   public id!: InstanceEntity["id"];
+
+  @ApiProperty({
+    enum: InstanceStatus,
+    enumName: "InstanceLifecycleStatus",
+    description: "Status do provisionamento da instância",
+    example: InstanceStatus.PENDING,
+  })
+  public status!: InstanceEntity["status"];
 
   @ApiProperty({
     type: "string",

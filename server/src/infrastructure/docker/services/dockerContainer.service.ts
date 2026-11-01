@@ -40,9 +40,9 @@ export class DockerContainerService {
     return docker.getContainer(id);
   }
 
-  public async containerExists(id: string): Promise<boolean> {
+  public async containerExists(name: string): Promise<boolean> {
     try {
-      await this.getContainer(id).inspect();
+      await this.getContainer(name).inspect();
       return true;
     } catch (error) {
       if (isNotFoundError(error)) return false;
@@ -53,9 +53,15 @@ export class DockerContainerService {
   public async deleteContainer(id: string, force = false): Promise<void> {
     const container = this.getContainer(id);
 
-    await container.remove({
-      force,
-    });
+    try {
+      await container.remove({
+        force,
+      });
+    } catch (error) {
+      if (isNotFoundError(error)) return;
+
+      throw error;
+    }
   }
 
   public async getStatsContainer(id: string): Promise<Docker.ContainerStats> {

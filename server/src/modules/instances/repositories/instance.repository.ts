@@ -1,7 +1,7 @@
-import { InstanceEntity } from "../instance.entity";
+import { InstanceEntity, InstanceStatus } from "../instance.entity";
+import { Repository, UpdateResult } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Injectable } from "@nestjs/common";
-import { DeleteResult, LessThan, Repository } from "typeorm";
 
 @Injectable()
 export class InstanceRepository {
@@ -18,10 +18,6 @@ export class InstanceRepository {
     return this.instanceRepository.find({ where: { userId: userId } });
   }
 
-  public findCreatedBefore(date: Date): Promise<InstanceEntity[]> {
-    return this.instanceRepository.find({ where: { createdAt: LessThan(date) } });
-  }
-
   public create(props: Partial<InstanceEntity>): InstanceEntity {
     return this.instanceRepository.create(props);
   }
@@ -30,11 +26,7 @@ export class InstanceRepository {
     return this.instanceRepository.save(instance);
   }
 
-  public remove(instance: InstanceEntity): Promise<InstanceEntity> {
-    return this.instanceRepository.remove(instance);
-  }
-
-  public delete(id: string): Promise<DeleteResult> {
-    return this.instanceRepository.delete({ id: id });
+  public updateStatus(id: string, status: InstanceStatus): Promise<UpdateResult> {
+    return this.instanceRepository.update({ id: id }, { status: status });
   }
 }

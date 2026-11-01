@@ -1,33 +1,37 @@
+import { InstanceInformationComponent } from "../../components/instanceInformation/instanceInformation.component";
 import { LoadingScreenComponent } from "@/shared/components/loadingScreen/loadingScreen.component";
 import { InstanceUsageComponent } from "../../components/instanceUsage/instanceUsage.component";
-import { InstanceInformationComponent } from "../../components/instanceInformation/instanceInformation.component";
-import { ArrowLeft, CircleAlert, Play, Square, Trash } from "lucide-react";
+import { ArrowLeft, CircleAlert, LoaderCircle, Play, Square, Trash } from "lucide-react";
 import { HeaderComponent } from "@/shared/components/header/header.component";
 import { useInstanceHandlers } from "../../hooks/useInstanceHandlers.hook";
+import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
 import { useInstanceQuery } from "../../queries/useInstance.query";
 import { useStateQuery } from "../../queries/useState.query";
 import { Link, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./instance.styled";
-import { useTranslation } from "react-i18next";
 
 export function InstancePage() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation("instances");
 
   const instanceQuery = useInstanceQuery(id);
-  const stateQuery = useStateQuery(id);
+
+  const isCompleted = instanceQuery.data?.status === INSTANCE_CONSTANT.STATUS.COMPLETED;
+
+  const stateQuery = useStateQuery(id, isCompleted);
 
   const { handleDeleteInstance, handleStartInstance, handleStopInstance } = useInstanceHandlers({
     stateQuery,
     id: id ?? "",
   });
 
-  if (stateQuery.isPending || instanceQuery.isPending) {
+  if (instanceQuery.isPending || (isCompleted && stateQuery.isPending)) {
     return <LoadingScreenComponent />;
   }
 
-  if (stateQuery.isError || instanceQuery.isError) {
+  if (instanceQuery.isError || (isCompleted && stateQuery.isError)) {
     return (
       <S.PageWrapper>
         <HeaderComponent />
@@ -52,8 +56,18 @@ export function InstancePage() {
     );
   }
 
-  const state = stateQuery.data!;
   const instance = instanceQuery.data!;
+  const state = stateQuery.data;
+
+  const isContainerReady = instance.status === INSTANCE_CONSTANT.STATUS.COMPLETED;
+  const isContainerPending = instance.status === INSTANCE_CONSTANT.STATUS.PENDING;
+  const isRunning = state?.status === "running";
+
+  const statusLabel = {
+    pending: t("INSTANCE_STATUS_PENDING"),
+    completed: isRunning ? t("INSTANCE_RUNNING_STATUS") : t("INSTANCE_STOPPED_STATUS"),
+    failed: t("INSTANCE_STATUS_FAILED"),
+  }[instance.status];
 
   return (
     <S.PageWrapper>
@@ -75,23 +89,40 @@ export function InstancePage() {
           <S.ButtonGroup>
             <S.StartOrStopInstance
               type="button"
-              $stop={state.status === "running"}
-              onClick={state.status === "running" ? handleStopInstance : handleStartInstance}
+              $stop={isRunning}
+              disabled={!isContainerReady}
+              onClick={isRunning ? handleStopInstance : handleStartInstance}
             >
-              {state.status === "running" ? <Square /> : <Play />}
-              {state.status === "running" ? t("INSTANCE_STOP") : t("INSTANCE_START")}
+              {isRunning ? <Square /> : <Play />}
+              {isRunning ? t("INSTANCE_STOP") : t("INSTANCE_START")}
             </S.StartOrStopInstance>
-            <S.DeleteInstance type="button" onClick={handleDeleteInstance}>
+            <S.DeleteInstance type="button" disabled={isContainerPending} onClick={handleDeleteInstance}>
               <Trash /> {t("INSTANCE_REMOVE")}
             </S.DeleteInstance>
           </S.ButtonGroup>
 
-          <S.Status $isRunning={state.status === "running"}>
-            {state.status === "running" ? t("INSTANCE_RUNNING_STATUS") : t("INSTANCE_STOPPED_STATUS")}
+          <S.Status $status={instance.status} $isRunning={isRunning}>
+            {statusLabel}
           </S.Status>
         </S.InstanceHeader>
 
-        <InstanceUsageComponent state={state} />
+        {state !== undefined ? (
+          <InstanceUsageComponent state={state} />
+        ) : (
+          <S.StatusNotice $status={instance.status}>
+            {instance.status === INSTANCE_CONSTANT.STATUS.FAILED ? (
+              <>
+                <CircleAlert size={20} />
+                {t("INSTANCE_FAILED_NOTICE")}
+              </>
+            ) : (
+              <>
+                <LoaderCircle size={20} />
+                {t("INSTANCE_PENDING_NOTICE")}
+              </>
+            )}
+          </S.StatusNotice>
+        )}
 
         <InstanceInformationComponent instance={instance} />
       </S.Content>

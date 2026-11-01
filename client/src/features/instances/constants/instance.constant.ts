@@ -10,4 +10,10 @@ export const INSTANCE_CONSTANT = {
     START_INSTANCE: "startInstance",
     CREATE_INSTANCE: "createInstance",
   },
+
+  STATUS: {
+    PENDING: "pending",
+    COMPLETED: "completed",
+    FAILED: "failed",
+  },
 } as const;

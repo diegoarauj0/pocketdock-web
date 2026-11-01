@@ -8,10 +8,13 @@ import { ThrottlerModule } from "@nestjs/throttler";
 import { ScheduleModule } from "@nestjs/schedule";
 import { DockerModule } from "./infrastructure/docker/docker.module";
 import { DatabaseModule } from "./infrastructure/database/database.module";
+import { OutboxModule } from "./infrastructure/outbox/outbox.module";
+import { LockModule } from "./infrastructure/lock/lock.module";
 import { InstanceModule } from "./modules/instances/instance.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { Module, ValidationPipe } from "@nestjs/common";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   providers: [
@@ -47,8 +50,11 @@ import { Module, ValidationPipe } from "@nestjs/common";
         blockDuration: THROTTLER_CONSTANT.GLOBAL_BLOCK_DURATION_MS,
       },
     ]),
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     DatabaseModule,
+    LockModule,
+    OutboxModule,
     AuthModule,
     UsersModule,
     InstanceModule,

@@ -34,6 +34,7 @@ const envSchema = z.object({
     .string()
     .transform((val) => val.split(",").map((item) => item.trim()))
     .default(["log", "error"]),
+  LOCK_DEFAULT_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
 });
 
 const { data, error, success } = envSchema.safeParse(process.env);

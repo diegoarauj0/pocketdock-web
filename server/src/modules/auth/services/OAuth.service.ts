@@ -1,11 +1,11 @@
-import { CryptoService } from "src/common/services/crypto.service";
 import { OAuthEmailConflictException, OAuthEmailConflictReason } from "../exceptions/OAuthEmailConflict.exception";
 import { InvalidOAuthStateException, InvalidOAuthStateReason } from "../exceptions/invalidOAuthState.exception";
 import { AccountsService } from "src/modules/accounts/services/accounts.service";
-import { AccountProvider } from "src/modules/accounts/account.entity";
 import { UsersService } from "src/modules/users/services/users.service";
-import { OAuthStrategyID } from "../strategies/base.strategy";
+import { AccountProvider } from "src/modules/accounts/account.entity";
+import { CryptoService } from "src/common/services/crypto.service";
 import { OAuthStrategyRegistry } from "../OAuthStrategy.registry";
+import { OAuthStrategyID } from "../strategies/base.strategy";
 import { UserEntity } from "src/modules/users/user.entity";
 import { Injectable } from "@nestjs/common";
 
