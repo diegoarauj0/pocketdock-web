@@ -1,0 +1,15 @@
+{
+  "TITLE": "Configurações",
+  "DESCRIPTION": "Gerencie suas preferências do PocketDock.",
+  "NAV_INTERFACE": "Interface",
+  "INTERFACE_TITLE": "Interface",
+  "INTERFACE_DESCRIPTION": "Personalize a aparência e o idioma do PocketDock.",
+  "LANGUAGE_TITLE": "Idioma",
+  "LANGUAGE_DESCRIPTION": "Escolha o idioma usado em toda a interface.",
+  "THEME_TITLE": "Tema",
+  "THEME_DESCRIPTION": "Selecione a aparência da interface.",
+  "THEME_LIGHT": "Claro",
+  "THEME_DARK": "Escuro",
+  "BACK": "Voltar",
+  "AUTO_SAVE_NOTE": "As alterações são salvas automaticamente neste dispositivo."
+}

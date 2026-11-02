@@ -1,4 +1,5 @@
 import { INSTANCE_CONSTANT } from "@/features/instances/constants/instance.constant";
+import { SETTINGS_CONSTANT } from "@/features/settings/constants/settings.constant";
 import { AUTH_CONSTANT } from "@/features/auth/constants/auth.constant";
 
 export const APP_PATH = {
@@ -15,4 +16,9 @@ export const APP_PATH = {
 
   INSTANCES: `/${INSTANCE_CONSTANT.ROUTER.INSTANCES}`,
   INSTANCE: `/${INSTANCE_CONSTANT.ROUTER.INSTANCE}/:id`,
+
+  SETTINGS: {
+    LAYOUT: `/${SETTINGS_CONSTANT.ROUTER.SETTINGS}`,
+    INTERFACE: `/${SETTINGS_CONSTANT.ROUTER.SETTINGS}/${SETTINGS_CONSTANT.ROUTER.INTERFACE}`,
+  },
 } as const;

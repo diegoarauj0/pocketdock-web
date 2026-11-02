@@ -2,14 +2,14 @@ import { ThemeContext, type ThemeType } from "@/features/theme/contexts/theme.co
 import { ThemeProvider as StyledThemeProvider } from "styled-components";
 import { themeStorageService } from "@/features/theme/services/themeStorage.service";
 import { DARK_THEME, LIGHT_THEME } from "@/features/theme/theme";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface InterfaceThemeProviderProps {
   children: React.ReactNode;
 }
 
 export function ThemeProvider(props: InterfaceThemeProviderProps) {
-  const [theme, setTheme] = useState<ThemeType>(() => {
+  const [theme, setThemeState] = useState<ThemeType>(() => {
     const savedTheme = themeStorageService.getTheme();
 
     if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
@@ -19,8 +19,13 @@ export function ThemeProvider(props: InterfaceThemeProviderProps) {
     return systemPrefersDark ? "dark" : "light";
   });
 
+  const setTheme = useCallback((nextTheme: ThemeType) => {
+    themeStorageService.setTheme(nextTheme);
+    setThemeState(nextTheme);
+  }, []);
+
   const toggleTheme = useCallback(() => {
-    setTheme((prevTheme) => {
+    setThemeState((prevTheme) => {
       const nextTheme = prevTheme === "light" ? "dark" : "light";
 
       themeStorageService.setTheme(nextTheme);
@@ -29,10 +34,14 @@ export function ThemeProvider(props: InterfaceThemeProviderProps) {
     });
   }, []);
 
+  useEffect(() => {
+    document.documentElement.style.colorScheme = theme;
+  }, [theme]);
+
   const value = theme === "dark" ? DARK_THEME : LIGHT_THEME;
 
   return (
-    <ThemeContext.Provider value={{ theme: theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
       <StyledThemeProvider theme={value}>{props.children}</StyledThemeProvider>
     </ThemeContext.Provider>
   );

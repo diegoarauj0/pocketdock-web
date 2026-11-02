@@ -61,6 +61,40 @@ export const UserSection = styled.div`
   gap: ${({ theme }) => theme.spacing[2]};
 `;
 
+export const SettingsLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[1.5]};
+
+  padding: ${({ theme }) => theme.spacing[1.5]} ${({ theme }) => theme.spacing[3]};
+
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  text-decoration: none;
+  color: ${({ theme }) => theme.text.muted};
+
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.text.default};
+    background-color: ${({ theme }) => theme.background.light};
+  }
+
+  &:focus-visible {
+    outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.primary};
+    outline-offset: ${({ theme }) => theme.spacing[0.5]};
+  }
+
+  @media ${({ theme }) => `(max-width: ${theme.breakpoint.sm})`} {
+    span {
+      display: none;
+    }
+  }
+`;
+
 export const LogoutButton = styled.button`
   display: inline-flex;
   align-items: center;

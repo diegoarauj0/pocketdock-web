@@ -7,6 +7,9 @@ import { OAuthCallbackPage } from "@/features/auth/pages/oAuthCallback/oAuthCall
 import { ResetPasswordPage } from "@/features/auth/pages/resetPassword/resetPassword.page";
 import { InstancesPage } from "@/features/instances/pages/instances/instances.page";
 import { InstancePage } from "@/features/instances/pages/instance/instance.page";
+import { InterfaceSettingsPage } from "@/features/settings/pages/interface/interface.page";
+import { SETTINGS_CONSTANT } from "@/features/settings/constants/settings.constant";
+import { SettingsLayout } from "@/features/settings/layouts/settings.layout";
 import { SignInPage } from "@/features/auth/pages/signIn/signIn.page";
 import { SignUpPage } from "@/features/auth/pages/signUp/signUp.page";
 import { AuthLayout } from "@/features/auth/layouts/auth.layout";
@@ -58,6 +61,21 @@ export const router = createBrowserRouter([
       {
         path: APP_PATH.HOME,
         element: <HomePage />,
+      },
+    ],
+  },
+
+  {
+    path: APP_PATH.SETTINGS.LAYOUT,
+    element: <SettingsLayout />,
+    children: [
+      {
+        index: true,
+        element: <Navigate to={APP_PATH.SETTINGS.INTERFACE} replace />,
+      },
+      {
+        path: SETTINGS_CONSTANT.ROUTER.INTERFACE,
+        element: <InterfaceSettingsPage />,
       },
     ],
   },
