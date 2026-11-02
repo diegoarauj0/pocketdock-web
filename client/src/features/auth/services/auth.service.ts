@@ -69,6 +69,10 @@ export const authService = {
     return httpService.post("/api/auth/logout", undefined);
   },
 
+  logoutAll: (): Promise<void> => {
+    return httpService.post("/api/auth/logout-all", undefined);
+  },
+
   signUp: (request: InterfaceSignUpRequest): Promise<void> => {
     return httpService.post<void, InterfaceSignUpRequest>("/api/auth/sign-up", request);
   },

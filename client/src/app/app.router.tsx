@@ -8,6 +8,7 @@ import { ResetPasswordPage } from "@/features/auth/pages/resetPassword/resetPass
 import { InstancesPage } from "@/features/instances/pages/instances/instances.page";
 import { InstancePage } from "@/features/instances/pages/instance/instance.page";
 import { InterfaceSettingsPage } from "@/features/settings/pages/interface/interface.page";
+import { SecuritySettingsPage } from "@/features/settings/pages/security/security.page";
 import { SETTINGS_CONSTANT } from "@/features/settings/constants/settings.constant";
 import { SettingsLayout } from "@/features/settings/layouts/settings.layout";
 import { SignInPage } from "@/features/auth/pages/signIn/signIn.page";
@@ -76,6 +77,16 @@ export const router = createBrowserRouter([
       {
         path: SETTINGS_CONSTANT.ROUTER.INTERFACE,
         element: <InterfaceSettingsPage />,
+      },
+      {
+        path: SETTINGS_CONSTANT.ROUTER.SECURITY,
+        element: <PrivateRouteComponent />,
+        children: [
+          {
+            index: true,
+            element: <SecuritySettingsPage />,
+          },
+        ],
       },
     ],
   },

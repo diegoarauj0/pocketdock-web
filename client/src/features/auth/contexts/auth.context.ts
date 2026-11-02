@@ -8,7 +8,8 @@ export interface InterfaceAuthContext {
   signIn: (accessToken: string) => void;
   user: InterfacePublicUser | null;
   state: AuthStateType;
-  signOut: () => void;
+  signOut: () => Promise<void>;
+  clearSession: () => void;
 }
 
 export const AuthContext = createContext<InterfaceAuthContext | undefined>(undefined);

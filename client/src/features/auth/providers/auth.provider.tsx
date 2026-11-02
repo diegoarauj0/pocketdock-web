@@ -68,14 +68,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
     [me],
   );
 
-  const signOut = useCallback(async () => {
-    await logout();
-
+  const clearSession = useCallback(() => {
     tokenStoreService.clear();
 
     setState("unauthenticated");
     setUser(null);
-  }, [logout]);
+  }, []);
+
+  const signOut = useCallback(async () => {
+    try {
+      await logout();
+    } finally {
+      clearSession();
+    }
+  }, [logout, clearSession]);
 
   useEffect(() => {
     const requestInterceptor = httpClient.interceptors.request.use((config) => {
@@ -158,5 +164,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
   }, [me]);
 
-  return <AuthContext.Provider value={{ user, state, signIn, signOut, setUser }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, state, signIn, signOut, setUser, clearSession }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }

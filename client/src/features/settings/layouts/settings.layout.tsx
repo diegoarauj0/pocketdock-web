@@ -1,13 +1,17 @@
 import { HeaderComponent } from "@/shared/components/header/header.component";
+import { useAuth } from "@/features/auth/contexts/auth.context";
 import { Outlet, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
-import { ArrowLeft, Monitor } from "lucide-react";
+import { ArrowLeft, Monitor, Shield } from "lucide-react";
 import * as S from "./settings.styled";
 
 export function SettingsLayout() {
+  const { state } = useAuth();
   const { t } = useTranslation("settings");
   const navigate = useNavigate();
+
+  const isAuthenticated = state === "authenticated";
 
   const handleBack = () => {
     const historyIndex = window.history.state?.idx;
@@ -43,6 +47,13 @@ export function SettingsLayout() {
               <Monitor size={16} />
               {t("NAV_INTERFACE")}
             </S.NavItem>
+
+            {isAuthenticated && (
+              <S.NavItem to={APP_PATH.SETTINGS.SECURITY}>
+                <Shield size={16} />
+                {t("NAV_SECURITY")}
+              </S.NavItem>
+            )}
           </S.NavList>
         </S.Sidebar>
 
