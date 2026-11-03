@@ -1,4 +1,4 @@
-const USER_AGENT_MAX_LENGTH = 120;
+const USER_AGENT_MAX_LENGTH = 50;
 
 export function truncateUserAgent(userAgent: string | null): string | null {
   if (userAgent === null) return null;

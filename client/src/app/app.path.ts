@@ -1,6 +1,7 @@
 import { INSTANCE_CONSTANT } from "@/features/instances/constants/instance.constant";
 import { SETTINGS_CONSTANT } from "@/features/settings/constants/settings.constant";
 import { AUTH_CONSTANT } from "@/features/auth/constants/auth.constant";
+import { ADMIN_CONSTANT } from "@/features/admin/admin.constant";
 
 export const APP_PATH = {
   HOME: "/",
@@ -21,5 +22,11 @@ export const APP_PATH = {
     LAYOUT: `/${SETTINGS_CONSTANT.ROUTER.SETTINGS}`,
     INTERFACE: `/${SETTINGS_CONSTANT.ROUTER.SETTINGS}/${SETTINGS_CONSTANT.ROUTER.INTERFACE}`,
     SECURITY: `/${SETTINGS_CONSTANT.ROUTER.SETTINGS}/${SETTINGS_CONSTANT.ROUTER.SECURITY}`,
+  },
+
+  ADMIN: {
+    LAYOUT: `/${ADMIN_CONSTANT.ROUTER.LAYOUT}`,
+    USERS: `/${ADMIN_CONSTANT.ROUTER.LAYOUT}/${ADMIN_CONSTANT.ROUTER.USERS}`,
+    INSTANCES: `/${ADMIN_CONSTANT.ROUTER.LAYOUT}/${ADMIN_CONSTANT.ROUTER.INSTANCES}`,
   },
 } as const;

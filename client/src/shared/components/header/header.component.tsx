@@ -1,18 +1,20 @@
 import { useAuth } from "@/features/auth/contexts/auth.context";
-import { Database, LogOut, Settings } from "lucide-react";
+import { Database, LogOut, Settings, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import * as S from "./header.styled";
 
 export function HeaderComponent() {
-  const { state, signOut } = useAuth();
+  const { state, user, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation("common");
 
   const isAuthenticated = state === "authenticated";
+  const isAdmin = user?.isAdmin === true;
   const isSettingsPage = location.pathname.startsWith(APP_PATH.SETTINGS.LAYOUT);
+  const isAdminPage = location.pathname.startsWith(APP_PATH.ADMIN.LAYOUT);
 
   const handleSignOut = () => {
     signOut();
@@ -31,6 +33,13 @@ export function HeaderComponent() {
       </S.Brand>
 
       <S.UserSection>
+        {isAdmin && !isAdminPage && (
+          <S.AdminLink to={APP_PATH.ADMIN.USERS} aria-label={t("HEADER_ADMIN")}>
+            <ShieldCheck size={16} />
+            <span>{t("HEADER_ADMIN")}</span>
+          </S.AdminLink>
+        )}
+
         {!isSettingsPage && (
           <S.SettingsLink to={APP_PATH.SETTINGS.INTERFACE} aria-label={t("HEADER_SETTINGS")}>
             <Settings size={16} />

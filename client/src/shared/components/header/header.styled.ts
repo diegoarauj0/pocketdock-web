@@ -95,6 +95,14 @@ export const SettingsLink = styled(Link)`
   }
 `;
 
+export const AdminLink = styled(SettingsLink)`
+  color: ${({ theme }) => theme.primary};
+
+  &:hover {
+    color: ${({ theme }) => theme.primary};
+  }
+`;
+
 export const LogoutButton = styled.button`
   display: inline-flex;
   align-items: center;

@@ -5,7 +5,12 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from "@nestjs/common";
 import { AdminInstanceListResponseDto, AdminInstancesQueryDto } from "../dtos/adminInstance.dto";
 import { AdminSessionListResponseDto, AdminSessionsQueryDto } from "../dtos/adminSession.dto";
-import { AdminUserIdParamsDto, AdminUserListResponseDto, AdminUsersQueryDto } from "../dtos/adminUser.dto";
+import {
+  AdminUserIdParamsDto,
+  AdminUserListResponseDto,
+  AdminUserResponseDto,
+  AdminUsersQueryDto,
+} from "../dtos/adminUser.dto";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { AdminOnly } from "src/modules/auth/decorators/adminOnly.decorator";
 import { PublicUserResponseDto } from "src/modules/users/dtos/user.dto";
@@ -46,6 +51,27 @@ export class AdminController {
       limit: query.limit,
       offset: query.offset,
     };
+  }
+
+  @ApiOperation({
+    summary: "Buscar usuário",
+    description: "Retorna os dados administrativos de um usuário específico.",
+  })
+  @ApiOkResponse({
+    description: "Usuário encontrado.",
+    type: SuccessResponseDto(AdminUserResponseDto),
+  })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
+  @Get("users/:id")
+  @Throttle({ default: ADMIN_CONSTANT.THROTTLE.LIST_USERS })
+  @ApiRateLimitExceededResponse()
+  @HttpCode(HttpStatus.OK)
+  public async findUserById(@Param() { id }: AdminUserIdParamsDto) {
+    const user = await this.adminService.findUserById(id);
+
+    return AdminUserMapper.toResponse(user);
   }
 
   @ApiOperation({

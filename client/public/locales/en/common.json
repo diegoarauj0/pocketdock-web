@@ -3,6 +3,7 @@
   "HEADER_SIGN_IN": "Sign in",
   "HEADER_SIGN_OUT": "Sign out",
   "HEADER_SETTINGS": "Settings",
+  "HEADER_ADMIN": "Admin",
   "NOTIFICATION_UNKNOWN_ERROR": "Unknown error.",
   "ERROR_INTERNAL_SERVER_ERROR": "An unexpected error occurred. Please try again later."
 }

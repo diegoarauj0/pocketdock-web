@@ -26,6 +26,10 @@ export class UsersService {
     return this.usersRepository.findAll(limit, offset);
   }
 
+  public findByIdForAdmin(id: string): Promise<UserEntity | null> {
+    return this.usersRepository.findByIdForAdmin(id);
+  }
+
   public async create(email: string, username: string, hash?: string): Promise<UserEntity> {
     const user = this.usersRepository.create({
       email: email.trim().toLowerCase(),

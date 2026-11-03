@@ -7,7 +7,7 @@ export function truncateIpAddress(ipAddress: string | null): string | null {
     const parts = ipv4Candidate.split(".");
 
     if (parts.length === 4) {
-      return `${parts[0]}.${parts[1]}.${parts[2]}.xxx`;
+      return `${parts[0]}.${parts[1]}.xxx.xxx`;
     }
   }
 

@@ -1,3 +1,4 @@
+import { UserNotFoundException } from "src/modules/users/exceptions/userNotFoundException.exception";
 import { SessionService } from "src/modules/sessions/services/session.service";
 import { InstancesService } from "src/modules/instances/services/instances.service";
 import { InstanceEntity } from "src/modules/instances/instance.entity";
@@ -16,6 +17,14 @@ export class AdminService {
 
   public findAllUsers(limit: number, offset: number): Promise<[UserEntity[], number]> {
     return this.usersService.findAll(limit, offset);
+  }
+
+  public async findUserById(id: string): Promise<UserEntity> {
+    const user = await this.usersService.findByIdForAdmin(id);
+
+    if (user === null) throw new UserNotFoundException();
+
+    return user;
   }
 
   public findAllInstances(limit: number, offset: number, userId?: string): Promise<[InstanceEntity[], number]> {

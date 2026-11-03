@@ -49,6 +49,21 @@ export class UsersRepository {
     });
   }
 
+  public findByIdForAdmin(id: string): Promise<UserEntity | null> {
+    return this.usersRepository.findOne({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        emailVerified: true,
+        isAdmin: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      where: { id: id },
+    });
+  }
+
   public create(props: Partial<UserEntity>): UserEntity {
     return this.usersRepository.create(props);
   }

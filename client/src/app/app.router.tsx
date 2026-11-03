@@ -1,7 +1,11 @@
+import { AdminRouteComponent } from "@/features/admin/components/adminRoute/adminRoute.component";
 import { EmailVerificationGuardComponent } from "@/features/auth/components/emailVerificationGuard/emailVerificationGuard.component";
 import { OptionalAuthComponent } from "@/features/auth/components/optionalAuthRoute/optionalAuthRoute.component";
 import { PublicOnlyRouteComponent } from "@/features/auth/components/publicOnlyRoute/publicOnlyRoute.component";
 import { PrivateRouteComponent } from "@/features/auth/components/privateRoute/privateRoute.component";
+import { AdminInstancesPage } from "@/features/admin/pages/instances/instances.page";
+import { AdminUsersPage } from "@/features/admin/pages/users/users.page";
+import { AdminUserPage } from "@/features/admin/pages/user/user.page";
 import { EmailVerificationPage } from "@/features/auth/pages/emailVerification/emailVerification.page";
 import { OAuthCallbackPage } from "@/features/auth/pages/oAuthCallback/oAuthCallback.page";
 import { ResetPasswordPage } from "@/features/auth/pages/resetPassword/resetPassword.page";
@@ -11,8 +15,10 @@ import { InterfaceSettingsPage } from "@/features/settings/pages/interface/inter
 import { SecuritySettingsPage } from "@/features/settings/pages/security/security.page";
 import { SETTINGS_CONSTANT } from "@/features/settings/constants/settings.constant";
 import { SettingsLayout } from "@/features/settings/layouts/settings.layout";
+import { AdminLayout } from "@/features/admin/layouts/admin.layout";
 import { SignInPage } from "@/features/auth/pages/signIn/signIn.page";
 import { SignUpPage } from "@/features/auth/pages/signUp/signUp.page";
+import { ADMIN_CONSTANT } from "@/features/admin/admin.constant";
 import { AuthLayout } from "@/features/auth/layouts/auth.layout";
 import { HomePage } from "@/features/home/pages/home/home.page";
 import { Navigate, createBrowserRouter } from "react-router";
@@ -101,6 +107,34 @@ export const router = createBrowserRouter([
       {
         path: APP_PATH.INSTANCE,
         element: <InstancePage />,
+      },
+    ],
+  },
+
+  {
+    path: APP_PATH.ADMIN.LAYOUT,
+    element: <AdminRouteComponent />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={APP_PATH.ADMIN.USERS} replace />,
+          },
+          {
+            path: ADMIN_CONSTANT.ROUTER.USERS,
+            element: <AdminUsersPage />,
+          },
+          {
+            path: `${ADMIN_CONSTANT.ROUTER.USERS}/:id`,
+            element: <AdminUserPage />,
+          },
+          {
+            path: ADMIN_CONSTANT.ROUTER.INSTANCES,
+            element: <AdminInstancesPage />,
+          },
+        ],
       },
     ],
   },
