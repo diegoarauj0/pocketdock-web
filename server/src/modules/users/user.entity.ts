@@ -20,6 +20,9 @@ export class UserEntity {
   @Column({ type: "boolean", default: false })
   public emailVerified!: boolean;
 
+  @Column({ type: "boolean", default: false })
+  public isAdmin!: boolean;
+
   @CreateDateColumn()
   public createdAt!: Date;
 

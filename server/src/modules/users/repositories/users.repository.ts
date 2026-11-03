@@ -30,6 +30,25 @@ export class UsersRepository {
     return this.usersRepository.findOneBy({ id: id });
   }
 
+  public findAll(limit: number, offset: number): Promise<[UserEntity[], number]> {
+    const select = {
+      id: true,
+      username: true,
+      email: true,
+      emailVerified: true,
+      isAdmin: true,
+      createdAt: true,
+      updatedAt: true,
+    };
+
+    return this.usersRepository.findAndCount({
+      select: select,
+      order: { createdAt: "DESC", id: "DESC" },
+      take: limit,
+      skip: offset,
+    });
+  }
+
   public create(props: Partial<UserEntity>): UserEntity {
     return this.usersRepository.create(props);
   }

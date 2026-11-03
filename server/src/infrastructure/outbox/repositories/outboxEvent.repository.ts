@@ -78,8 +78,8 @@ export class OutboxEventRepository {
   public async claimById(id: string): Promise<OutboxEventEntity | null> {
     return this.dataSource.transaction(async (manager) => {
       const results = await manager.query<OutboxEventEntity[] | undefined>(
-        'SELECT * FROM outbox_events WHERE "id" = $1 FOR UPDATE SKIP LOCKED',
-        [id],
+        'SELECT * FROM outbox_events WHERE "id" = $1 AND "status" IN ($2, $3) FOR UPDATE SKIP LOCKED',
+        [id, OutboxEventStatus.PENDING, OutboxEventStatus.FAILED],
       );
 
       const event = (results ?? [])[0];

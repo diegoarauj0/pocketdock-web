@@ -91,6 +91,10 @@ export class InstancesService {
     return this.instanceRepository.findByUserId(userId);
   }
 
+  public findAll(limit: number, offset: number, userId?: string): Promise<[InstanceEntity[], number]> {
+    return this.instanceRepository.findAll(limit, offset, userId);
+  }
+
   public async updateStatus(id: string, status: InstanceStatus): Promise<void> {
     await this.instanceRepository.updateStatus(id, status);
   }
@@ -111,17 +115,11 @@ export class InstancesService {
     }
   }
 
-  /**
-   * Serializes start, stop and remove operations for the same instance.
-   * The lock is acquired before reading the instance state again so the operation
-   * always works with a fresh row and cannot interleave with another mutation.
-   */
   private async withInstanceLock<T>(
     id: string,
     userId: string,
     operation: (instance: InstanceEntity) => Promise<T>,
   ): Promise<T> {
-    // Validate ownership before acquiring the lock so another user's instance is not exposed.
     await this.findOwnedById(id, userId);
 
     const resourceId = `${INSTANCE_CONSTANT.LOCK.RESOURCE_PREFIX}:${id}`;

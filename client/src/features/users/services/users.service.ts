@@ -3,6 +3,7 @@ import { httpService } from "@/shared/services/http.service";
 export interface InterfacePublicUser {
   id: string;
   username: string;
+  isAdmin: boolean;
   createdAt: string;
   updatedAt: string;
 }

@@ -6,6 +6,7 @@ export class UserMapper {
     return {
       id: user.id,
       username: user.username,
+      isAdmin: user.isAdmin,
       updatedAt: user.updatedAt,
       createdAt: user.createdAt,
     };

@@ -35,6 +35,15 @@ const envSchema = z.object({
     .transform((val) => val.split(",").map((item) => item.trim()))
     .default(["log", "error"]),
   LOCK_DEFAULT_TIMEOUT_MS: z.coerce.number().int().positive().default(30_000),
+  BOOTSTRAP_ADMIN_EMAIL: z
+    .string()
+    .default("")
+    .transform((val) =>
+      val
+        .split(",")
+        .map((item) => item.trim().toLowerCase())
+        .filter((item) => item.length > 0),
+    ),
 });
 
 const { data, error, success } = envSchema.safeParse(process.env);

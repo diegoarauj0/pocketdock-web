@@ -3,7 +3,7 @@ import { InvalidSessionException, InvalidSessionReason } from "../exceptions/inv
 import { UsersService } from "src/modules/users/services/users.service";
 import { SessionRepository } from "../repositories/session.repository";
 import { JWTService } from "src/modules/sessions/services/jwt.service";
-import { SessionRevokeType } from "../session.entity";
+import { SessionEntity, SessionRevokeType } from "../session.entity";
 import { UserEntity } from "src/modules/users/user.entity";
 import { SESSION_CONSTANT } from "../session.constant";
 import { Injectable, Logger } from "@nestjs/common";
@@ -145,6 +145,10 @@ export class SessionService {
     await this.sessionRepository.revokeAllByUserID(userId, SessionRevokeType.LOGOUT_ALL);
 
     this.logger.log("All sessions revoked.", { userId, reason: SessionRevokeType.LOGOUT_ALL });
+  }
+
+  public findAll(limit: number, offset: number, userId?: string): Promise<[SessionEntity[], number]> {
+    return this.sessionRepository.findAll(limit, offset, userId);
   }
 
   public async deleteExpiredSessions(): Promise<number> {

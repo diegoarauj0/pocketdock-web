@@ -13,6 +13,9 @@ export class PublicUserResponseDto {
   @ApiProperty({ type: "string", description: "Nome de usuário", example: "victor" })
   public username!: UserEntity["username"];
 
+  @ApiProperty({ type: "boolean", description: "Indica se o usuário é administrador", example: false })
+  public isAdmin!: UserEntity["isAdmin"];
+
   @ApiProperty({
     type: "string",
     format: "date-time",

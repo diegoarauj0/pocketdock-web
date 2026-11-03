@@ -1,13 +1,17 @@
+import { LastAdminException } from "../exceptions/lastAdmin.exception";
+import { UserNotFoundException } from "../exceptions/userNotFoundException.exception";
 import { InstancesService } from "src/modules/instances/services/instances.service";
 import { UsersRepository } from "../repositories/users.repository";
 import { UserEntity } from "../user.entity";
 import { Injectable } from "@nestjs/common";
+import { DataSource } from "typeorm";
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly instancesService: InstancesService,
+    private readonly dataSource: DataSource,
   ) {}
 
   public findByEmail(email: string): Promise<UserEntity | null> {
@@ -16,6 +20,10 @@ export class UsersService {
 
   public findById(id: string): Promise<UserEntity | null> {
     return this.usersRepository.findById(id);
+  }
+
+  public findAll(limit: number, offset: number): Promise<[UserEntity[], number]> {
+    return this.usersRepository.findAll(limit, offset);
   }
 
   public async create(email: string, username: string, hash?: string): Promise<UserEntity> {
@@ -32,6 +40,40 @@ export class UsersService {
     await this.instancesService.removeAllContainersByUserId(user.id);
 
     return this.usersRepository.remove(user);
+  }
+
+  public async promoteToAdmin(id: string): Promise<UserEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(UserEntity, { where: { id } });
+
+      if (user === null) throw new UserNotFoundException();
+
+      if (user.isAdmin === false) {
+        user.isAdmin = true;
+        await manager.save(user);
+      }
+
+      return user;
+    });
+  }
+
+  public async demoteFromAdmin(id: string): Promise<UserEntity> {
+    return this.dataSource.transaction(async (manager) => {
+      const user = await manager.findOne(UserEntity, { where: { id } });
+
+      if (user === null) throw new UserNotFoundException();
+
+      if (user.isAdmin === false) return user;
+
+      const adminCount = await manager.count(UserEntity, { where: { isAdmin: true } });
+
+      if (adminCount <= 1) throw new LastAdminException();
+
+      user.isAdmin = false;
+      await manager.save(user);
+
+      return user;
+    });
   }
 
   public async verifyEmailById(id: string): Promise<boolean> {

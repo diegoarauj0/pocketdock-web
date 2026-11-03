@@ -18,6 +18,31 @@ export class InstanceRepository {
     return this.instanceRepository.find({ where: { userId: userId } });
   }
 
+  public findAll(limit: number, offset: number, userId?: string): Promise<[InstanceEntity[], number]> {
+    const select = {
+      id: true,
+      userId: true,
+      status: true,
+      containerName: true,
+      createdAt: true,
+      updatedAt: true,
+      user: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    };
+
+    return this.instanceRepository.findAndCount({
+      select: select,
+      relations: { user: true },
+      where: userId === undefined ? {} : { userId: userId },
+      order: { createdAt: "DESC", id: "DESC" },
+      take: limit,
+      skip: offset,
+    });
+  }
+
   public create(props: Partial<InstanceEntity>): InstanceEntity {
     return this.instanceRepository.create(props);
   }

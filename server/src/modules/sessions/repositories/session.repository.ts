@@ -14,6 +14,33 @@ export class SessionRepository {
     return this.sessionRepository.findOne({ where: { id: id } });
   }
 
+  public findAll(limit: number, offset: number, userId?: string): Promise<[SessionEntity[], number]> {
+    return this.sessionRepository.findAndCount({
+      select: {
+        id: true,
+        userId: true,
+        expiresAt: true,
+        revoked: true,
+        revokedAt: true,
+        revokeType: true,
+        ipAddress: true,
+        userAgent: true,
+        createdAt: true,
+        updatedAt: true,
+        user: {
+          id: true,
+          username: true,
+          email: true,
+        },
+      },
+      relations: { user: true },
+      where: userId === undefined ? {} : { userId: userId },
+      order: { createdAt: "DESC", id: "DESC" },
+      take: limit,
+      skip: offset,
+    });
+  }
+
   public create(props: Partial<SessionEntity>): SessionEntity {
     return this.sessionRepository.create(props);
   }

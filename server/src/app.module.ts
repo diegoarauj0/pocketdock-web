@@ -11,6 +11,7 @@ import { DatabaseModule } from "./infrastructure/database/database.module";
 import { OutboxModule } from "./infrastructure/outbox/outbox.module";
 import { LockModule } from "./infrastructure/lock/lock.module";
 import { InstanceModule } from "./modules/instances/instance.module";
+import { AdminModule } from "./modules/admin/admin.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AuthModule } from "./modules/auth/auth.module";
 import { Module, ValidationPipe } from "@nestjs/common";
@@ -58,6 +59,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
     AuthModule,
     UsersModule,
     InstanceModule,
+    AdminModule,
     DockerModule,
   ],
 })
