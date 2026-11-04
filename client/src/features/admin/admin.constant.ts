@@ -11,5 +11,9 @@ export const ADMIN_CONSTANT = {
   NOTIFICATION_IDS: {
     PROMOTE_USER: "adminPromoteUser",
     DEMOTE_USER: "adminDemoteUser",
+    DELETE_USER: "adminDeleteUser",
+    DELETE_INSTANCE: "adminDeleteInstance",
+    REVOKE_SESSION: "adminRevokeSession",
+    REVOKE_ALL_SESSIONS: "adminRevokeAllSessions",
   },
 } as const;

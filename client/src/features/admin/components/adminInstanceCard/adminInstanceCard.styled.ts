@@ -146,3 +146,8 @@ export const MetaValue = styled.span`
   color: ${({ theme }) => theme.text.default};
   text-align: right;
 `;
+
+export const Actions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;

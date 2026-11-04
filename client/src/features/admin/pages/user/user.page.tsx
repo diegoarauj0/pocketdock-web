@@ -1,3 +1,4 @@
+import { AdminActionButtonComponent } from "@/features/admin/components/adminActionButton/adminActionButton.component";
 import { AdminEmptyStateComponent } from "@/features/admin/components/adminEmptyState/adminEmptyState.component";
 import { AdminErrorStateComponent } from "@/features/admin/components/adminErrorState/adminErrorState.component";
 import { AdminInstanceCardComponent } from "@/features/admin/components/adminInstanceCard/adminInstanceCard.component";
@@ -5,13 +6,14 @@ import { AdminLoadingStateComponent } from "@/features/admin/components/adminLoa
 import { AdminPaginationComponent } from "@/features/admin/components/adminPagination/adminPagination.component";
 import { AdminSessionItemComponent } from "@/features/admin/components/adminSessionItem/adminSessionItem.component";
 import { AdminBadgeComponent } from "@/features/admin/components/adminBadge/adminBadge.component";
+import { useAdminInstanceActions } from "@/features/admin/hooks/useAdminInstanceActions.hook";
+import { useAdminUserActions } from "@/features/admin/hooks/useAdminUserActions.hook";
 import { useAdminInstancesQuery } from "@/features/admin/queries/useAdminInstances.query";
 import { useAdminSessionsQuery } from "@/features/admin/queries/useAdminSessions.query";
 import { useAdminUserQuery } from "@/features/admin/queries/useAdminUser.query";
-import { useAdminUserRoleHandlers } from "@/features/admin/hooks/useAdminUserRoleHandlers.hook";
 import { ADMIN_CONSTANT } from "@/features/admin/admin.constant";
 import { formatDateTime } from "@/shared/utils/formatDate.util";
-import { ArrowLeft, Container, KeyRound, ShieldMinus, ShieldPlus } from "lucide-react";
+import { ArrowLeft, Ban, Container, KeyRound, ShieldMinus, ShieldPlus, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { APP_PATH } from "@/app/app.path";
@@ -29,13 +31,25 @@ export function AdminUserPage() {
   const sessionsQuery = useAdminSessionsQuery(sessionsPage, id, ADMIN_CONSTANT.DETAIL_PAGE_SIZE);
 
   const {
-    confirmDialog,
+    confirmDialog: userConfirmDialog,
+    handleDeleteUser,
     handleDemote,
     handlePromote,
+    handleRevokeAllUserSessions,
+    handleRevokeSession,
+    isDeleteUserPending,
     isDemoteUserPending,
     isPromoteUserPending,
-    isRolePending,
-  } = useAdminUserRoleHandlers({ userQuery });
+    isRevokeAllUserSessionsPending,
+    isUserActionPending,
+    revokingSessionId,
+  } = useAdminUserActions({ userQuery });
+
+  const {
+    confirmDialog: instanceConfirmDialog,
+    deletingInstanceId,
+    handleDeleteInstance,
+  } = useAdminInstanceActions();
 
   const renderInstances = () => {
     if (instancesQuery.isLoading) return <AdminLoadingStateComponent />;
@@ -65,7 +79,13 @@ export function AdminUserPage() {
       <>
         <S.CardsGrid>
           {instancesQuery.data.items.map((instance) => (
-            <AdminInstanceCardComponent key={instance.id} instance={instance} showOwner={false} />
+            <AdminInstanceCardComponent
+              key={instance.id}
+              instance={instance}
+              showOwner={false}
+              onDelete={handleDeleteInstance}
+              isDeleting={deletingInstanceId === instance.id}
+            />
           ))}
         </S.CardsGrid>
 
@@ -108,7 +128,12 @@ export function AdminUserPage() {
       <>
         <S.SessionsList>
           {sessionsQuery.data.items.map((session) => (
-            <AdminSessionItemComponent key={session.id} session={session} />
+            <AdminSessionItemComponent
+              key={session.id}
+              session={session}
+              onRevoke={handleRevokeSession}
+              isRevoking={revokingSessionId === session.id}
+            />
           ))}
         </S.SessionsList>
 
@@ -160,16 +185,36 @@ export function AdminUserPage() {
 
             <S.RoleActions>
               {user.isAdmin ? (
-                <S.RoleButton type="button" $variant="demote" disabled={isRolePending} onClick={handleDemote}>
-                  {isDemoteUserPending ? <S.Spinner size={16} /> : <ShieldMinus size={16} />}
+                <AdminActionButtonComponent
+                  variant="danger"
+                  isLoading={isDemoteUserPending}
+                  disabled={isUserActionPending}
+                  icon={<ShieldMinus size={16} />}
+                  onClick={handleDemote}
+                >
                   {t("USER_DEMOTE")}
-                </S.RoleButton>
+                </AdminActionButtonComponent>
               ) : (
-                <S.RoleButton type="button" disabled={isRolePending} onClick={handlePromote}>
-                  {isPromoteUserPending ? <S.Spinner size={16} /> : <ShieldPlus size={16} />}
+                <AdminActionButtonComponent
+                  variant="default"
+                  isLoading={isPromoteUserPending}
+                  disabled={isUserActionPending}
+                  icon={<ShieldPlus size={16} />}
+                  onClick={handlePromote}
+                >
                   {t("USER_PROMOTE")}
-                </S.RoleButton>
+                </AdminActionButtonComponent>
               )}
+
+              <AdminActionButtonComponent
+                variant="ghostDanger"
+                isLoading={isDeleteUserPending}
+                disabled={isUserActionPending}
+                icon={<Trash2 size={16} />}
+                onClick={handleDeleteUser}
+              >
+                {t("USER_DELETE")}
+              </AdminActionButtonComponent>
             </S.RoleActions>
           </S.UserMain>
 
@@ -215,11 +260,23 @@ export function AdminUserPage() {
               <S.SectionDescription>{t("USER_SESSIONS_DESCRIPTION")}</S.SectionDescription>
             </S.SectionHeading>
 
-            {sessionsQuery.data !== undefined && (
-              <S.SectionCount>
-                {t("USER_SESSIONS_COUNT", { count: sessionsQuery.data.total })}
-              </S.SectionCount>
-            )}
+            <S.SectionHeaderActions>
+              {sessionsQuery.data !== undefined && (
+                <S.SectionCount>
+                  {t("USER_SESSIONS_COUNT", { count: sessionsQuery.data.total })}
+                </S.SectionCount>
+              )}
+
+              <AdminActionButtonComponent
+                variant="ghostDanger"
+                isLoading={isRevokeAllUserSessionsPending}
+                disabled={isUserActionPending}
+                icon={<Ban size={16} />}
+                onClick={handleRevokeAllUserSessions}
+              >
+                {t("SESSION_REVOKE_ALL")}
+              </AdminActionButtonComponent>
+            </S.SectionHeaderActions>
           </S.SectionHeader>
 
           {renderSessions()}
@@ -239,7 +296,8 @@ export function AdminUserPage() {
 
       {renderContent()}
 
-      {confirmDialog}
+      {userConfirmDialog}
+      {instanceConfirmDialog}
     </>
   );
 }

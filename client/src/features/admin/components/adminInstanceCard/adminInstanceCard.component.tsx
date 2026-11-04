@@ -1,8 +1,9 @@
+import { AdminActionButtonComponent } from "@/features/admin/components/adminActionButton/adminActionButton.component";
 import { INSTANCE_STATUS_LABEL_KEYS } from "@/features/instances/utils/instanceStatus.util";
 import { formatDateTime } from "@/shared/utils/formatDate.util";
 import { APP_PATH } from "@/app/app.path";
 import { useTranslation } from "react-i18next";
-import { Container, ExternalLink, UserRound } from "lucide-react";
+import { Container, ExternalLink, Trash2, UserRound } from "lucide-react";
 import { AdminBadgeComponent, type AdminBadgeTone } from "../adminBadge/adminBadge.component";
 import type { InterfaceAdminInstance } from "../../services/admin.service";
 import * as S from "./adminInstanceCard.styled";
@@ -10,6 +11,8 @@ import * as S from "./adminInstanceCard.styled";
 interface InterfaceAdminInstanceCardProps {
   instance: InterfaceAdminInstance;
   showOwner?: boolean;
+  onDelete?: (instance: InterfaceAdminInstance) => void;
+  isDeleting?: boolean;
 }
 
 const STATUS_TONE_MAP = {
@@ -18,7 +21,12 @@ const STATUS_TONE_MAP = {
   failed: "danger",
 } as const satisfies Record<InterfaceAdminInstance["status"], AdminBadgeTone>;
 
-export function AdminInstanceCardComponent({ instance, showOwner = true }: InterfaceAdminInstanceCardProps) {
+export function AdminInstanceCardComponent({
+  instance,
+  showOwner = true,
+  onDelete,
+  isDeleting = false,
+}: InterfaceAdminInstanceCardProps) {
   const { t } = useTranslation(["admin", "instances"]);
 
   return (
@@ -57,6 +65,21 @@ export function AdminInstanceCardComponent({ instance, showOwner = true }: Inter
         <S.MetaLabel>{t("INSTANCE_CREATED_AT")}</S.MetaLabel>
         <S.MetaValue>{formatDateTime(instance.createdAt)}</S.MetaValue>
       </S.Meta>
+
+      {onDelete !== undefined && (
+        <S.Actions>
+          <AdminActionButtonComponent
+            variant="ghostDanger"
+            isLoading={isDeleting}
+            disabled={instance.status === "pending"}
+            icon={<Trash2 size={14} />}
+            title={instance.status === "pending" ? t("INSTANCE_DELETE_PENDING_HINT") : undefined}
+            onClick={() => onDelete(instance)}
+          >
+            {t("INSTANCE_DELETE")}
+          </AdminActionButtonComponent>
+        </S.Actions>
+      )}
     </S.Card>
   );
 }

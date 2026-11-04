@@ -1,6 +1,5 @@
 import { CryptoService } from "src/common/services/crypto.service";
 import { InvalidSessionException, InvalidSessionReason } from "../exceptions/invalidSession.exception";
-import { UsersService } from "src/modules/users/services/users.service";
 import { SessionRepository } from "../repositories/session.repository";
 import { JWTService } from "src/modules/sessions/services/jwt.service";
 import { SessionEntity, SessionRevokeType } from "../session.entity";
@@ -21,7 +20,6 @@ export class SessionService {
   constructor(
     private readonly cryptoService: CryptoService,
     private readonly sessionRepository: SessionRepository,
-    private readonly usersService: UsersService,
     private readonly jwtService: JWTService,
   ) {}
 
@@ -121,17 +119,29 @@ export class SessionService {
   public async verifyAccessToken(access: string): Promise<{ sessionId: string; user: UserEntity }> {
     const { sessionId, userId } = this.jwtService.verifyAccessToken(access);
 
-    const user = await this.usersService.findById(userId);
+    const session = await this.sessionRepository.findByIdAndUserIdWithUser(sessionId, userId);
 
-    if (user === null) {
-      this.logger.warn("Access token valid but user not found.", { sessionId, userId });
+    if (session === null) {
+      this.logger.warn("Access token valid but session not found.", { sessionId, userId });
 
-      throw new InvalidSessionException(InvalidSessionReason.USER_NOT_FOUND, true);
+      throw new InvalidSessionException(InvalidSessionReason.NOT_FOUND, true);
+    }
+
+    if (session.revoked) {
+      this.logger.warn("Access token valid but session revoked.", { sessionId, userId });
+
+      throw new InvalidSessionException(InvalidSessionReason.REVOKED, true);
+    }
+
+    if (session.expiresAt.getTime() < Date.now()) {
+      this.logger.debug("Access token valid but session expired.", { sessionId, userId });
+
+      throw new InvalidSessionException(InvalidSessionReason.EXPIRED, true);
     }
 
     return {
-      sessionId: sessionId,
-      user: user,
+      sessionId: session.id,
+      user: session.user,
     };
   }
 

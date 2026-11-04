@@ -33,7 +33,7 @@ export interface InterfaceAdminInstance {
   updatedAt: string;
 }
 
-export type AdminSessionRevokeType = "TOKEN_REUSE" | "LOGOUT_ALL" | "EXPIRED" | "LOGOUT";
+export type AdminSessionRevokeType = "TOKEN_REUSE" | "LOGOUT_ALL" | "EXPIRED" | "LOGOUT" | "ADMIN";
 
 export interface InterfaceAdminSession {
   id: string;
@@ -94,10 +94,26 @@ export const adminService = {
     return httpService.post(`/api/admin/users/${id}/demote`, undefined);
   },
 
+  deleteUser: (id: string): Promise<InterfaceAdminPublicUser> => {
+    return httpService.delete<InterfaceAdminPublicUser>(`/api/admin/users/${id}`);
+  },
+
+  revokeSession: (id: string): Promise<void> => {
+    return httpService.post<void, undefined>(`/api/admin/sessions/${id}/revoke`, undefined);
+  },
+
+  revokeAllUserSessions: (userId: string): Promise<void> => {
+    return httpService.post<void, undefined>(`/api/admin/users/${userId}/sessions/revoke-all`, undefined);
+  },
+
   findInstances: (
     params: InterfaceAdminFilteredPaginationParams,
   ): Promise<InterfaceAdminPaginatedResponse<InterfaceAdminInstance>> => {
     return httpService.get(`/api/admin/instances${buildQuery({ ...params })}`);
+  },
+
+  deleteInstance: (id: string): Promise<InterfaceAdminInstance> => {
+    return httpService.delete<InterfaceAdminInstance>(`/api/admin/instances/${id}`);
   },
 
   findSessions: (

@@ -3,6 +3,7 @@ import { AdminErrorStateComponent } from "@/features/admin/components/adminError
 import { AdminInstanceCardComponent } from "@/features/admin/components/adminInstanceCard/adminInstanceCard.component";
 import { AdminLoadingStateComponent } from "@/features/admin/components/adminLoadingState/adminLoadingState.component";
 import { AdminPaginationComponent } from "@/features/admin/components/adminPagination/adminPagination.component";
+import { useAdminInstanceActions } from "@/features/admin/hooks/useAdminInstanceActions.hook";
 import { useAdminInstancesQuery } from "@/features/admin/queries/useAdminInstances.query";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -13,6 +14,7 @@ export function AdminInstancesPage() {
   const { t } = useTranslation("admin");
   const [page, setPage] = useState(0);
   const { data, isError, isFetching, isLoading, refetch } = useAdminInstancesQuery(page);
+  const { confirmDialog, deletingInstanceId, handleDeleteInstance } = useAdminInstanceActions();
 
   if (isLoading) return <AdminLoadingStateComponent />;
 
@@ -43,7 +45,12 @@ export function AdminInstancesPage() {
       ) : (
         <S.CardsGrid>
           {data.items.map((instance) => (
-            <AdminInstanceCardComponent key={instance.id} instance={instance} />
+            <AdminInstanceCardComponent
+              key={instance.id}
+              instance={instance}
+              onDelete={handleDeleteInstance}
+              isDeleting={deletingInstanceId === instance.id}
+            />
           ))}
         </S.CardsGrid>
       )}
@@ -55,6 +62,8 @@ export function AdminInstancesPage() {
         isFetching={isFetching}
         onPageChange={setPage}
       />
+
+      {confirmDialog}
     </>
   );
 }

@@ -14,6 +14,28 @@ export class SessionRepository {
     return this.sessionRepository.findOne({ where: { id: id } });
   }
 
+  public findByIdAndUserIdWithUser(id: string, userId: string): Promise<SessionEntity | null> {
+    return this.sessionRepository.findOne({
+      where: { id: id, userId: userId },
+      relations: { user: true },
+      select: {
+        id: true,
+        userId: true,
+        expiresAt: true,
+        revoked: true,
+        user: {
+          id: true,
+          username: true,
+          email: true,
+          emailVerified: true,
+          isAdmin: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    });
+  }
+
   public findAll(limit: number, offset: number, userId?: string): Promise<[SessionEntity[], number]> {
     return this.sessionRepository.findAndCount({
       select: {

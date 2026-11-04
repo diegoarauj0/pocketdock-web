@@ -1,3 +1,4 @@
+import { AdminActionButtonComponent } from "@/features/admin/components/adminActionButton/adminActionButton.component";
 import { formatDateTime } from "@/shared/utils/formatDate.util";
 import { useTranslation } from "react-i18next";
 import { Ban, CalendarClock, Globe, Info, Monitor } from "lucide-react";
@@ -7,6 +8,8 @@ import * as S from "./adminSessionItem.styled";
 
 interface InterfaceAdminSessionItemProps {
   session: InterfaceAdminSession;
+  onRevoke?: (session: InterfaceAdminSession) => void;
+  isRevoking?: boolean;
 }
 
 const REVOKE_TYPE_LABEL_KEYS = {
@@ -14,6 +17,7 @@ const REVOKE_TYPE_LABEL_KEYS = {
   LOGOUT_ALL: "SESSION_REVOKE_LOGOUT_ALL",
   EXPIRED: "SESSION_REVOKE_EXPIRED",
   LOGOUT: "SESSION_REVOKE_LOGOUT",
+  ADMIN: "SESSION_REVOKE_ADMIN",
 } as const satisfies Record<AdminSessionRevokeType, string>;
 
 function resolveSessionStatus(session: InterfaceAdminSession): "active" | "revoked" | "expired" {
@@ -30,7 +34,11 @@ const STATUS_TONE_MAP = {
   revoked: "danger",
 } as const satisfies Record<"active" | "revoked" | "expired", AdminBadgeTone>;
 
-export function AdminSessionItemComponent({ session }: InterfaceAdminSessionItemProps) {
+export function AdminSessionItemComponent({
+  session,
+  onRevoke,
+  isRevoking = false,
+}: InterfaceAdminSessionItemProps) {
   const { t } = useTranslation("admin");
   const status = resolveSessionStatus(session);
   const statusLabelKeys = {
@@ -43,7 +51,21 @@ export function AdminSessionItemComponent({ session }: InterfaceAdminSessionItem
     <S.Item>
       <S.Header>
         <AdminBadgeComponent tone={STATUS_TONE_MAP[status]}>{t(statusLabelKeys[status])}</AdminBadgeComponent>
-        <S.CreatedAt>{t("SESSION_CREATED_AT", { date: formatDateTime(session.createdAt) })}</S.CreatedAt>
+
+        <S.HeaderRight>
+          <S.CreatedAt>{t("SESSION_CREATED_AT", { date: formatDateTime(session.createdAt) })}</S.CreatedAt>
+
+          {status === "active" && onRevoke !== undefined && (
+            <AdminActionButtonComponent
+              variant="ghostDanger"
+              isLoading={isRevoking}
+              icon={<Ban size={14} />}
+              onClick={() => onRevoke(session)}
+            >
+              {t("SESSION_REVOKE")}
+            </AdminActionButtonComponent>
+          )}
+        </S.HeaderRight>
       </S.Header>
 
       <S.Details>

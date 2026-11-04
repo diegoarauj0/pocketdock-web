@@ -24,6 +24,13 @@ export const Header = styled.div`
   gap: ${({ theme }) => theme.spacing[2]};
 `;
 
+export const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing[2]};
+`;
+
 export const CreatedAt = styled.span`
   font-size: ${({ theme }) => theme.fontSize.xs};
   color: ${({ theme }) => theme.text.muted};
