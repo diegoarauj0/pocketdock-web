@@ -8,9 +8,10 @@ import { AdminBadgeComponent } from "@/features/admin/components/adminBadge/admi
 import { useAdminInstancesQuery } from "@/features/admin/queries/useAdminInstances.query";
 import { useAdminSessionsQuery } from "@/features/admin/queries/useAdminSessions.query";
 import { useAdminUserQuery } from "@/features/admin/queries/useAdminUser.query";
+import { useAdminUserRoleHandlers } from "@/features/admin/hooks/useAdminUserRoleHandlers.hook";
 import { ADMIN_CONSTANT } from "@/features/admin/admin.constant";
 import { formatDateTime } from "@/shared/utils/formatDate.util";
-import { ArrowLeft, Container, KeyRound } from "lucide-react";
+import { ArrowLeft, Container, KeyRound, ShieldMinus, ShieldPlus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { APP_PATH } from "@/app/app.path";
@@ -26,6 +27,15 @@ export function AdminUserPage() {
   const userQuery = useAdminUserQuery(id);
   const instancesQuery = useAdminInstancesQuery(instancesPage, id, ADMIN_CONSTANT.DETAIL_PAGE_SIZE);
   const sessionsQuery = useAdminSessionsQuery(sessionsPage, id, ADMIN_CONSTANT.DETAIL_PAGE_SIZE);
+
+  const {
+    confirmDialog,
+    handleDemote,
+    handlePromote,
+    isDemoteUserPending,
+    isPromoteUserPending,
+    isRolePending,
+  } = useAdminUserRoleHandlers({ userQuery });
 
   const renderInstances = () => {
     if (instancesQuery.isLoading) return <AdminLoadingStateComponent />;
@@ -147,6 +157,20 @@ export function AdminUserPage() {
                 {user.emailVerified ? t("USER_EMAIL_VERIFIED") : t("USER_EMAIL_PENDING")}
               </AdminBadgeComponent>
             </S.Badges>
+
+            <S.RoleActions>
+              {user.isAdmin ? (
+                <S.RoleButton type="button" $variant="demote" disabled={isRolePending} onClick={handleDemote}>
+                  {isDemoteUserPending ? <S.Spinner size={16} /> : <ShieldMinus size={16} />}
+                  {t("USER_DEMOTE")}
+                </S.RoleButton>
+              ) : (
+                <S.RoleButton type="button" disabled={isRolePending} onClick={handlePromote}>
+                  {isPromoteUserPending ? <S.Spinner size={16} /> : <ShieldPlus size={16} />}
+                  {t("USER_PROMOTE")}
+                </S.RoleButton>
+              )}
+            </S.RoleActions>
           </S.UserMain>
 
           <S.MetaGrid>
@@ -214,6 +238,8 @@ export function AdminUserPage() {
       </S.BackRow>
 
       {renderContent()}
+
+      {confirmDialog}
     </>
   );
 }

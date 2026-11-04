@@ -14,6 +14,13 @@ export class InstanceRepository {
     return this.instanceRepository.findOne({ where: { id: id, userId: userId } });
   }
 
+  public findById(id: string): Promise<InstanceEntity | null> {
+    return this.instanceRepository.findOne({
+      where: { id: id },
+      relations: { user: true },
+    });
+  }
+
   public findByUserId(userId: string): Promise<InstanceEntity[]> {
     return this.instanceRepository.find({ where: { userId: userId } });
   }

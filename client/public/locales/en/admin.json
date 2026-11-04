@@ -62,5 +62,22 @@
   "SESSION_REVOKE_TOKEN_REUSE": "Token reuse",
   "SESSION_REVOKE_LOGOUT_ALL": "Signed out of all devices",
   "SESSION_REVOKE_EXPIRED": "Session expired",
-  "SESSION_REVOKE_LOGOUT": "Signed out"
+  "SESSION_REVOKE_LOGOUT": "Signed out",
+  "USER_PROMOTE": "Promote to admin",
+  "USER_DEMOTE": "Demote to user",
+  "CONFIRM_YES": "Yes",
+  "CONFIRM_NO": "No",
+  "CONFIRM_PROMOTE_TITLE": "Promote {{username}} to admin?",
+  "CONFIRM_PROMOTE_DESCRIPTION": "This user will have full access to the admin panel.",
+  "CONFIRM_DEMOTE_TITLE": "Demote {{username}} to user?",
+  "CONFIRM_DEMOTE_DESCRIPTION": "This user will lose access to the admin panel.",
+  "NOTIFICATION_PROMOTE_LOADING": "Promoting user to admin...",
+  "NOTIFICATION_PROMOTE_SUCCESS": "User promoted to admin.",
+  "NOTIFICATION_PROMOTE_ERROR": "Could not promote the user to admin.",
+  "NOTIFICATION_DEMOTE_LOADING": "Demoting user...",
+  "NOTIFICATION_DEMOTE_SUCCESS": "User demoted to regular user.",
+  "NOTIFICATION_DEMOTE_ERROR": "Could not demote the user.",
+  "ERROR_LAST_ADMIN": "The last admin cannot be demoted.",
+  "ERROR_LAST_ADMIN_LAST_ADMIN": "The last admin cannot be demoted.",
+  "ERROR_USER_NOT_FOUND": "User not found."
 }

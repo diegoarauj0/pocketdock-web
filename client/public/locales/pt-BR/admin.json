@@ -62,5 +62,22 @@
   "SESSION_REVOKE_TOKEN_REUSE": "Reutilização de token",
   "SESSION_REVOKE_LOGOUT_ALL": "Logout de todos os dispositivos",
   "SESSION_REVOKE_EXPIRED": "Sessão expirada",
-  "SESSION_REVOKE_LOGOUT": "Logout"
+  "SESSION_REVOKE_LOGOUT": "Logout",
+  "USER_PROMOTE": "Promover a admin",
+  "USER_DEMOTE": "Rebaixar para usuário",
+  "CONFIRM_YES": "Sim",
+  "CONFIRM_NO": "Não",
+  "CONFIRM_PROMOTE_TITLE": "Promover {{username}} a admin?",
+  "CONFIRM_PROMOTE_DESCRIPTION": "Este usuário terá acesso total ao painel administrativo.",
+  "CONFIRM_DEMOTE_TITLE": "Rebaixar {{username}} para usuário?",
+  "CONFIRM_DEMOTE_DESCRIPTION": "Este usuário perderá o acesso ao painel administrativo.",
+  "NOTIFICATION_PROMOTE_LOADING": "Promovendo usuário a admin...",
+  "NOTIFICATION_PROMOTE_SUCCESS": "Usuário promovido a admin.",
+  "NOTIFICATION_PROMOTE_ERROR": "Não foi possível promover o usuário a admin.",
+  "NOTIFICATION_DEMOTE_LOADING": "Rebaixando usuário...",
+  "NOTIFICATION_DEMOTE_SUCCESS": "Usuário rebaixado para usuário normal.",
+  "NOTIFICATION_DEMOTE_ERROR": "Não foi possível rebaixar o usuário.",
+  "ERROR_LAST_ADMIN": "Não é possível rebaixar o último administrador.",
+  "ERROR_LAST_ADMIN_LAST_ADMIN": "Não é possível rebaixar o último administrador.",
+  "ERROR_USER_NOT_FOUND": "Usuário não encontrado."
 }

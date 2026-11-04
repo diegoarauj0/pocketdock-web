@@ -1,6 +1,13 @@
 import { fadeInUp } from "@/features/theme/animations";
-import styled from "styled-components";
+import { LoaderCircle } from "lucide-react";
+import styled, { keyframes } from "styled-components";
 import { Link } from "react-router";
+
+const spin = keyframes`
+  to {
+    transform: rotate(360deg);
+  }
+`;
 
 export const BackRow = styled.div`
   ${fadeInUp(0)}
@@ -105,6 +112,58 @@ export const Badges = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing[2]};
+`;
+
+export const RoleActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing[2]};
+`;
+
+export const RoleButton = styled.button<{ $variant?: "promote" | "demote" }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing[2]};
+
+  min-height: ${({ theme }) => theme.spacing[9]};
+  padding: 0 ${({ theme }) => theme.spacing[3.5]};
+
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: 500;
+  white-space: nowrap;
+  color: ${({ theme, $variant }) => ($variant === "demote" ? theme.onPrimary : theme.inverse.text)};
+
+  background-color: ${({ theme, $variant }) => ($variant === "demote" ? theme.danger : theme.inverse.background)};
+  border: ${({ theme }) => theme.border.thin} solid transparent;
+  border-radius: ${({ theme }) => theme.radius.md};
+
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: ${({ theme, $variant }) =>
+      $variant === "demote"
+        ? `color-mix(in srgb, ${theme.danger} 85%, ${theme.text.default})`
+        : `color-mix(in srgb, ${theme.inverse.background} 85%, ${theme.inverse.text})`};
+  }
+
+  &:focus-visible {
+    outline: ${({ theme }) => theme.border.medium} solid ${({ theme }) => theme.primary};
+    outline-offset: ${({ theme }) => theme.spacing[0.5]};
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+`;
+
+export const Spinner = styled(LoaderCircle)`
+  animation: ${spin} 0.8s linear infinite;
 `;
 
 export const MetaGrid = styled.div`

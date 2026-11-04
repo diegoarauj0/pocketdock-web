@@ -11,6 +11,7 @@ import { Body, Controller, Get, HttpCode, HttpStatus, Ip, Post, Res } from "@nes
 import { ApiValidationResponse } from "src/common/decorators/swagger/validation.decorator";
 import { AcceptLanguage } from "src/common/decorators/acceptLanguage.decorator";
 import { SessionService } from "src/modules/sessions/services/session.service";
+import { SessionRevokeType } from "src/modules/sessions/session.entity";
 import { SuccessResponseDto } from "src/common/dtos/successResponse.dto";
 import { AllowAnonymous } from "../decorators/allowAnonymous.decorator";
 import { SESSION_CONSTANT } from "src/modules/sessions/session.constant";
@@ -258,7 +259,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Session() { sessionId }: { sessionId: string },
   ): Promise<void> {
-    await this.sessionService.revoke(sessionId);
+    await this.sessionService.revoke(sessionId, SessionRevokeType.LOGOUT);
 
     this.clearRefreshCookie(res);
   }
@@ -279,7 +280,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Session() { user }: { user: UserEntity },
   ): Promise<void> {
-    await this.sessionService.revokeAll(user.id);
+    await this.sessionService.revokeAll(user.id, SessionRevokeType.LOGOUT_ALL);
 
     this.clearRefreshCookie(res);
   }

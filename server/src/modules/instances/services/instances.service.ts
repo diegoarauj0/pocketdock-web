@@ -109,6 +109,16 @@ export class InstancesService {
     return instance;
   }
 
+  public async findById(id: string): Promise<InstanceEntity> {
+    const instance = await this.instanceRepository.findById(id);
+
+    if (instance === null) {
+      throw new InstanceNotFoundException();
+    }
+
+    return instance;
+  }
+
   private assertContainerReady(instance: InstanceEntity): void {
     if (instance.status !== InstanceStatus.COMPLETED) {
       throw new InstanceContainerException(ContainerErrorReason.NOT_READY);

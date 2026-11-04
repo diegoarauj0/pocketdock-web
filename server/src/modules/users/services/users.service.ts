@@ -5,6 +5,7 @@ import { UsersRepository } from "../repositories/users.repository";
 import { UserEntity } from "../user.entity";
 import { Injectable } from "@nestjs/common";
 import { DataSource } from "typeorm";
+import { env } from "src/config/env";
 
 @Injectable()
 export class UsersService {
@@ -26,14 +27,13 @@ export class UsersService {
     return this.usersRepository.findAll(limit, offset);
   }
 
-  public findByIdForAdmin(id: string): Promise<UserEntity | null> {
-    return this.usersRepository.findByIdForAdmin(id);
-  }
-
   public async create(email: string, username: string, hash?: string): Promise<UserEntity> {
+    const normalizeEmail = email.trim().toLowerCase();
+
     const user = this.usersRepository.create({
-      email: email.trim().toLowerCase(),
+      isAdmin: env.BOOTSTRAP_ADMIN_EMAIL.includes(normalizeEmail),
       username: username.trim(),
+      email: normalizeEmail,
       hash: hash,
     });
 
@@ -41,12 +41,22 @@ export class UsersService {
   }
 
   public async remove(user: UserEntity): Promise<UserEntity> {
+    await this.verifyLastAdmin(user);
+
     await this.instancesService.removeAllContainersByUserId(user.id);
 
     return this.usersRepository.remove(user);
   }
 
-  public async promoteToAdmin(id: string): Promise<UserEntity> {
+  private async verifyLastAdmin(user: UserEntity): Promise<void> {
+    if (user.isAdmin === false) return;
+
+    const adminCount = await this.usersRepository.countByAdmin();
+
+    if (adminCount <= 1) throw new LastAdminException();
+  }
+
+  public async promoteUser(id: string): Promise<UserEntity> {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(UserEntity, { where: { id } });
 
@@ -61,7 +71,7 @@ export class UsersService {
     });
   }
 
-  public async demoteFromAdmin(id: string): Promise<UserEntity> {
+  public async demoteUser(id: string): Promise<UserEntity> {
     return this.dataSource.transaction(async (manager) => {
       const user = await manager.findOne(UserEntity, { where: { id } });
 

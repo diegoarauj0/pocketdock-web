@@ -6,6 +6,7 @@ export enum SessionRevokeType {
   LOGOUT_ALL = "LOGOUT_ALL",
   EXPIRED = "EXPIRED",
   LOGOUT = "LOGOUT",
+  ADMIN = "ADMIN",
 }
 
 @typeorm.Entity("sessions")

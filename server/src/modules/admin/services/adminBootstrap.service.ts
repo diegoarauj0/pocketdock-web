@@ -21,7 +21,7 @@ export class AdminBootstrapService implements OnApplicationBootstrap {
       if (user.isAdmin === true) continue;
 
       try {
-        await this.usersService.promoteToAdmin(user.id);
+        await this.usersService.promoteUser(user.id);
         this.logger.log(`Bootstrap admin promoted: ${email}.`);
       } catch (error) {
         if (error instanceof UserNotFoundException) {

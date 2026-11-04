@@ -1,8 +1,21 @@
-import { IsInt, IsOptional, IsUUID, Max, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Max, Min } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AdminUserSummaryResponseDto } from "./adminUserSummary.dto";
 import { InstanceEntity, InstanceStatus } from "src/modules/instances/instance.entity";
 import { Type } from "class-transformer";
+
+export class AdminInstanceIdParamsDto {
+  @ApiProperty({
+    type: "string",
+    format: "uuid",
+    description: "id da instância",
+    example: "123e4567-e89b-12d3-a456-426614174000",
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
+  public id!: InstanceEntity["id"];
+}
 
 export class AdminInstancesQueryDto {
   @ApiPropertyOptional({

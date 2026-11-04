@@ -2,9 +2,14 @@ import { ApiInvalidSessionResponse } from "src/common/decorators/swagger/invalid
 import { ApiRateLimitExceededResponse } from "src/common/decorators/swagger/rateLimitExceeded.decorator";
 import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidToken.decorator";
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from "@nestjs/common";
-import { AdminInstanceListResponseDto, AdminInstancesQueryDto } from "../dtos/adminInstance.dto";
-import { AdminSessionListResponseDto, AdminSessionsQueryDto } from "../dtos/adminSession.dto";
+import { Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, Query } from "@nestjs/common";
+import {
+  AdminInstanceIdParamsDto,
+  AdminInstanceListResponseDto,
+  AdminInstanceResponseDto,
+  AdminInstancesQueryDto,
+} from "../dtos/adminInstance.dto";
+import { AdminSessionIdParamsDto, AdminSessionListResponseDto, AdminSessionsQueryDto } from "../dtos/adminSession.dto";
 import {
   AdminUserIdParamsDto,
   AdminUserListResponseDto,
@@ -75,6 +80,28 @@ export class AdminController {
   }
 
   @ApiOperation({
+    summary: "Deletar usuário",
+    description:
+      "Exclui a conta do usuário e todos os dados associados. Não é possível deletar o último administrador.",
+  })
+  @ApiOkResponse({
+    description: "Usuário deletado com sucesso.",
+    type: SuccessResponseDto(PublicUserResponseDto),
+  })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
+  @Delete("users/:id")
+  @Throttle({ default: ADMIN_CONSTANT.THROTTLE.DELETE_USER })
+  @ApiRateLimitExceededResponse()
+  @HttpCode(HttpStatus.OK)
+  public async deleteUser(@Param() { id }: AdminUserIdParamsDto) {
+    const user = await this.adminService.deleteUser(id);
+
+    return UserMapper.toPublic(user);
+  }
+
+  @ApiOperation({
     summary: "Listar instâncias",
     description: "Lista todas as instâncias com paginação e filtro opcional por usuário.",
   })
@@ -98,6 +125,27 @@ export class AdminController {
       limit: query.limit,
       offset: query.offset,
     };
+  }
+
+  @ApiOperation({
+    summary: "Deletar instância",
+    description: "Exclui uma instância específica, independentemente do usuário dono.",
+  })
+  @ApiOkResponse({
+    description: "Instância deletada com sucesso.",
+    type: SuccessResponseDto(AdminInstanceResponseDto),
+  })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
+  @Delete("instances/:id")
+  @Throttle({ default: ADMIN_CONSTANT.THROTTLE.DELETE_INSTANCE })
+  @ApiRateLimitExceededResponse()
+  @HttpCode(HttpStatus.OK)
+  public async deleteInstance(@Param() { id }: AdminInstanceIdParamsDto) {
+    const instance = await this.adminService.deleteInstance(id);
+
+    return AdminInstanceMapper.toResponse(instance);
   }
 
   @ApiOperation({
@@ -125,6 +173,44 @@ export class AdminController {
       limit: query.limit,
       offset: query.offset,
     };
+  }
+
+  @ApiOperation({
+    summary: "Revogar sessão",
+    description: "Revoga uma sessão específica. O motivo da revogação é registrado como ADMIN.",
+  })
+  @ApiOkResponse({
+    description: "Sessão revogada com sucesso.",
+    type: SuccessResponseDto(),
+  })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
+  @Post("sessions/:id/revoke")
+  @Throttle({ default: ADMIN_CONSTANT.THROTTLE.REVOKE_SESSION })
+  @ApiRateLimitExceededResponse()
+  @HttpCode(HttpStatus.OK)
+  public async revokeSession(@Param() { id }: AdminSessionIdParamsDto): Promise<void> {
+    await this.adminService.revokeSession(id);
+  }
+
+  @ApiOperation({
+    summary: "Revogar todas as sessões de um usuário",
+    description: "Revoga todas as sessões ativas de um usuário. O motivo da revogação é registrado como ADMIN.",
+  })
+  @ApiOkResponse({
+    description: "Sessões do usuário revogadas com sucesso.",
+    type: SuccessResponseDto(),
+  })
+  @ApiBearerAuth("access-token")
+  @ApiInvalidTokenResponse()
+  @ApiInvalidSessionResponse()
+  @Post("users/:id/sessions/revoke-all")
+  @Throttle({ default: ADMIN_CONSTANT.THROTTLE.REVOKE_SESSION })
+  @ApiRateLimitExceededResponse()
+  @HttpCode(HttpStatus.OK)
+  public async revokeAllUserSessions(@Param() { id }: AdminUserIdParamsDto): Promise<void> {
+    await this.adminService.revokeAllUserSessions(id);
   }
 
   @ApiOperation({

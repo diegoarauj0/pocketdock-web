@@ -135,16 +135,16 @@ export class SessionService {
     };
   }
 
-  public async revoke(sessionId: string): Promise<void> {
-    await this.sessionRepository.revokeById(sessionId, SessionRevokeType.LOGOUT);
+  public async revoke(sessionId: string, reason: SessionRevokeType): Promise<void> {
+    await this.sessionRepository.revokeById(sessionId, reason);
 
-    this.logger.log("Session revoked.", { sessionId, reason: SessionRevokeType.LOGOUT });
+    this.logger.log("Session revoked.", { sessionId, reason });
   }
 
-  public async revokeAll(userId: string): Promise<void> {
-    await this.sessionRepository.revokeAllByUserID(userId, SessionRevokeType.LOGOUT_ALL);
+  public async revokeAll(userId: string, reason: SessionRevokeType): Promise<void> {
+    await this.sessionRepository.revokeAllByUserID(userId, reason);
 
-    this.logger.log("All sessions revoked.", { userId, reason: SessionRevokeType.LOGOUT_ALL });
+    this.logger.log("All sessions revoked.", { userId, reason });
   }
 
   public findAll(limit: number, offset: number, userId?: string): Promise<[SessionEntity[], number]> {

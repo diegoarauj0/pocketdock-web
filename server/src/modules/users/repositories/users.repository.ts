@@ -26,8 +26,8 @@ export class UsersRepository {
     return this.usersRepository.findOneBy({ email: email });
   }
 
-  public findById(id: string): Promise<UserEntity | null> {
-    return this.usersRepository.findOneBy({ id: id });
+  public countByAdmin(): Promise<number> {
+    return this.usersRepository.countBy({ isAdmin: true });
   }
 
   public findAll(limit: number, offset: number): Promise<[UserEntity[], number]> {
@@ -49,7 +49,7 @@ export class UsersRepository {
     });
   }
 
-  public findByIdForAdmin(id: string): Promise<UserEntity | null> {
+  public findById(id: string): Promise<UserEntity | null> {
     return this.usersRepository.findOne({
       select: {
         id: true,

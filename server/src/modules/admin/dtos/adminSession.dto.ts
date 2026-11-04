@@ -1,8 +1,21 @@
-import { IsInt, IsOptional, IsUUID, Max, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID, Max, Min } from "class-validator";
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { AdminUserSummaryResponseDto } from "./adminUserSummary.dto";
 import { SessionEntity, SessionRevokeType } from "src/modules/sessions/session.entity";
 import { Type } from "class-transformer";
+
+export class AdminSessionIdParamsDto {
+  @ApiProperty({
+    type: "string",
+    format: "uuid",
+    description: "id da sessão",
+    example: "123e4567-e89b-12d3-a456-426614174000",
+  })
+  @IsString()
+  @IsNotEmpty()
+  @IsUUID()
+  public id!: SessionEntity["id"];
+}
 
 export class AdminSessionsQueryDto {
   @ApiPropertyOptional({

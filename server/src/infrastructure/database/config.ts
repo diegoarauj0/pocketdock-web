@@ -8,7 +8,6 @@ export default {
   username: env.POSTGRES_USER,
   password: env.POSTGRES_PASSWORD,
   database: env.POSTGRES_DB,
-  migrationsRun: true,
   logging: ["error", "warn", "migration"],
   synchronize: false,
   entities: ["dist/**/*.entity.{js,ts}"],

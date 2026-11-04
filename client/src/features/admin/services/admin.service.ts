@@ -14,6 +14,14 @@ export interface InterfaceAdminUser extends InterfaceAdminUserSummary {
   updatedAt: string;
 }
 
+export interface InterfaceAdminPublicUser {
+  id: string;
+  username: string;
+  isAdmin: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface InterfaceAdminInstance {
   id: string;
   userId: string;
@@ -76,6 +84,14 @@ export const adminService = {
 
   findUserById: (id: string): Promise<InterfaceAdminUser> => {
     return httpService.get(`/api/admin/users/${id}`);
+  },
+
+  promoteUser: (id: string): Promise<InterfaceAdminPublicUser> => {
+    return httpService.post(`/api/admin/users/${id}/promote`, undefined);
+  },
+
+  demoteUser: (id: string): Promise<InterfaceAdminPublicUser> => {
+    return httpService.post(`/api/admin/users/${id}/demote`, undefined);
   },
 
   findInstances: (
