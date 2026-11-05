@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InterfaceInstance } from "../services/instances.service";
+import { instancesQueryKey } from "../queries/useInstances.query";
 import { useTranslation } from "react-i18next";
 import { instancesService } from "../services/instances.service";
 import { INSTANCE_CONSTANT } from "../constants/instance.constant";
@@ -16,9 +17,11 @@ export function useCreateInstanceMutation() {
   return useMutation<InterfaceInstance, unknown, void, InterfaceCreateInstanceContext>({
     mutationFn: () => instancesService.createInstance(),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: ["instances"] });
+      const queryKey = instancesQueryKey();
 
-      const previousInstances = queryClient.getQueryData<InterfaceInstance[]>(["instances"]);
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousInstances = queryClient.getQueryData<InterfaceInstance[]>(queryKey);
 
       const createdAt = new Date().toISOString();
 
@@ -32,7 +35,7 @@ export function useCreateInstanceMutation() {
         url: "",
       };
 
-      queryClient.setQueryData<InterfaceInstance[]>(["instances"], (oldInstances = []) => [
+      queryClient.setQueryData<InterfaceInstance[]>(queryKey, (oldInstances = []) => [
         optimisticInstance,
         ...oldInstances,
       ]);
@@ -41,16 +44,16 @@ export function useCreateInstanceMutation() {
     },
     onError: (_error, _variables, context) => {
       if (context?.previousInstances !== undefined) {
-        queryClient.setQueryData(["instances"], context.previousInstances);
+        queryClient.setQueryData(instancesQueryKey(), context.previousInstances);
       }
     },
     onSuccess: (createdInstance, _variables, context) => {
-      queryClient.setQueryData<InterfaceInstance[]>(["instances"], (oldInstances = []) =>
+      queryClient.setQueryData<InterfaceInstance[]>(instancesQueryKey(), (oldInstances = []) =>
         oldInstances.map((instance) => (instance.id === context?.optimisticInstance.id ? createdInstance : instance)),
       );
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["instances"] });
+      void queryClient.invalidateQueries({ queryKey: instancesQueryKey() });
     },
   });
 }

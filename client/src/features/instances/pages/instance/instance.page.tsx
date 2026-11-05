@@ -5,7 +5,7 @@ import { ArrowLeft, CircleAlert, LoaderCircle, Play, Square, Trash } from "lucid
 import { HeaderComponent } from "@/shared/components/header/header.component";
 import { useInstanceHandlers } from "../../hooks/useInstanceHandlers.hook";
 import { INSTANCE_CONSTANT } from "../../constants/instance.constant";
-import { useInstanceQuery } from "../../queries/useInstance.query";
+import { useInstanceQuery } from "../../queries/useInstance.query.ts";
 import { useStateQuery } from "../../queries/useState.query";
 import { Link, useParams } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,6 @@ export function InstancePage() {
   const stateQuery = useStateQuery(id, isCompleted);
 
   const { handleDeleteInstance, handleStartInstance, handleStopInstance } = useInstanceHandlers({
-    stateQuery,
     id: id ?? "",
   });
 

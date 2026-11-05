@@ -7,16 +7,13 @@ import { notificationService } from "@/shared/services/notification.service";
 import { INSTANCE_CONSTANT } from "../constants/instance.constant";
 import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
-import type { UseQueryResult } from "@tanstack/react-query";
-import type { InterfaceState } from "../services/instances.service";
 
 interface InterfaceInstanceHandlersProps {
-  stateQuery: UseQueryResult<NoInfer<InterfaceState>, Error>;
   id: string;
 }
 
 export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
-  const { id, stateQuery } = props;
+  const { id } = props;
 
   const navigate = useNavigate();
   const { t } = useTranslation("instances");
@@ -37,7 +34,6 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
     stopInstanceMutation.mutate(id || "", {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_STOP_INSTANCE_SUCCESS"), notificationID);
-        stateQuery.refetch();
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_STOP_INSTANCE_ERROR")),
     });
@@ -51,7 +47,6 @@ export function useInstanceHandlers(props: InterfaceInstanceHandlersProps) {
     startInstanceMutation.mutate(id || "", {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_START_INSTANCE_SUCCESS"), notificationID);
-        stateQuery.refetch();
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_START_INSTANCE_ERROR")),
     });

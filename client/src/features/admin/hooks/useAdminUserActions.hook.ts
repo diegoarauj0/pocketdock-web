@@ -1,11 +1,11 @@
 import type { InterfaceAdminSession, InterfaceAdminUser } from "../services/admin.service";
-import { useRevokeAllUserSessionsMutation } from "../mutations/useRevokeAllUserSessions.mutation";
-import { useDeleteUserMutation } from "../mutations/useDeleteUser.mutation";
-import { useRevokeSessionMutation } from "../mutations/useRevokeSession.mutation";
-import { useDemoteUserMutation } from "../mutations/useDemoteUser.mutation";
-import { usePromoteUserMutation } from "../mutations/usePromoteUser.mutation";
+import { useRevokeAllUserSessionsByAdminMutation } from "../mutations/useRevokeAllUserSessionsByAdmin.mutation";
+import { useDeleteUserByAdminMutation } from "../mutations/useDeleteUserByAdmin.mutation";
+import { useRevokeSessionByAdminMutation } from "../mutations/useRevokeSessionByAdmin.mutation";
+import { useDemoteUserByAdminMutation } from "../mutations/useDemoteUserByAdmin.mutation";
+import { usePromoteUserByAdminMutation } from "../mutations/usePromoteUserByAdmin.mutation";
 import { translateServerError } from "@/features/locale/services/translateServerError.service";
-import { useQueryClient, type UseQueryResult } from "@tanstack/react-query";
+import { type UseQueryResult } from "@tanstack/react-query";
 import { notificationService } from "@/shared/services/notification.service";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog.hook";
 import { useAuth } from "@/features/auth/contexts/auth.context";
@@ -21,21 +21,20 @@ interface InterfaceAdminUserActionsProps {
 export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProps) {
   const { confirm, confirmDialog } = useConfirmDialog();
   const { clearSession, user: currentUser } = useAuth();
-  const promoteUserMutation = usePromoteUserMutation();
-  const demoteUserMutation = useDemoteUserMutation();
-  const deleteUserMutation = useDeleteUserMutation();
-  const revokeSessionMutation = useRevokeSessionMutation();
-  const revokeAllUserSessionsMutation = useRevokeAllUserSessionsMutation();
-  const queryClient = useQueryClient();
+  const promoteUserByAdminMutation = usePromoteUserByAdminMutation();
+  const demoteUserByAdminMutation = useDemoteUserByAdminMutation();
+  const deleteUserByAdminMutation = useDeleteUserByAdminMutation();
+  const revokeSessionByAdminMutation = useRevokeSessionByAdminMutation();
+  const revokeAllUserSessionsByAdminMutation = useRevokeAllUserSessionsByAdminMutation();
   const navigate = useNavigate();
   const { t } = useTranslation("admin");
 
-  const isRolePending = promoteUserMutation.isPending || demoteUserMutation.isPending;
+  const isRolePending = promoteUserByAdminMutation.isPending || demoteUserByAdminMutation.isPending;
   const isUserActionPending =
     isRolePending ||
-    deleteUserMutation.isPending ||
-    revokeSessionMutation.isPending ||
-    revokeAllUserSessionsMutation.isPending;
+    deleteUserByAdminMutation.isPending ||
+    revokeSessionByAdminMutation.isPending ||
+    revokeAllUserSessionsByAdminMutation.isPending;
 
   const handleMutationError = (error: unknown, id: string, genericMessage: string) => {
     notificationService.error(translateServerError(t, error, genericMessage), id);
@@ -59,10 +58,9 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
 
     notificationService.loading(t("NOTIFICATION_PROMOTE_LOADING"), notificationID);
 
-    promoteUserMutation.mutate(user.id, {
+    promoteUserByAdminMutation.mutate(user.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_PROMOTE_SUCCESS"), notificationID);
-        void userQuery.refetch();
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_PROMOTE_ERROR")),
     });
@@ -87,10 +85,9 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
 
     notificationService.loading(t("NOTIFICATION_DEMOTE_LOADING"), notificationID);
 
-    demoteUserMutation.mutate(user.id, {
+    demoteUserByAdminMutation.mutate(user.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_DEMOTE_SUCCESS"), notificationID);
-        void userQuery.refetch();
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_DEMOTE_ERROR")),
     });
@@ -115,15 +112,9 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
 
     notificationService.loading(t("NOTIFICATION_DELETE_USER_LOADING"), notificationID);
 
-    deleteUserMutation.mutate(user.id, {
+    deleteUserByAdminMutation.mutate(user.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_DELETE_USER_SUCCESS"), notificationID);
-
-        queryClient.removeQueries({ queryKey: ["admin", "user", user.id] });
-
-        void queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
-        void queryClient.invalidateQueries({ queryKey: ["admin", "instances"] });
-        void queryClient.invalidateQueries({ queryKey: ["admin", "sessions"] });
 
         if (currentUser?.id === user.id) {
           clearSession();
@@ -152,10 +143,9 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
 
     notificationService.loading(t("NOTIFICATION_REVOKE_SESSION_LOADING"), notificationID);
 
-    revokeSessionMutation.mutate(session.id, {
+    revokeSessionByAdminMutation.mutate(session.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_REVOKE_SESSION_SUCCESS"), notificationID);
-        void queryClient.invalidateQueries({ queryKey: ["admin", "sessions"] });
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_REVOKE_SESSION_ERROR")),
     });
@@ -180,10 +170,9 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
 
     notificationService.loading(t("NOTIFICATION_REVOKE_ALL_SESSIONS_LOADING"), notificationID);
 
-    revokeAllUserSessionsMutation.mutate(user.id, {
+    revokeAllUserSessionsByAdminMutation.mutate(user.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_REVOKE_ALL_SESSIONS_SUCCESS"), notificationID);
-        void queryClient.invalidateQueries({ queryKey: ["admin", "sessions"] });
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_REVOKE_ALL_SESSIONS_ERROR")),
     });
@@ -196,11 +185,11 @@ export function useAdminUserActions({ userQuery }: InterfaceAdminUserActionsProp
     handlePromote,
     handleRevokeAllUserSessions,
     handleRevokeSession,
-    isDeleteUserPending: deleteUserMutation.isPending,
-    isDemoteUserPending: demoteUserMutation.isPending,
-    isPromoteUserPending: promoteUserMutation.isPending,
-    isRevokeAllUserSessionsPending: revokeAllUserSessionsMutation.isPending,
+    isDeleteUserPending: deleteUserByAdminMutation.isPending,
+    isDemoteUserPending: demoteUserByAdminMutation.isPending,
+    isPromoteUserPending: promoteUserByAdminMutation.isPending,
+    isRevokeAllUserSessionsPending: revokeAllUserSessionsByAdminMutation.isPending,
     isUserActionPending,
-    revokingSessionId: revokeSessionMutation.isPending ? revokeSessionMutation.variables : undefined,
+    revokingSessionId: revokeSessionByAdminMutation.isPending ? revokeSessionByAdminMutation.variables : undefined,
   };
 }

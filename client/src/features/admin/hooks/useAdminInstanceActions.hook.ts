@@ -1,7 +1,6 @@
 import type { InterfaceAdminInstance } from "../services/admin.service";
-import { useDeleteInstanceMutation } from "../mutations/useDeleteInstance.mutation";
+import { useDeleteInstanceByAdminMutation } from "../mutations/useDeleteInstanceByAdmin.mutation";
 import { translateServerError } from "@/features/locale/services/translateServerError.service";
-import { useQueryClient } from "@tanstack/react-query";
 import { notificationService } from "@/shared/services/notification.service";
 import { useConfirmDialog } from "@/shared/hooks/useConfirmDialog.hook";
 import { ADMIN_CONSTANT } from "../admin.constant";
@@ -9,8 +8,7 @@ import { useTranslation } from "react-i18next";
 
 export function useAdminInstanceActions() {
   const { confirm, confirmDialog } = useConfirmDialog();
-  const deleteInstanceMutation = useDeleteInstanceMutation();
-  const queryClient = useQueryClient();
+  const deleteInstanceByAdminMutation = useDeleteInstanceByAdminMutation();
   const { t } = useTranslation("admin");
 
   const handleMutationError = (error: unknown, id: string, genericMessage: string) => {
@@ -32,10 +30,9 @@ export function useAdminInstanceActions() {
 
     notificationService.loading(t("NOTIFICATION_DELETE_INSTANCE_LOADING"), notificationID);
 
-    deleteInstanceMutation.mutate(instance.id, {
+    deleteInstanceByAdminMutation.mutate(instance.id, {
       onSuccess: () => {
         notificationService.success(t("NOTIFICATION_DELETE_INSTANCE_SUCCESS"), notificationID);
-        void queryClient.invalidateQueries({ queryKey: ["admin", "instances"] });
       },
       onError: (error) => handleMutationError(error, notificationID, t("NOTIFICATION_DELETE_INSTANCE_ERROR")),
     });
@@ -43,7 +40,9 @@ export function useAdminInstanceActions() {
 
   return {
     confirmDialog,
-    deletingInstanceId: deleteInstanceMutation.isPending ? deleteInstanceMutation.variables : undefined,
+    deletingInstanceId: deleteInstanceByAdminMutation.isPending
+      ? deleteInstanceByAdminMutation.variables
+      : undefined,
     handleDeleteInstance,
   };
 }
