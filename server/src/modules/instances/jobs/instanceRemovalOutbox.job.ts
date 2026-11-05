@@ -39,6 +39,7 @@ export class InstanceRemovalOutboxJob {
       });
     });
   }
+
   private execute = async (outboxEvent: OutboxEventEntity): Promise<void> => {
     const { instanceId, containerName } = outboxEvent.payload as unknown as InterfacePayload;
 

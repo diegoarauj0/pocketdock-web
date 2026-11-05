@@ -55,13 +55,15 @@ export class OutboxEventRepository {
   public async claimNext(type: string): Promise<OutboxEventEntity | null> {
     return this.dataSource.transaction(async (manager) => {
       const results = await manager.query<OutboxEventEntity[] | undefined>(
-        'SELECT * FROM outbox_events WHERE "status" IN ($1, $2) AND "type" = $3 FOR UPDATE SKIP LOCKED LIMIT 1',
-        [OutboxEventStatus.PENDING, OutboxEventStatus.FAILED, type],
+        `SELECT * FROM outbox_events WHERE
+        "type" = $1 AND ("status" IN ($2, $3) OR "status" = $4 AND "updatedAt" >= NOW() - INTERVAL '5 minutes' )
+        FOR UPDATE SKIP LOCKED LIMIT 1`,
+        [type, OutboxEventStatus.PENDING, OutboxEventStatus.FAILED, OutboxEventStatus.PROCESSING],
       );
 
       const event = (results ?? [])[0];
 
-      if (!event || event.attempts > event.maxAttempts) return null;
+      if (!event || event.attempts >= event.maxAttempts) return null;
 
       await manager.query(
         'UPDATE "outbox_events" SET "status" = $1, "attempts" = $2, "updatedAt" = NOW() WHERE id = $3',
