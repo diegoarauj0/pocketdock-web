@@ -4,7 +4,6 @@ import { ApiInvalidTokenResponse } from "src/common/decorators/swagger/invalidTo
 import { ApiBearerAuth, ApiCookieAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { EmailVerificationService } from "src/modules/emailVerification/services/emailVerification.service";
 import { ApiInvalidCredentialResponse } from "src/common/decorators/swagger/invalidCredential.decorator";
-import { ApiConcurrentEmailVerificationResponse } from "src/common/decorators/swagger/concurrentEmailVerification.decorator";
 import { ApiInvalidEmailVerificationCodeResponse } from "src/common/decorators/swagger/invalidEmailVerificationCode.decorator";
 import { EmailVerificationType } from "src/modules/emailVerification/emailVerification.entity";
 import { Body, Controller, Get, HttpCode, HttpStatus, Ip, Post, Res } from "@nestjs/common";
@@ -64,7 +63,6 @@ export class AuthController {
   @AllowAnonymous()
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
-  @ApiConcurrentEmailVerificationResponse()
   @Post("forgot-password/resend")
   @Throttle({ default: AUTH_CONSTANT.THROTTLE.FORGOT_PASSWORD })
   @ApiRateLimitExceededResponse()
@@ -90,7 +88,6 @@ export class AuthController {
   @ApiRateLimitExceededResponse()
   @HttpCode(HttpStatus.OK)
   @ApiValidationResponse()
-  @ApiConcurrentEmailVerificationResponse()
   @ApiOkResponse({ type: SuccessResponseDto() })
   public async forgotPassword(
     @Body() body: DTOs.EmailAndPasswordDto,
@@ -143,7 +140,6 @@ export class AuthController {
   @Throttle({ default: AUTH_CONSTANT.THROTTLE.SIGN_UP })
   @ApiRateLimitExceededResponse()
   @ApiValidationResponse()
-  @ApiConcurrentEmailVerificationResponse()
   @HttpCode(HttpStatus.OK)
   @ApiOkResponse({ type: SuccessResponseDto() })
   public async signUpResendEmail(
@@ -166,7 +162,6 @@ export class AuthController {
   @Throttle({ default: AUTH_CONSTANT.THROTTLE.SIGN_UP })
   @ApiRateLimitExceededResponse()
   @ApiValidationResponse()
-  @ApiConcurrentEmailVerificationResponse()
   @HttpCode(HttpStatus.CREATED)
   @ApiCreatedResponse({ type: SuccessResponseDto() })
   public async signUp(

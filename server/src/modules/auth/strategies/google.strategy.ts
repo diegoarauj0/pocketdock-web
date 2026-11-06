@@ -90,6 +90,11 @@ export class GoogleOAuthStrategy implements InterfaceBaseOAuthStrategy {
       return response.data;
     } catch (error) {
       this.logger.error("Failed to communicate with OAuth provider", error);
+
+      if (error instanceof OAuthStrategyException) {
+        throw error;
+      }
+
       throw new OAuthStrategyException(this.OAuthStrategyID, OAuthStrategyErrorReason.TOKEN_EXCHANGE_FAILED);
     }
   }

@@ -30,6 +30,14 @@ const envSchema = z.object({
   MAX_NANO_CPUS: z.coerce.number().default(1000000000),
   INSTANCE_DOMAIN: z.string().default("localhost"),
   INSTANCE_PROTOCOL: z.enum(["http", "https"]).default(process.env.NODE_ENV === "production" ? "https" : "http"),
+  TRUST_PROXY: z
+    .string()
+    .optional()
+    .default("false")
+    .transform((val) => {
+      const normalized = (val ?? "").trim().toLowerCase();
+      return normalized === "true" || normalized === "1" || normalized === "yes" || normalized === "on";
+    }),
   LOG_CONTEXTS: z
     .string()
     .transform((val) => val.split(",").map((item) => item.trim()))

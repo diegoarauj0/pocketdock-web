@@ -151,7 +151,7 @@ export class InstanceCreationOutboxJob {
         const { exitCode, stdout, stderr } = await this.dockerContainerService.execContainer(containerName, cmd);
 
         if (exitCode === 0) {
-          this.logger.log(`Superuser created for instance ${containerName}.`, { email });
+          this.logger.log(`Superuser created for instance ${containerName}.`);
           return;
         }
 

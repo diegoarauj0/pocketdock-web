@@ -70,9 +70,7 @@ export class EmailVerificationService {
     const { affected } = await this.emailVerificationRepository.revoke(existsEmailVerification.id);
 
     if (affected === undefined || affected === 0) {
-      throw new concurrentEmailVerification.ConcurrentEmailVerificationException(
-        concurrentEmailVerification.ConcurrentEmailVerificationReason.REVOKE_RACE_LOST,
-      );
+      return this.logger.debug("Failed to revoke existing email verification due to a concurrent operation.");
     }
 
     const code = this.cryptoService.createRandomCode(EMAIL_VERIFICATION_CONSTANT.CODE_LENGTH);
@@ -94,9 +92,12 @@ export class EmailVerificationService {
       await this.sendEmail({ emailVerificationType, email: normalizedEmail, code, locale });
     } catch (error) {
       if (isUniqueConstraintError(error)) {
-        throw new concurrentEmailVerification.ConcurrentEmailVerificationException(
-          concurrentEmailVerification.ConcurrentEmailVerificationReason.DUPLICATE_ACTIVE_VERIFICATION,
+        this.logger.debug(
+          "Failed to create email verification due to an existing active verification of the same type.",
+          { type: emailVerificationType },
         );
+
+        return;
       }
 
       throw error;
@@ -114,10 +115,12 @@ export class EmailVerificationService {
     );
 
     if (existsEmailVerification) {
-      return this.logger.debug("Verification email was not created because an active verification already exists", {
-        emailVerificationType,
-        email: normalizedEmail,
-      });
+      this.logger.debug("Existing email verification found. Revoking previous verification.");
+      const { affected } = await this.emailVerificationRepository.revoke(existsEmailVerification.id);
+
+      if (affected === undefined || affected === 0) {
+        return this.logger.debug("Failed to revoke existing email verification due to a concurrent operation.");
+      }
     }
 
     const code = this.cryptoService.createRandomCode(EMAIL_VERIFICATION_CONSTANT.CODE_LENGTH);

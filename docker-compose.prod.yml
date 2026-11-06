@@ -32,6 +32,8 @@ services:
       CORS_ORIGIN: http://localhost
       # Use the domain that points to the client
       OAUTH_SUCCESS_REDIRECT_URL: http://localhost
+      # The API is behind the client nginx reverse proxy in production
+      TRUST_PROXY: "true"
       POSTGRES_HOST: database
       POSTGRES_PORT: 5432
       # Even though the Postgres port is not exposed, it is recommended to change this value
@@ -45,6 +47,8 @@ services:
       INSTANCE_PROTOCOL: https
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "8080:8080"
     depends_on:
       database:
         condition: service_healthy
@@ -53,10 +57,10 @@ services:
     build:
       context: ./client
       target: production
+      args:
+        # Point to the URL of the server
+        - VITE_API_URL=localhost
     restart: unless-stopped
-    environment:
-      # Point to the URL of the server
-      - VITE_API_URL=localhost
     ports:
       - "80:80"
     depends_on:

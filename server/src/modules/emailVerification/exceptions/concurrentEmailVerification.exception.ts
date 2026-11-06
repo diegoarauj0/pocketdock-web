@@ -3,7 +3,6 @@ import { HttpStatus } from "@nestjs/common";
 
 export enum ConcurrentEmailVerificationReason {
   DUPLICATE_ACTIVE_VERIFICATION = "DUPLICATE_ACTIVE_VERIFICATION",
-  REVOKE_RACE_LOST = "REVOKE_RACE_LOST",
 }
 
 export class ConcurrentEmailVerificationException extends BaseException<{ reason: ConcurrentEmailVerificationReason }> {

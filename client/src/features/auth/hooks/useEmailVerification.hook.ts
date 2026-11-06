@@ -50,12 +50,6 @@ export function useEmailVerification() {
 
           return;
         }
-
-        if (error.code === ERROR_CODES.CONCURRENT_EMAIL_VERIFICATION) {
-          notificationService.error(translateServerError(t, error));
-
-          return;
-        }
       }
 
       notificationService.error(translateServerError(t, error), notificationID);
