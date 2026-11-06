@@ -12,12 +12,16 @@ import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { APP_PATH } from "@/app/app.path";
 import { useForm } from "react-hook-form";
+import { useAuth } from "../contexts/auth.context";
+import type { InterfaceTokenResponse } from "../services/auth.service";
 
 export function useSignIn() {
   const { t } = useTranslation(["auth", "common"]);
   const signInSchema = useMemo(() => getSignInSchema(t), [t]);
   const signInMutation = useSignInMutation();
   const navigate = useNavigate();
+
+  const { signIn } = useAuth();
 
   const form = useForm<InterfaceSignInFormValues>({
     resolver: zodResolver(signInSchema),
@@ -66,11 +70,15 @@ export function useSignIn() {
     [notificationID, setError, t],
   );
 
-  const handleSuccess = useCallback(() => {
-    notificationService.success(t("NOTIFICATION_SIGN_IN_SUCCESS"), notificationID);
+  const handleSuccess = useCallback(
+    (data: InterfaceTokenResponse) => {
+      notificationService.success(t("NOTIFICATION_SIGN_IN_SUCCESS"), notificationID);
 
-    navigate(APP_PATH.HOME);
-  }, [notificationID, navigate, t]);
+      signIn(data.access);
+      navigate(APP_PATH.HOME);
+    },
+    [notificationID, navigate, t, signIn],
+  );
 
   const submitHandler = handleSubmit(async (values) => {
     notificationService.loading(t("NOTIFICATION_SIGN_IN_LOADING"), notificationID);

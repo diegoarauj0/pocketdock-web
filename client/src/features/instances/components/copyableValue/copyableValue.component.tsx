@@ -2,6 +2,7 @@ import { Check, Copy } from "lucide-react";
 import * as S from "./copyableValue.styled";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { notificationService } from "@/shared/services/notification.service";
 
 interface InterfaceCopyableValueProps {
   panelURL: string;
@@ -15,12 +16,16 @@ export function CopyableValueComponent({ panelURL, value }: InterfaceCopyableVal
   const handleCopy = useCallback(async () => {
     if (copied) return;
 
-    await navigator.clipboard.writeText(value);
+    try {
+      await navigator.clipboard.writeText(value);
 
-    setCopied(true);
+      setCopied(true);
 
-    setTimeout(() => setCopied(false), 2000);
-  }, [value, copied]);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      notificationService.error(t("INSTANCE_COPY_ERROR"));
+    }
+  }, [value, copied, t]);
 
   return (
     <S.CopyableValue>

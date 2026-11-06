@@ -53,5 +53,10 @@
   "ERROR_INSTANCE_CONTAINER_ERROR_OPERATION_IN_PROGRESS": "Já existe uma operação em andamento para esta instância.",
   "ERROR_INSTANCE_CONTAINER_ERROR_ALREADY_STOPPED": "A instância já está parada.",
   "ERROR_INSTANCE_CONTAINER_ERROR_ALREADY_RUNNING": "A instância já está em execução.",
-  "ERROR_INSTANCE_CONTAINER_ERROR_SUPERUSER_CREATE_FAILED": "Não foi possível criar a instância."
+  "ERROR_INSTANCE_CONTAINER_ERROR_SUPERUSER_CREATE_FAILED": "Não foi possível criar a instância.",
+  "CONFIRM_DELETE_INSTANCE_TITLE": "Excluir esta instância?",
+  "CONFIRM_DELETE_INSTANCE_DESCRIPTION": "Esta ação remove a instância e não pode ser desfeita.",
+  "CONFIRM_YES": "Sim",
+  "CONFIRM_NO": "Não",
+  "INSTANCE_COPY_ERROR": "Não foi possível copiar para a área de transferência."
 }

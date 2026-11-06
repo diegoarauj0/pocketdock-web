@@ -77,6 +77,7 @@ export function AdminUsersPage() {
         page={page}
         limit={data.limit}
         total={data.total}
+        itemsCount={data.items.length}
         isFetching={isFetching}
         onPageChange={setPage}
       />

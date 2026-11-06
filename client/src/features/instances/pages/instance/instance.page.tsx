@@ -22,7 +22,7 @@ export function InstancePage() {
 
   const stateQuery = useStateQuery(id, isCompleted);
 
-  const { handleDeleteInstance, handleStartInstance, handleStopInstance } = useInstanceHandlers({
+  const { handleDeleteInstance, handleStartInstance, handleStopInstance, confirmDialog } = useInstanceHandlers({
     id: id ?? "",
   });
 
@@ -125,6 +125,8 @@ export function InstancePage() {
 
         <InstanceInformationComponent instance={instance} />
       </S.Content>
+
+      {confirmDialog}
     </S.PageWrapper>
   );
 }

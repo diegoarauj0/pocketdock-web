@@ -100,6 +100,7 @@ export function AdminUserSessionsSectionComponent(props: InterfaceAdminUserSessi
             page={page}
             limit={data.limit}
             total={data.total}
+            itemsCount={data.items.length}
             isFetching={isFetching}
             onPageChange={onPageChange}
           />

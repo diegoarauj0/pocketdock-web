@@ -59,6 +59,7 @@ export function AdminInstancesPage() {
         page={page}
         limit={data.limit}
         total={data.total}
+        itemsCount={data.items.length}
         isFetching={isFetching}
         onPageChange={setPage}
       />

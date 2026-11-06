@@ -57,13 +57,14 @@ export class ApiResponseError extends Error {
   }
 
   public static axiosErrorToApiResponseError(axiosError: AxiosError): ApiResponseError | AxiosError {
-    const body = axiosError.response?.data as InterfaceApiResponseError;
+    const body = axiosError.response?.data as InterfaceApiResponseError | undefined;
+    const error = body?.error;
 
-    if (body.error !== undefined) {
+    if (error !== undefined && body !== undefined) {
       return new ApiResponseError(
-        body.error.message,
-        body.error.code,
-        body.error.details,
+        error.message,
+        error.code,
+        error.details,
         body.timestamp,
         body.statusCode,
         axiosError,

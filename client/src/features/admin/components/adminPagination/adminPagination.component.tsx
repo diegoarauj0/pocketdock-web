@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import * as S from "./adminPagination.styled";
 
@@ -8,6 +9,7 @@ interface InterfaceAdminPaginationProps {
   limit: number;
   total: number;
   page: number;
+  itemsCount?: number;
 }
 
 export function AdminPaginationComponent({
@@ -16,12 +18,20 @@ export function AdminPaginationComponent({
   limit,
   total,
   page,
+  itemsCount,
 }: InterfaceAdminPaginationProps) {
   const { t } = useTranslation("admin");
 
+  const totalPages = Math.max(1, Math.ceil(total / limit));
+
+  useEffect(() => {
+    if (page > 0 && (itemsCount === 0 || page >= totalPages)) {
+      onPageChange(Math.max(0, totalPages - 1));
+    }
+  }, [itemsCount, page, totalPages, onPageChange]);
+
   if (total === 0) return null;
 
-  const totalPages = Math.max(1, Math.ceil(total / limit));
   const start = page * limit + 1;
   const end = Math.min((page + 1) * limit, total);
 

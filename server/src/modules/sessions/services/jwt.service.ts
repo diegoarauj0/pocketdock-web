@@ -2,6 +2,7 @@ import { InvalidTokenException, InvalidTokenReason } from "../exceptions/invalid
 import JWT, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { SESSION_CONSTANT } from "../session.constant";
 import { Injectable } from "@nestjs/common";
+import { randomUUID } from "node:crypto";
 import { env } from "src/config/env";
 
 interface InterfaceCreateAccessTokenProps {
@@ -29,6 +30,7 @@ export class JWTService {
 
     return JWT.sign({ sessionId, userId, type: "refresh" }, env.SECRET, {
       expiresIn: SESSION_CONSTANT.SESSION_EXPIRES_IN_MS / 1000,
+      jwtid: randomUUID(),
     });
   }
 

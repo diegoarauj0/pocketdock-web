@@ -93,6 +93,21 @@ export class SessionRepository {
     return this.sessionRepository.delete({ revoked: true, revokedAt: LessThan(date) });
   }
 
+  public rotateRefreshToken(id: string, oldHash: string, newHash: string): Promise<UpdateResult> {
+    return this.sessionRepository.update(
+      { id: id, refreshTokenHash: oldHash },
+      { refreshTokenHash: newHash },
+    );
+  }
+
+  public updateRefreshTokenHash(id: string, oldHash: string, newHash: string): Promise<UpdateResult> {
+    return this.rotateRefreshToken(id, oldHash, newHash);
+  }
+
+  public compareAndSwapRefreshToken(id: string, oldHash: string, newHash: string): Promise<UpdateResult> {
+    return this.rotateRefreshToken(id, oldHash, newHash);
+  }
+
   public withManager(entityManager: EntityManager): SessionRepository {
     return new SessionRepository(entityManager.getRepository(SessionEntity));
   }

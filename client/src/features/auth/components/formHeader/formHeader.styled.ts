@@ -5,11 +5,15 @@ export const Brand = styled.div`
   ${fadeInUp(0)}
 
   margin-bottom: ${({ theme }) => theme.spacing[5]};
-  color: ${({ theme }) => theme.primary};
-  font-size: ${({ theme }) => theme.fontSize.xs};
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+
+  a {
+    text-decoration: none;
+    color: ${({ theme }) => theme.primary};
+    font-size: ${({ theme }) => theme.fontSize.xs};
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
 `;
 
 export const Title = styled.h2`

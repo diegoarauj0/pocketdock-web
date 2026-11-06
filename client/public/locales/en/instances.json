@@ -53,5 +53,10 @@
   "ERROR_INSTANCE_CONTAINER_ERROR_OPERATION_IN_PROGRESS": "Another operation is already in progress for this instance.",
   "ERROR_INSTANCE_CONTAINER_ERROR_ALREADY_STOPPED": "The instance is already stopped.",
   "ERROR_INSTANCE_CONTAINER_ERROR_ALREADY_RUNNING": "The instance is already running.",
-  "ERROR_INSTANCE_CONTAINER_ERROR_SUPERUSER_CREATE_FAILED": "Unable to create the instance."
+  "ERROR_INSTANCE_CONTAINER_ERROR_SUPERUSER_CREATE_FAILED": "Unable to create the instance.",
+  "CONFIRM_DELETE_INSTANCE_TITLE": "Delete this instance?",
+  "CONFIRM_DELETE_INSTANCE_DESCRIPTION": "This action removes the instance and cannot be undone.",
+  "CONFIRM_YES": "Yes",
+  "CONFIRM_NO": "No",
+  "INSTANCE_COPY_ERROR": "Could not copy to clipboard."
 }

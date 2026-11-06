@@ -63,12 +63,6 @@ export function useResetPassword() {
           return verificationCode.reset();
         }
 
-        if (error.code === ERROR_CODES.CONCURRENT_EMAIL_VERIFICATION) {
-          notificationService.error(translateServerError(t, error), notificationID);
-
-          return;
-        }
-
         if (error.code === ERROR_CODES.VALIDATION_ERROR) {
           const details = error.details as InterfaceValidationErrorDetails[];
 

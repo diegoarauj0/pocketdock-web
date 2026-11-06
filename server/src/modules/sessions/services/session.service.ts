@@ -102,9 +102,22 @@ export class SessionService {
       userId: session.userId,
     });
 
-    session.refreshTokenHash = this.cryptoService.hash(newRefresh);
+    const newHash = this.cryptoService.hash(newRefresh);
 
-    await this.sessionRepository.save(session);
+    const rotation = await this.sessionRepository.rotateRefreshToken(session.id, hash, newHash);
+
+    if ((rotation.affected ?? 0) === 0) {
+      this.logger.warn("Concurrent refresh detected. Session revoked.", {
+        sessionId: session.id,
+        userId: session.userId,
+      });
+
+      await this.sessionRepository.revokeById(session.id, SessionRevokeType.TOKEN_REUSE);
+
+      throw new InvalidSessionException(InvalidSessionReason.TOKEN_REUSE, true);
+    }
+
+    session.refreshTokenHash = newHash;
 
     const access = this.jwtService.createAccessToken({
       sessionId: session.id,
